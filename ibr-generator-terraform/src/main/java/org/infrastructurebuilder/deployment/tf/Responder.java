@@ -18,6 +18,15 @@ package org.infrastructurebuilder.deployment.tf;
 import java.util.Optional;
 import java.util.function.Supplier;
 
+/**
+ * A Responder provides an Optional Supplier of type M for a given object.
+ * The supplied object might be invalid or useless, in which case the
+ * supplier should return Optional.empty()
+ *
+ * @author mykel.alvis
+ *
+ * @param <M>
+ */
 public interface Responder<M> {
   /**
    *

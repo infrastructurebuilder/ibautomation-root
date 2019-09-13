@@ -55,10 +55,10 @@ public class PackerGenericIBRArchiveProvisionerTest {
   private IBArchive a;
   private DefaultPlexusContainer c;
   private PackerGenericIBRArchiveProvisioner d;
-  private List<PackerProvisioner> dList;
+  private List<PackerProvisioner<JSONObject>> dList;
   private ContainerConfiguration dpcreq;
-  private AbstractPackerIBRProvisioner g;
-  private List<PackerProvisioner> gList;
+  private AbstractPackerIBRProvisioner<JSONObject> g;
+  private List<PackerProvisioner<JSONObject>> gList;
   private ClassWorld kw;
   private IBArchive l;
   private Path root;
@@ -78,7 +78,7 @@ public class PackerGenericIBRArchiveProvisionerTest {
     c = new DefaultPlexusContainer(dpcreq,
         new WireModule(new SpaceModule(new URLClassSpace(kw.getClassRealm(TESTING)))));
 
-    g = (AbstractPackerIBRProvisioner) c.lookup(PackerProvisioner.class,
+    g = (AbstractPackerIBRProvisioner<JSONObject>) c.lookup(PackerProvisioner.class,
         PackerGenericIBRArchiveProvisioner.GENERIC_IBR);
     g.setBuilders(new ArrayList<>());
     g.setLog(log);

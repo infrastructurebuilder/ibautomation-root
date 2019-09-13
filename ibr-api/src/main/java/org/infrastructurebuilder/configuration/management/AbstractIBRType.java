@@ -37,9 +37,9 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
   private String name;
   private final PathSupplier rcs;
 
-  private final List<IBRValidator> validators;
+  private final List<IBRValidator<T>> validators;
 
-  public AbstractIBRType(final PathSupplier rps, final List<IBRValidator> validators) {
+  public AbstractIBRType(final PathSupplier rps, final List<IBRValidator<T>> validators) {
     rcs = Objects.requireNonNull(rps);
     this.validators = Objects.requireNonNull(validators);
   }
@@ -49,7 +49,7 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
     final SortedSet<IBRValidationOutput> o = new TreeSet<>();
     final String subPath = (String) Objects.requireNonNull(getConfig().get().get("file"));
 
-    for (final IBRValidator v : getRelevantValidators()) {
+    for (final IBRValidator<?> v : getRelevantValidators()) {
       o.addAll(v.validate(getRoot().resolve(Paths.get(subPath))));
     }
     return o;
@@ -76,7 +76,7 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
   }
 
   @Override
-  public Set<IBRValidator> getRelevantValidators() {
+  public Set<IBRValidator<T>> getRelevantValidators() {
     return getValidators().stream().filter(v -> v.respondsTo(this)).collect(Collectors.toSet());
   }
 
@@ -88,7 +88,7 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
     return root;
   }
 
-  public final List<IBRValidator> getValidators() {
+  public final List<IBRValidator<T>> getValidators() {
     return validators;
   }
 

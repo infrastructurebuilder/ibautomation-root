@@ -42,7 +42,7 @@ import org.json.JSONObject;
 public class ShellIBRType extends AbstractIBRType<JSONObject> {
 
   @Inject
-  public ShellIBRType(final IBRRootPathSupplier rps, final List<IBRValidator> validators) {
+  public ShellIBRType(final IBRRootPathSupplier rps, final List<IBRValidator<JSONObject>> validators) {
     super(rps, validators);
     setName(SHELL);
   }

@@ -122,9 +122,9 @@ public class TestIBRPackageMojo {
 
     mavenMap = new HashMap<>();
 
-    final Map<String, IBRDataObject> itemMap = new HashMap<>();
+    final Map<String, IBRDataObject<JSONObject>> itemMap = new HashMap<>();
     itemMap.put(FakeDummyIBRType.FAKE_TYPE_FILE,
-        new IBRDataObject(testFakeCMType, Paths.get("."), builderEntry));
+        new IBRDataObject<>(testFakeCMType, Paths.get("."), builderEntry));
 
     mavenMap.put(AbstractIBRMojo.COMPILE_ORDER, Arrays.asList(FakeDummyIBRType.FAKE_TYPE_FILE));
     mavenMap.put(AbstractIBRMojo.COMPILE_ITEMS, itemMap);
@@ -145,9 +145,9 @@ public class TestIBRPackageMojo {
     m.setOutputDirectory(target.toFile());
     m.setWorkDirectory(target.toFile());
     m.setRootPathSupplier(rps);
-    final IBRType a = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator()));
+    final IBRType<JSONObject> a = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator()));
     a.setConfigSupplier(new DefaultIBConfigSupplier().setConfig(new HashMap<>()));
-    final Map<String, IBRType> myTypes = Arrays.asList(a).stream()
+    final Map<String, IBRType<JSONObject>> myTypes = Arrays.asList(a).stream()
         .collect(Collectors.toMap(k -> a.getName(), Function.identity()));
     m.setMyTypes(myTypes);
 
@@ -239,9 +239,9 @@ public class TestIBRPackageMojo {
   public void testExecuteNoFiles() throws MojoExecutionException, MojoFailureException {
     expected.expect(MojoExecutionException.class);
     expected.expectMessage("List of files to include was empty!");
-    final Map<String, IBRDataObject> itemMap = new HashMap<>();
+    final Map<String, IBRDataObject<JSONObject>> itemMap = new HashMap<>();
     itemMap.put(FakeDummyIBRType.FAKE_TYPE_FILE,
-        new IBRDataObject(testFakeNoFileCMType, Paths.get("."), builderEntry));
+        new IBRDataObject<>(testFakeNoFileCMType, Paths.get("."), builderEntry));
 
     mavenMap.put(AbstractIBRMojo.COMPILE_ITEMS, itemMap);
     m.setPluginContext(mavenMap);

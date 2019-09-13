@@ -15,12 +15,10 @@
  */
 package org.infrastructurebuilder.deployment.tf;
 
-import static java.util.Optional.*;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
 
 import java.util.Optional;
-
-import static java.util.Objects.*;
-
 import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
@@ -30,7 +28,6 @@ import org.infrastructurebuilder.util.artifacts.Checksum;
 import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
 import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
-import org.json.JSONObject;
 
 abstract public class TFObject<T extends ChecksumEnabled> implements ChecksumEnabled {
 
@@ -80,14 +77,19 @@ abstract public class TFObject<T extends ChecksumEnabled> implements ChecksumEna
     return description;
   }
 
+  /**
+   * Override in children to produce a checksum.
+   * @return
+   */
   protected ChecksumBuilder getCheckumBuilder() {
     return b;
   }
 
   @Override
   public Checksum asChecksum() {
-    // We depend on the underlying implementations to use getChecksumBuilder() to identify their actual checksums
-    return b.asChecksum();
+    // We depend on the underlying/overriding implementations to use getChecksumBuilder()
+    // to identify their actual checksums
+    return getCheckumBuilder().asChecksum();
   }
 
   public final String getInstanceName() {

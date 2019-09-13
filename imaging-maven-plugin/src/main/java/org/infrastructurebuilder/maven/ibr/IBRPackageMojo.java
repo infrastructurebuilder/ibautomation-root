@@ -37,7 +37,7 @@ import org.infrastructurebuilder.util.IBUtils;
 import org.json.JSONObject;
 
 @Mojo(name = "package", requiresProject = true, threadSafe = true, instantiationStrategy = InstantiationStrategy.PER_LOOKUP, defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
-public final class IBRPackageMojo extends AbstractIBRMojo {
+public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
 
   @SuppressWarnings("unchecked")
   @Override

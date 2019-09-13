@@ -116,10 +116,11 @@ public class TestDefaultAnsibleIBRValidator {
         .collect(Collectors.toMap(k -> k.getPath(), v -> v.getException()));
 
     assertEquals("Map size should be 8", 8, result.size());
-    if (result.get(fileA).isPresent()) {
+    Optional<IBArchiveException> res = result.get(fileA);
+    if (res.isPresent()) {
 
     }
-    assertFalse("Good file should have empty exception list", result.get(fileA).isPresent());
+    assertFalse("Good file should have empty exception list", res.isPresent());
     for (final Path a : Arrays.asList(fileB, fileC, fileD, fileE, fileF, fileG, fileH)) {
       assertTrue("Bad file should be present in list " + a, result.containsKey(a));
       assertTrue("Bad file should have exception " + a, result.get(a).isPresent());

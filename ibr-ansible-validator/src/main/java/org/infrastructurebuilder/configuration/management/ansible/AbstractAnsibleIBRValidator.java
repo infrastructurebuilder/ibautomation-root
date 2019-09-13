@@ -21,11 +21,12 @@ import java.util.Objects;
 
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
+import org.json.JSONObject;
 
-public abstract class AbstractAnsibleIBRValidator implements IBRValidator {
+public abstract class AbstractAnsibleIBRValidator implements IBRValidator<JSONObject> {
 
   @Override
-  public boolean respondsTo(final IBRType type) {
+  public boolean respondsTo(final IBRType<JSONObject> type) {
     return ANSIBLE.equals(Objects.requireNonNull(type).getName());
   }
 

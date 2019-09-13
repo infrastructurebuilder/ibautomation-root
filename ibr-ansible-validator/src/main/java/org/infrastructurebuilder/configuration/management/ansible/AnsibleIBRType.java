@@ -46,7 +46,7 @@ public class AnsibleIBRType extends AbstractIBRType<JSONObject> {
 
   @Inject
   public AnsibleIBRType(@Named("default") final IBRRootPathSupplier rps,
-      final List<IBRValidator> validators) {
+      final List<IBRValidator<JSONObject>> validators) {
     super(rps, validators);
     setName(ANSIBLE);
   }

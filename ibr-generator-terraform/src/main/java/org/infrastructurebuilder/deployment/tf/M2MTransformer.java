@@ -16,7 +16,6 @@
 package org.infrastructurebuilder.deployment.tf;
 
 import java.util.Optional;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 
 /**

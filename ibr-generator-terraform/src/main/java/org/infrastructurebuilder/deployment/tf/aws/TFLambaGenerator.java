@@ -15,15 +15,13 @@
  */
 package org.infrastructurebuilder.deployment.tf.aws;
 
-import static java.util.Optional.*;
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.deployment.tf.AbstractTFGenerator;
-import org.infrastructurebuilder.deployment.tf.TFFormatter;
 import org.infrastructurebuilder.deployment.tf.TFGenerator;
 import org.infrastructurebuilder.deployment.tf.TFModel;
 import org.infrastructurebuilder.deployment.tf.TFObject;

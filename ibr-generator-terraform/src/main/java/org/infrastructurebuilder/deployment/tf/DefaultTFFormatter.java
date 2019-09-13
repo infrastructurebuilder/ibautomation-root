@@ -15,10 +15,9 @@
  */
 package org.infrastructurebuilder.deployment.tf;
 
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;

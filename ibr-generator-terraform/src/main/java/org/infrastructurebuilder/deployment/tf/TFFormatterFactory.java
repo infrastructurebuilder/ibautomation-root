@@ -17,12 +17,24 @@ package org.infrastructurebuilder.deployment.tf;
 
 import java.util.Optional;
 
+/**
+ * Terraform Formatter factory
+ *
+ * @author mykel.alvis
+ *
+ */
 public interface TFFormatterFactory {
 
   default TFFormatter getSpecificFormatterFor(TFObject<?> resource) {
     return this.getSpecificFormatterFor(Optional.empty(), resource);
   }
 
+  /**
+   * Get a formatter for a given parent and resource.
+   * @param parent
+   * @param resource
+   * @return
+   */
   TFFormatter getSpecificFormatterFor(Optional<TFFormatter> parent, TFObject<?> resource);
 
 }

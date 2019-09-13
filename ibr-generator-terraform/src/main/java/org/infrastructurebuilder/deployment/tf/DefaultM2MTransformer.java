@@ -15,16 +15,14 @@
  */
 package org.infrastructurebuilder.deployment.tf;
 
+import static java.util.Objects.requireNonNull;
+
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
-import static java.util.Objects.*;
-
-import java.util.Map;
 
 @Named
 public class DefaultM2MTransformer implements M2MTransformer<Object> {
@@ -34,7 +32,6 @@ public class DefaultM2MTransformer implements M2MTransformer<Object> {
   @Inject
   public DefaultM2MTransformer(Map<String, Responder<TFModel>> responderMap) {
     this.map = requireNonNull(responderMap);
-    // TODO Auto-generated constructor stub
   }
 
   @Override

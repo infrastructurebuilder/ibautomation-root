@@ -15,14 +15,19 @@
  */
 package org.infrastructurebuilder.deployment.tf;
 
-import static java.util.Optional.*;
+import static java.util.Objects.requireNonNull;
+
 import java.nio.file.Path;
-import java.util.Optional;
 
 import org.infrastructurebuilder.IBException;
 import org.infrastructurebuilder.deployment.DeployableSupplier;
 
-import static java.util.Objects.*;
+/**
+ * Supply a path to a deployable that is specifically meant for Terraform
+ * (and is thusly formatted)
+ * @author mykel.alvis
+ *
+ */
 public class TFDeployableSupplier implements DeployableSupplier {
 
   private final Path root;

@@ -17,16 +17,14 @@ package org.infrastructurebuilder.deployment.tf.aws;
 
 import java.util.Optional;
 
-import org.infrastructurebuilder.deployment.tf.TFGenerator;
 import org.infrastructurebuilder.deployment.tf.IBJSONObject;
+import org.infrastructurebuilder.deployment.tf.TFGenerator;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
-import org.json.JSONObject;
 
 public class DefaultTFAWSObject extends TFAWSObject<IBJSONObject> {
 
   public DefaultTFAWSObject(final WorkingPathSupplier wps,TFGenerator type, String name, Optional<String> description, IBJSONObject data) {
     super(wps,type, name, description, data);
-    // TODO Auto-generated constructor stub
   }
 
 }

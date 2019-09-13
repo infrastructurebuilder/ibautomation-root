@@ -16,7 +16,12 @@
 package org.infrastructurebuilder.deployment.tf;
 
 import org.json.JSONArray;
-
+/**
+ * Terraform Formatter
+ *
+ * @author mykel.alvis
+ *
+ */
 public interface TFFormatter {
 
   String specificFormat();

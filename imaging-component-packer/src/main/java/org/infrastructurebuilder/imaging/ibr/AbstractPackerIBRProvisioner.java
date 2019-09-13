@@ -15,6 +15,9 @@
  */
 package org.infrastructurebuilder.imaging.ibr;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toSet;
 
 import java.nio.file.Path;
@@ -22,7 +25,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -54,10 +56,10 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
     public GenericProvisioner(final IBRType<T> thisType, final String ltype, final Path p,
         final Optional<IBArchive> arch) {
       super();
-      iBRType = Objects.requireNonNull(thisType);
-      lType = Objects.requireNonNull(ltype);
-      path = Objects.requireNonNull(p);
-      archive = Objects.requireNonNull(arch);
+      iBRType = requireNonNull(thisType);
+      lType = requireNonNull(ltype);
+      path = requireNonNull(p);
+      archive = requireNonNull(arch);
     }
 
     @Override
@@ -67,7 +69,7 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
 
     @Override
     public Optional<String> getLookupHint() {
-      return Optional.of(GENERIC_IBR_PROVISIONER);
+      return of(GENERIC_IBR_PROVISIONER);
     }
 
     @Override
@@ -92,12 +94,12 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
   @Inject
   public AbstractPackerIBRProvisioner(final Map<String, IBRType<T>> cmTypes) {
     super();
-    this.cmTypes = Objects.requireNonNull(cmTypes);
+    this.cmTypes = requireNonNull(cmTypes);
   }
 
   @Override
   public List<PackerProvisioner<T>> applyArchive(final IBArchive archive) {
-    this.archive = Objects.requireNonNull(archive);
+    this.archive = requireNonNull(archive);
     final List<PackerProvisioner<T>> list = new ArrayList<>();
     getArchive().ifPresent(a -> {
       final List<String> notfound = new ArrayList<>(
@@ -120,7 +122,7 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
   }
 
   public Optional<IBArchive> getArchive() {
-    return Optional.ofNullable(archive);
+    return ofNullable(archive);
   }
 
   @Override

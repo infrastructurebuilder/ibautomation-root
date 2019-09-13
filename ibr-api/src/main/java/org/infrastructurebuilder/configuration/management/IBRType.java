@@ -37,7 +37,7 @@ public interface IBRType<T> {
 
   String getName();
 
-  Set<IBRValidator> getRelevantValidators();
+  Set<IBRValidator<T>> getRelevantValidators();
 
   void setConfigSupplier(IBConfigSupplier acs);
 
