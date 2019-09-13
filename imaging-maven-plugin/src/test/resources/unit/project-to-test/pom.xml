@@ -1,0 +1,56 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.infrastructurebuilder.automation</groupId>
+  <artifactId>project-to-test</artifactId>
+  <version>1.0-SNAPSHOT</version>
+  <packaging>image</packaging>
+  <name>Test PackerMojo</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>3.8.1</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.infrastructurebuilder.automation</groupId>
+        <artifactId>imaging-maven-plugin</artifactId>
+        <version>${imaging.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <target>../packer-component/src/test/resources</target>
+          <finalName>finalNameTest</finalName>
+          <image>
+            <tags>
+              <CostCenter>LABS</CostCenter>
+              <Platform>Linux</Platform>
+              <Name>${project.artifactId}-${project.version}</Name>
+            </tags>
+            <size>gpu</size>
+            <disks>
+              <disk>
+                <id>rvol</id>
+                <size>16</size>
+              </disk>
+              <disk>
+                <id>mldata</id>
+                <size>250</size>
+                <snapshotIdentifier>snap-02aa4adc27af62b9f</snapshotIdentifier>
+              </disk>
+            </disks>
+          </image>
+        </configuration>
+        <settings
+          implementation="org.infrastructurebuilder.imaging.maven.SettingsStub" />
+      </plugin>
+    </plugins>
+  </build>
+</project>

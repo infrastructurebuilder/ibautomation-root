@@ -1,0 +1,48 @@
+{
+	"variables": {
+		"aws_access_key": "",
+		"aws_secret_key": "",
+    "iso_checksum":      "88c0437f0a14c6e2c94426df9d43cd67",
+    "iso_checksum_type": "md5",
+    "iso_name":          "CentOS-7-x86_64-Minimal-1511",
+    "iso_url":           "http://ftp.riken.jp/Linux/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso",
+    "ssh_password":      "vagrant",
+    "ssh_username":      "vagrant",
+    "update":            "false",
+    "version":           "0.0.1",
+    "scripts_dir":       "scripts"
+
+	},
+	"builders": [{
+		"type": "amazon-ebs",
+		"name" : "somename",
+		"access_key": "{{user `aws_access_key`}}",
+		"secret_key": "{{user `aws_secret_key`}}",
+		"region": "us-west-2",
+	  "source_ami": "ami-b7a114d7",
+	  "instance_type": "t2.micro",
+	  "ssh_username": "ubuntu",
+	  "ami_name": "packer-quick-start {{timestamp}}",
+    "run_tags": {
+			"Name": "packer-exercise"
+		},
+	  "ami_block_device_mappings": [
+		    {
+		      "device_name": "/dev/sdm",
+		      "virtual_name": "ephemeral0"
+		    },
+		    {
+		      "device_name": "/dev/sdn",
+		      "virtual_name": "ephemeral1"
+		    }
+		  ]
+	}],
+	"provisioners": [{
+		"type": "shell",
+		"inline": [
+			"sleep 30",
+			"sudo apt-get update",
+			"sudo apt-get install -y redis-server"
+		]
+	}]
+}

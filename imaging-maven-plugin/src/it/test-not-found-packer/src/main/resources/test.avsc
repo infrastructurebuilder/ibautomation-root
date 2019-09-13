@@ -1,0 +1,35 @@
+{
+	"namespace":"${project.groupId}",
+	"doc":"${project.description}",
+	"type":"record",
+	"name":"RDAMetadata",
+	"fields":[
+		/* optional source coordinates.  These are the artifacts that were processed to obtain this artifact */	
+		{ "name":"sources",	"type":{
+				"type":"array",	"items":{
+					"name" : "SourceCoordinates",	"type" : "record",
+					"fields" : [	
+									{ "name":"groupId","type":"string"},
+									{ "name":"artifactId","type":"string"},
+									{ "name":"version","type":"string"},
+									{ "name":"classifier","type":[ "null","string"] },
+									{ "name":"packaging","type":["null","string"] }
+									/* TODO I think we need something to indicate how each was processed
+											i.e. the ETL chain that the artifact progressed through.
+											that's probably a list of strings that indicate processors
+									*/
+					]
+				}
+			}
+		},
+		/* local archive path to the schema file */
+		{ "name" : "rdaSchema", "type":"string"},
+		/* optional pathes to spring contexts */
+		{ "name" : "contexts", "type": { "type":"array", "items":"string" } },
+		/* relative paths to streams of input data */
+		{ "name":"streams",	"type":{"type":"array",	"items":{"name" : "Stream",	"type" : "string" }	} }, 
+		
+		/* There should always be a baked-in version.  Do not alter this... */
+		{ "name" : "version", "type":"string" }
+	]
+}

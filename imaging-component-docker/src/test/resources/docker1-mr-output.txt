@@ -1,0 +1,15 @@
+1522582816,,ui,say,\n==> Builds finished. The artifacts of successful builds are:
+1522582816,two,artifact-count,1
+1522582816,two,artifact,0,builder-id,packer.post-processor.docker-import
+1522582816,two,artifact,0,id,sha256:a98fe0f3f985cbedecefefdf7a27b17f719324a617246cc1e73a82c35566e1b7
+1522582816,two,artifact,0,string,Imported Docker image: sha256:a98fe0f3f985cbedecefefdf7a27b17f719324a617246cc1e73a82c35566e1b7
+1522582816,two,artifact,0,files-count,0
+1522582816,two,artifact,0,end
+1522582816,,ui,say,--> two: Imported Docker image: sha256:a98fe0f3f985cbedecefefdf7a27b17f719324a617246cc1e73a82c35566e1b7
+1522582816,one,artifact-count,1
+1522582816,one,artifact,0,builder-id,packer.post-processor.docker-import
+1522582816,one,artifact,0,id,sha256:b4a3bfe056a442f27fe39b5692075be846844c340acf02bfddecc2c83e6b84f4
+1522582816,one,artifact,0,string,Imported Docker image: sha256:b4a3bfe056a442f27fe39b5692075be846844c340acf02bfddecc2c83e6b84f4
+1522582816,one,artifact,0,files-count,0
+1522582816,one,artifact,0,end
+1522582816,,ui,say,--> one: Imported Docker image: sha256:b4a3bfe056a442f27fe39b5692075be846844c340acf02bfddecc2c83e6b84f4

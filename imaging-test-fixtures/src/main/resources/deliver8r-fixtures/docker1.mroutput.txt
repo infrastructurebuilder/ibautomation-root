@@ -1,0 +1,43 @@
+1523388382,,ui,say,==> one: Creating a temporary directory for sharing data...
+1523388382,,ui,say,==> two: Creating a temporary directory for sharing data...
+1523388382,,ui,say,==> one: Pulling Docker image: ubuntu
+1523388382,,ui,say,==> two: Pulling Docker image: ubuntu
+1523388382,,ui,message,    two: Using default tag: latest
+1523388382,,ui,message,    one: Using default tag: latest
+1523388382,,ui,message,    one: latest: Pulling from library/ubuntu
+1523388383,,ui,message,    two: latest: Pulling from library/ubuntu
+1523388383,,ui,message,    one: Digest: sha256:e348fbbea0e0a0e73ab0370de151e7800684445c509d46195aef73e090a49bd6
+1523388383,,ui,message,    one: Status: Image is up to date for ubuntu:latest
+1523388383,,ui,say,==> one: Starting docker container...
+1523388383,,ui,message,    one: Run command: docker run -v /Users/mykel.alvis/.packer.d/tmp/packer-docker299923260:/packer-files -d -i -t ubuntu /bin/bash
+1523388383,,ui,message,    two: Digest: sha256:e348fbbea0e0a0e73ab0370de151e7800684445c509d46195aef73e090a49bd6
+1523388383,,ui,message,    two: Status: Image is up to date for ubuntu:latest
+1523388383,,ui,say,==> two: Starting docker container...
+1523388383,,ui,message,    two: Run command: docker run -v /Users/mykel.alvis/.packer.d/tmp/packer-docker035808362:/packer-files -d -i -t ubuntu /bin/bash
+1523388383,,ui,message,    one: Container ID: d641141d49b69cc59f7a0b5d224231ceda17766d16dd313c700657002754f991
+1523388383,,ui,say,==> one: Provisioning with shell script: /var/folders/zv/5r99s1kd4r92ngy2r_cgsb1jzcq157/T/packer-shell977233080
+1523388383,,ui,message,    two: Container ID: a6c948d0da03c654920b536d53e62d22e07939283331897589843f11ffe420fa
+1523388384,,ui,say,==> two: Provisioning with shell script: /var/folders/zv/5r99s1kd4r92ngy2r_cgsb1jzcq157/T/packer-shell771138573
+1523388387,,ui,say,==> one: Committing the container
+1523388387,,ui,message,    one: Image ID: sha256:e04d0867b2435e27b4d476d305b4e0071e89e794e73820060cb4d71c17a1778a
+1523388387,,ui,say,==> one: Killing the container: d641141d49b69cc59f7a0b5d224231ceda17766d16dd313c700657002754f991
+1523388387,,ui,say,==> two: Committing the container
+1523388387,,ui,message,    two: Image ID: sha256:05b1f9b007f8ccda145424b7646a33209ebce01af2e52b0f97278edd5fe37234
+1523388387,,ui,say,==> two: Killing the container: a6c948d0da03c654920b536d53e62d22e07939283331897589843f11ffe420fa
+1523388387,,ui,say,Build 'one' finished.
+1523388388,,ui,say,Build 'two' finished.
+1523388388,,ui,say,\n==> Builds finished. The artifacts of successful builds are:
+1523388388,one,artifact-count,1
+1523388388,one,artifact,0,builder-id,packer.post-processor.docker-import
+1523388388,one,artifact,0,id,sha256:e04d0867b2435e27b4d476d305b4e0071e89e794e73820060cb4d71c17a1778a
+1523388388,one,artifact,0,string,Imported Docker image: sha256:e04d0867b2435e27b4d476d305b4e0071e89e794e73820060cb4d71c17a1778a
+1523388388,one,artifact,0,files-count,0
+1523388388,one,artifact,0,end
+1523388388,,ui,say,--> one: Imported Docker image: sha256:e04d0867b2435e27b4d476d305b4e0071e89e794e73820060cb4d71c17a1778a
+1523388388,two,artifact-count,1
+1523388388,two,artifact,0,builder-id,packer.post-processor.docker-import
+1523388388,two,artifact,0,id,sha256:05b1f9b007f8ccda145424b7646a33209ebce01af2e52b0f97278edd5fe37234
+1523388388,two,artifact,0,string,Imported Docker image: sha256:05b1f9b007f8ccda145424b7646a33209ebce01af2e52b0f97278edd5fe37234
+1523388388,two,artifact,0,files-count,0
+1523388388,two,artifact,0,end
+1523388388,,ui,say,--> two: Imported Docker image: sha256:05b1f9b007f8ccda145424b7646a33209ebce01af2e52b0f97278edd5fe37234

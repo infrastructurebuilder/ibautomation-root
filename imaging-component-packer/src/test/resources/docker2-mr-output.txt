@@ -1,0 +1,8 @@
+1522585462,,ui,say,--> two: Imported Docker image: sha256:4160ef136ffb0a6eef687c4e0588041fad9ec6ec923f52d46c7e6c8e4a90d687
+1522585462,one,artifact-count,1
+1522585462,one,artifact,0,builder-id,packer.docker
+1522585462,one,artifact,0,id,Container
+1522585462,one,artifact,0,string,Exported Docker file: somefile.tar
+1522585462,one,artifact,0,files-count,1
+1522585462,one,artifact,0,file,0,somefile.tar
+1522585462,one,artifact,0,end

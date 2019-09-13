@@ -1,0 +1,8 @@
+---
+- hosts: default
+  tasks:
+  - name: file template
+    template:
+      src:/non/existent/1
+      dest:/non/existent/2
+      check_mode: no

@@ -1,0 +1,55 @@
+# packer build  -machine-readable -color=false   packer-component/target/packer-fixtures/fixtures/amazon-ebs/ami_region_copy.json
+1516851931,,ui,say,==> amazon-ebs: Prevalidating AMI Name: packer-test 1516851931
+1516851935,,ui,message,    amazon-ebs: Found Image ID: ami-0568456c
+1516851935,,ui,say,==> amazon-ebs: Creating temporary keypair: packer_5a6952db-eabd-2140-a7e8-9600e195b9ca
+1516851935,,ui,say,==> amazon-ebs: Creating temporary security group for this instance: packer_5a6952df-ea54-13ce-edd7-a7750c5e8aa5
+1516851935,,ui,say,==> amazon-ebs: Authorizing access to port 22 from 0.0.0.0/0 in the temporary security group...
+1516851935,,ui,say,==> amazon-ebs: Launching a source AWS instance...
+1516851935,,ui,say,==> amazon-ebs: Adding tags to source instance
+1516851935,,ui,message,    amazon-ebs: Adding tag: "Name": "Packer Builder"
+1516851936,,ui,message,    amazon-ebs: Instance ID: i-003366216008f38db
+1516851936,,ui,say,==> amazon-ebs: Waiting for instance (i-003366216008f38db) to become ready...
+1516852226,,ui,say,==> amazon-ebs: Waiting for SSH to become available...
+1516852258,,ui,say,==> amazon-ebs: Connected to SSH!
+1516852258,,ui,say,==> amazon-ebs: Stopping the source instance...
+1516852258,,ui,message,    amazon-ebs: Stopping instance%!(PACKER_COMMA) attempt 1
+1516852259,,ui,say,==> amazon-ebs: Waiting for the instance to stop...
+1516852320,,ui,say,==> amazon-ebs: Creating the AMI: packer-test 1516851931
+1516852320,,ui,message,    amazon-ebs: AMI: ami-3155664b
+1516852320,,ui,say,==> amazon-ebs: Waiting for AMI to become ready...
+1516852365,,ui,say,==> amazon-ebs: Copying AMI (ami-3155664b) to other regions...
+1516852365,,ui,message,    amazon-ebs: Copying to: us-west-1
+1516852365,,ui,message,    amazon-ebs: Copying to: us-west-2
+1516852365,,ui,message,    amazon-ebs: Waiting for all copies to complete...
+1516852685,,ui,say,==> amazon-ebs: Adding tags to AMI (ami-3155664b)...
+1516852686,,ui,say,==> amazon-ebs: Tagging snapshot: snap-095358838adb3d2f0
+1516852686,,ui,say,==> amazon-ebs: Creating AMI tags
+1516852686,,ui,message,    amazon-ebs: Adding tag: "packer-id": "ami_region_copy"
+1516852686,,ui,message,    amazon-ebs: Adding tag: "packer-test": "true"
+1516852686,,ui,say,==> amazon-ebs: Creating snapshot tags
+1516852686,,ui,say,==> amazon-ebs: Adding tags to AMI (ami-48823d30)...
+1516852686,,ui,say,==> amazon-ebs: Tagging snapshot: snap-0ef10ade63f979ffb
+1516852686,,ui,say,==> amazon-ebs: Creating AMI tags
+1516852686,,ui,message,    amazon-ebs: Adding tag: "packer-test": "true"
+1516852686,,ui,message,    amazon-ebs: Adding tag: "packer-id": "ami_region_copy"
+1516852686,,ui,say,==> amazon-ebs: Creating snapshot tags
+1516852686,,ui,say,==> amazon-ebs: Adding tags to AMI (ami-178e8377)...
+1516852687,,ui,say,==> amazon-ebs: Tagging snapshot: snap-000ef680369c6506f
+1516852687,,ui,say,==> amazon-ebs: Creating AMI tags
+1516852687,,ui,message,    amazon-ebs: Adding tag: "packer-id": "ami_region_copy"
+1516852687,,ui,message,    amazon-ebs: Adding tag: "packer-test": "true"
+1516852687,,ui,say,==> amazon-ebs: Creating snapshot tags
+1516852687,,ui,say,==> amazon-ebs: Terminating the source AWS instance...
+1516852693,,ui,say,==> amazon-ebs: Cleaning up any extra volumes...
+1516852693,,ui,say,==> amazon-ebs: No volumes to clean up%!(PACKER_COMMA) skipping
+1516852693,,ui,say,==> amazon-ebs: Deleting temporary security group...
+1516852694,,ui,say,==> amazon-ebs: Deleting temporary keypair...
+1516852694,,ui,say,Build 'amazon-ebs' finished.
+1516852694,,ui,say,\n==> Builds finished. The artifacts of successful builds are:
+1516852694,amazon-ebs,artifact-count,1
+1516852694,amazon-ebs,artifact,0,builder-id,mitchellh.amazonebs
+1516852694,amazon-ebs,artifact,0,id,us-east-1:ami-3155664b%!(PACKER_COMMA)us-west-1:ami-178e8377%!(PACKER_COMMA)us-west-2:ami-48823d30
+1516852694,amazon-ebs,artifact,0,string,AMIs were created:\nus-east-1: ami-3155664b\nus-west-1: ami-178e8377\nus-west-2: ami-48823d30\n
+1516852694,amazon-ebs,artifact,0,files-count,0
+1516852694,amazon-ebs,artifact,0,end
+1516852694,,ui,say,--> amazon-ebs: AMIs were created:\nus-east-1: ami-3155664b\nus-west-1: ami-178e8377\nus-west-2: ami-48823d30\n

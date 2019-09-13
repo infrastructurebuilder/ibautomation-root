@@ -1,0 +1,59 @@
+{
+  "variables": {
+    "iso_url": "http://ftp.riken.jp/Linux/centos/7/isos/x86_64/CentOS-7-x86_64-Minimal-1511.iso",
+    "ssh_username": "vagrant",
+    "scripts_dir": "scripts",
+    "iso_name": "CentOS-7-x86_64-Minimal-1511",
+    "aws_access_key": "",
+    "update": "false",
+    "iso_checksum_type": "md5",
+    "aws_secret_key": "",
+    "iso_checksum": "88c0437f0a14c6e2c94426df9d43cd67",
+    "ssh_password": "vagrant",
+    "version": "0.0.1"
+  },
+  "builders": [{
+    "ssh_username": "ubuntu",
+    "run_tags": {"Name": "packer-exercise"},
+    "type": "amazon-ebs",
+    "tags": {
+      "Semiote-Produced-By": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT:packer",
+      "Owner": "Mykel Alvis",
+      "CostCenter": "LABS",
+      "Platform": "Linux",
+      "builder": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT",
+      "OS_Version": "Ubuntu",
+      "Release": "Latest",
+      "Name": "packer-exercise"
+    },
+    "secret_key": "{{user `aws_secret_key`}}",
+    "ami_block_device_mappings": [
+      {
+        "device_name": "/dev/sdm",
+        "virtual_name": "ephemeral0"
+      },
+      {
+        "device_name": "/dev/sdn",
+        "virtual_name": "ephemeral1"
+      }
+    ],
+    "access_key": "{{user `aws_access_key`}}",
+    "ami_regions": [
+      "us-west-1",
+      "us-east-1"
+    ],
+    "name": "somename",
+    "ami_name": "packer-quick-start {{timestamp}}",
+    "region": "us-west-2",
+    "source_ami": "ami-b7a114d7",
+    "instance_type": "t2.micro"
+  }],
+  "provisioners": [{
+    "inline": [
+      "sleep 30",
+      "sudo apt-get update",
+      "sudo apt-get install -y redis-server"
+    ],
+    "type": "shell"
+  }]
+}

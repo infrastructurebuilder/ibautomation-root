@@ -1,0 +1,14 @@
+{
+  "builders": [{
+    "type": "file",
+    "content": "ABC",
+    "target": "testingWork/eab20be5-c1f5-4e27-ac99-ca02bfb74c72/filename.txt.json"
+  }],
+  "variables": {},
+  "provisioners": [],
+  "post-processors": [[{
+    "output": "testingWork/eab20be5-c1f5-4e27-ac99-ca02bfb74c72/7bddadbf-87ce-4186-bf8a-9938330cfade.json",
+    "type": "manifest",
+    "strip_path": false
+  }]]
+}

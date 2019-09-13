@@ -1,0 +1,156 @@
+1522166699,,ui,say,==> somename: Prevalidating AMI Name: packer-quick-start 1522166698
+1522166702,,ui,message,    somename: Found Image ID: ami-b7a114d7
+1522166702,,ui,say,==> somename: Creating temporary keypair: packer_5aba6baa-d391-2c6a-83f1-d78c6d991d95
+1522166703,,ui,say,==> somename: Creating temporary security group for this instance: packer_5aba6baf-8d45-36b7-9332-44c6904d0b7d
+1522166703,,ui,say,==> somename: Authorizing access to port 22 from 0.0.0.0/0 in the temporary security group...
+1522166703,,ui,say,==> somename: Launching a source AWS instance...
+1522166703,,ui,say,==> somename: Adding tags to source instance
+1522166703,,ui,message,    somename: Adding tag: "Name": "packer-exercise"
+1522166705,,ui,message,    somename: Instance ID: i-0555cbd82d3f0198a
+1522166705,,ui,say,==> somename: Waiting for instance (i-0555cbd82d3f0198a) to become ready...
+1522166736,,ui,say,==> somename: Waiting for SSH to become available...
+1522166737,,ui,say,==> somename: Connected to SSH!
+1522166737,,ui,say,==> somename: Provisioning with shell script: /var/folders/zv/5r99s1kd4r92ngy2r_cgsb1jzcq157/T/packer-shell985389367
+1522166768,,ui,message,    somename: Hit:1 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial InRelease
+1522166768,,ui,message,    somename: Get:2 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates InRelease [102 kB]
+1522166768,,ui,message,    somename: Get:3 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports InRelease [102 kB]
+1522166769,,ui,message,    somename: Get:4 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/main Sources [868 kB]
+1522166769,,ui,message,    somename: Get:5 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/restricted Sources [4%!(PACKER_COMMA)808 B]
+1522166769,,ui,message,    somename: Get:6 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/universe Sources [7%!(PACKER_COMMA)728 kB]
+1522166769,,ui,message,    somename: Get:7 http://security.ubuntu.com/ubuntu xenial-security InRelease [102 kB]
+1522166769,,ui,message,    somename: Get:8 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/multiverse Sources [179 kB]
+1522166769,,ui,message,    somename: Get:9 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/main Sources [302 kB]
+1522166769,,ui,message,    somename: Get:10 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/restricted Sources [2%!(PACKER_COMMA)524 B]
+1522166769,,ui,message,    somename: Get:11 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/universe Sources [199 kB]
+1522166769,,ui,message,    somename: Get:12 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/multiverse Sources [7%!(PACKER_COMMA)948 B]
+1522166769,,ui,message,    somename: Get:13 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/main amd64 Packages [744 kB]
+1522166769,,ui,message,    somename: Get:14 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/main Translation-en [308 kB]
+1522166769,,ui,message,    somename: Get:15 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/restricted amd64 Packages [7%!(PACKER_COMMA)560 B]
+1522166769,,ui,message,    somename: Get:16 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/restricted Translation-en [2%!(PACKER_COMMA)272 B]
+1522166769,,ui,message,    somename: Get:17 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/universe amd64 Packages [615 kB]
+1522166769,,ui,message,    somename: Get:18 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/universe Translation-en [248 kB]
+1522166769,,ui,message,    somename: Get:19 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/multiverse amd64 Packages [16.2 kB]
+1522166769,,ui,message,    somename: Get:20 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-updates/multiverse Translation-en [8%!(PACKER_COMMA)076 B]
+1522166769,,ui,message,    somename: Get:21 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports/main Sources [3%!(PACKER_COMMA)432 B]
+1522166769,,ui,message,    somename: Get:22 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports/universe Sources [5%!(PACKER_COMMA)828 B]
+1522166769,,ui,message,    somename: Get:23 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports/main amd64 Packages [4%!(PACKER_COMMA)836 B]
+1522166769,,ui,message,    somename: Get:24 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports/main Translation-en [3%!(PACKER_COMMA)220 B]
+1522166769,,ui,message,    somename: Get:25 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports/universe amd64 Packages [7%!(PACKER_COMMA)084 B]
+1522166769,,ui,message,    somename: Get:26 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial-backports/universe Translation-en [3%!(PACKER_COMMA)812 B]
+1522166769,,ui,message,    somename: Get:27 http://security.ubuntu.com/ubuntu xenial-security/main Sources [119 kB]
+1522166769,,ui,message,    somename: Get:28 http://security.ubuntu.com/ubuntu xenial-security/restricted Sources [2%!(PACKER_COMMA)116 B]
+1522166769,,ui,message,    somename: Get:29 http://security.ubuntu.com/ubuntu xenial-security/universe Sources [62.5 kB]
+1522166770,,ui,message,    somename: Get:30 http://security.ubuntu.com/ubuntu xenial-security/multiverse Sources [1%!(PACKER_COMMA)520 B]
+1522166770,,ui,message,    somename: Get:31 http://security.ubuntu.com/ubuntu xenial-security/main amd64 Packages [465 kB]
+1522166770,,ui,message,    somename: Get:32 http://security.ubuntu.com/ubuntu xenial-security/main Translation-en [201 kB]
+1522166770,,ui,message,    somename: Get:33 http://security.ubuntu.com/ubuntu xenial-security/restricted amd64 Packages [7%!(PACKER_COMMA)224 B]
+1522166770,,ui,message,    somename: Get:34 http://security.ubuntu.com/ubuntu xenial-security/restricted Translation-en [2%!(PACKER_COMMA)152 B]
+1522166770,,ui,message,    somename: Get:35 http://security.ubuntu.com/ubuntu xenial-security/universe amd64 Packages [337 kB]
+1522166770,,ui,message,    somename: Get:36 http://security.ubuntu.com/ubuntu xenial-security/universe Translation-en [126 kB]
+1522166770,,ui,message,    somename: Get:37 http://security.ubuntu.com/ubuntu xenial-security/multiverse amd64 Packages [3%!(PACKER_COMMA)208 B]
+1522166770,,ui,message,    somename: Get:38 http://security.ubuntu.com/ubuntu xenial-security/multiverse Translation-en [1%!(PACKER_COMMA)408 B]
+1522166773,,ui,message,    somename: Fetched 12.9 MB in 2s (5%!(PACKER_COMMA)149 kB/s)
+1522166774,,ui,message,    somename: Reading package lists...
+1522166774,,ui,message,    somename: Reading package lists...
+1522166774,,ui,message,    somename: Building dependency tree...
+1522166774,,ui,message,    somename: Reading state information...
+1522166774,,ui,message,    somename: The following additional packages will be installed:
+1522166774,,ui,message,    somename:   libjemalloc1 redis-tools
+1522166774,,ui,message,    somename: Suggested packages:
+1522166774,,ui,message,    somename:   ruby-redis
+1522166774,,ui,message,    somename: The following NEW packages will be installed:
+1522166774,,ui,message,    somename:   libjemalloc1 redis-server redis-tools
+1522166774,,ui,message,    somename: 0 upgraded%!(PACKER_COMMA) 3 newly installed%!(PACKER_COMMA) 0 to remove and 197 not upgraded.
+1522166774,,ui,message,    somename: Need to get 517 kB of archives.
+1522166774,,ui,message,    somename: After this operation%!(PACKER_COMMA) 1%!(PACKER_COMMA)505 kB of additional disk space will be used.
+1522166774,,ui,message,    somename: Get:1 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/universe amd64 libjemalloc1 amd64 3.6.0-9ubuntu1 [78.9 kB]
+1522166774,,ui,message,    somename: Get:2 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/universe amd64 redis-tools amd64 2:3.0.6-1 [95.3 kB]
+1522166774,,ui,message,    somename: Get:3 http://us-west-2.ec2.archive.ubuntu.com/ubuntu xenial/universe amd64 redis-server amd64 2:3.0.6-1 [343 kB]
+1522166774,,ui,message,    somename: debconf: unable to initialize frontend: Dialog
+1522166774,,ui,message,    somename: debconf: (Dialog frontend will not work on a dumb terminal%!(PACKER_COMMA) an emacs shell buffer%!(PACKER_COMMA) or without a controlling terminal.)
+1522166774,,ui,message,    somename: debconf: falling back to frontend: Readline
+1522166774,,ui,message,    somename: debconf: unable to initialize frontend: Readline
+1522166774,,ui,message,    somename: debconf: (This frontend requires a controlling tty.)
+1522166774,,ui,message,    somename: debconf: falling back to frontend: Teletype
+1522166774,,ui,message,    somename: dpkg-preconfigure: unable to re-open stdin:
+1522166774,,ui,message,    somename: Fetched 517 kB in 0s (19.6 MB/s)
+1522166774,,ui,message,    somename: Selecting previously unselected package libjemalloc1.
+1522166775,,ui,message,    somename: (Reading database ... 53712 files and directories currently installed.)
+1522166775,,ui,message,    somename: Preparing to unpack .../libjemalloc1_3.6.0-9ubuntu1_amd64.deb ...
+1522166775,,ui,message,    somename: Unpacking libjemalloc1 (3.6.0-9ubuntu1) ...
+1522166775,,ui,message,    somename: Selecting previously unselected package redis-tools.
+1522166775,,ui,message,    somename: Preparing to unpack .../redis-tools_2%3a3.0.6-1_amd64.deb ...
+1522166775,,ui,message,    somename: Unpacking redis-tools (2:3.0.6-1) ...
+1522166775,,ui,message,    somename: Selecting previously unselected package redis-server.
+1522166775,,ui,message,    somename: Preparing to unpack .../redis-server_2%3a3.0.6-1_amd64.deb ...
+1522166775,,ui,message,    somename: Unpacking redis-server (2:3.0.6-1) ...
+1522166775,,ui,message,    somename: Processing triggers for libc-bin (2.23-0ubuntu5) ...
+1522166775,,ui,message,    somename: Processing triggers for man-db (2.7.5-1) ...
+1522166776,,ui,message,    somename: Processing triggers for systemd (229-4ubuntu12) ...
+1522166776,,ui,message,    somename: Processing triggers for ureadahead (0.100.0-19) ...
+1522166776,,ui,message,    somename: Setting up libjemalloc1 (3.6.0-9ubuntu1) ...
+1522166776,,ui,message,    somename: Setting up redis-tools (2:3.0.6-1) ...
+1522166776,,ui,message,    somename: Setting up redis-server (2:3.0.6-1) ...
+1522166776,,ui,message,    somename: Processing triggers for libc-bin (2.23-0ubuntu5) ...
+1522166776,,ui,message,    somename: Processing triggers for systemd (229-4ubuntu12) ...
+1522166776,,ui,message,    somename: Processing triggers for ureadahead (0.100.0-19) ...
+1522166778,,ui,say,==> somename: Stopping the source instance...
+1522166778,,ui,message,    somename: Stopping instance%!(PACKER_COMMA) attempt 1
+1522166779,,ui,say,==> somename: Waiting for the instance to stop...
+1522166810,,ui,say,==> somename: Creating the AMI: packer-quick-start 1522166698
+1522166810,,ui,message,    somename: AMI: ami-05cb210bef6c8c6ba
+1522166810,,ui,say,==> somename: Waiting for AMI to become ready...
+1522166912,,ui,say,==> somename: Copying AMI (ami-05cb210bef6c8c6ba) to other regions...
+1522166912,,ui,message,    somename: Copying to: us-west-1
+1522166912,,ui,message,    somename: Copying to: us-east-1
+1522166912,,ui,message,    somename: Waiting for all copies to complete...
+1522167264,,ui,say,==> somename: Adding tags to AMI (ami-0d4603ae96702699a)...
+1522167265,,ui,say,==> somename: Tagging snapshot: snap-0d6ceeb6bb575d5f7
+1522167265,,ui,say,==> somename: Creating AMI tags
+1522167265,,ui,message,    somename: Adding tag: "CostCenter": "LABS"
+1522167265,,ui,message,    somename: Adding tag: "Platform": "Linux"
+1522167265,,ui,message,    somename: Adding tag: "builder": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT"
+1522167265,,ui,message,    somename: Adding tag: "OS_Version": "Ubuntu"
+1522167265,,ui,message,    somename: Adding tag: "Release": "Latest"
+1522167265,,ui,message,    somename: Adding tag: "Name": "packer-exercise"
+1522167265,,ui,message,    somename: Adding tag: "Semiote-Produced-By": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT:packer"
+1522167265,,ui,message,    somename: Adding tag: "Owner": "Mykel Alvis"
+1522167265,,ui,say,==> somename: Creating snapshot tags
+1522167265,,ui,say,==> somename: Adding tags to AMI (ami-0f55d64ed691eff15)...
+1522167265,,ui,say,==> somename: Tagging snapshot: snap-0781085f2a105c3bf
+1522167265,,ui,say,==> somename: Creating AMI tags
+1522167265,,ui,message,    somename: Adding tag: "Name": "packer-exercise"
+1522167265,,ui,message,    somename: Adding tag: "Semiote-Produced-By": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT:packer"
+1522167265,,ui,message,    somename: Adding tag: "Owner": "Mykel Alvis"
+1522167265,,ui,message,    somename: Adding tag: "CostCenter": "LABS"
+1522167265,,ui,message,    somename: Adding tag: "Platform": "Linux"
+1522167265,,ui,message,    somename: Adding tag: "builder": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT"
+1522167265,,ui,message,    somename: Adding tag: "OS_Version": "Ubuntu"
+1522167265,,ui,message,    somename: Adding tag: "Release": "Latest"
+1522167265,,ui,say,==> somename: Creating snapshot tags
+1522167265,,ui,say,==> somename: Adding tags to AMI (ami-05cb210bef6c8c6ba)...
+1522167266,,ui,say,==> somename: Tagging snapshot: snap-04bb97254b7624cb7
+1522167266,,ui,say,==> somename: Creating AMI tags
+1522167266,,ui,message,    somename: Adding tag: "OS_Version": "Ubuntu"
+1522167266,,ui,message,    somename: Adding tag: "Release": "Latest"
+1522167266,,ui,message,    somename: Adding tag: "Name": "packer-exercise"
+1522167266,,ui,message,    somename: Adding tag: "Semiote-Produced-By": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT:packer"
+1522167266,,ui,message,    somename: Adding tag: "Owner": "Mykel Alvis"
+1522167266,,ui,message,    somename: Adding tag: "CostCenter": "LABS"
+1522167266,,ui,message,    somename: Adding tag: "Platform": "Linux"
+1522167266,,ui,message,    somename: Adding tag: "builder": "org.infrastructurebuilder.imaging:packer-exercise:0.10.3-SNAPSHOT"
+1522167266,,ui,say,==> somename: Creating snapshot tags
+1522167266,,ui,say,==> somename: Terminating the source AWS instance...
+1522167273,,ui,say,==> somename: Cleaning up any extra volumes...
+1522167273,,ui,say,==> somename: No volumes to clean up%!(PACKER_COMMA) skipping
+1522167273,,ui,say,==> somename: Deleting temporary security group...
+1522167273,,ui,say,==> somename: Deleting temporary keypair...
+1522167273,,ui,say,Build 'somename' finished.
+1522167273,,ui,say,\n==> Builds finished. The artifacts of successful builds are:
+1522167273,somename,artifact-count,1
+1522167273,somename,artifact,0,builder-id,mitchellh.amazonebs
+1522167273,somename,artifact,0,id,us-east-1:ami-0d4603ae96702699a%!(PACKER_COMMA)us-west-1:ami-0f55d64ed691eff15%!(PACKER_COMMA)us-west-2:ami-05cb210bef6c8c6ba
+1522167273,somename,artifact,0,string,AMIs were created:\nus-east-1: ami-0d4603ae96702699a\nus-west-1: ami-0f55d64ed691eff15\nus-west-2: ami-05cb210bef6c8c6ba\n
+1522167273,somename,artifact,0,files-count,0
+1522167273,somename,artifact,0,end
+1522167273,,ui,say,--> somename: AMIs were created:\nus-east-1: ami-0d4603ae96702699a\nus-west-1: ami-0f55d64ed691eff15\nus-west-2: ami-05cb210bef6c8c6ba\n

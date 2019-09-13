@@ -1,0 +1,474 @@
+/**
+ * Copyright © 2019 admin (admin@infrastructurebuilder.org)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.infrastructurebuilder.imaging.maven;
+
+import static java.util.stream.Collectors.toList;
+import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDER;
+import static org.infrastructurebuilder.imaging.PackerConstantsV1.DEFAULT;
+import static org.infrastructurebuilder.imaging.PackerConstantsV1.POST_PROCESSOR;
+import static org.infrastructurebuilder.imaging.PackerConstantsV1.PROVISIONER;
+import static org.infrastructurebuilder.imaging.PackerException.et;
+import static org.infrastructurebuilder.util.IBUtils.writeString;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.Set;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import org.codehaus.plexus.PlexusContainer;
+import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
+import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
+import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
+import org.infrastructurebuilder.imaging.IBRInternalDependency;
+import org.infrastructurebuilder.imaging.ImageBaseObject;
+import org.infrastructurebuilder.imaging.ImageBuildResult;
+import org.infrastructurebuilder.imaging.ImageBuilder;
+import org.infrastructurebuilder.imaging.ImageData;
+import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.imaging.PackerFactory;
+import org.infrastructurebuilder.imaging.PackerHintMapDAO;
+import org.infrastructurebuilder.imaging.PackerManifestPostProcessor;
+import org.infrastructurebuilder.imaging.PackerPostProcessor;
+import org.infrastructurebuilder.imaging.PackerProvisioner;
+import org.infrastructurebuilder.imaging.PackerTypeMapperProcessingSection;
+import org.infrastructurebuilder.util.artifacts.Checksum;
+import org.infrastructurebuilder.util.artifacts.GAV;
+import org.infrastructurebuilder.util.auth.IBAuthentication;
+import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.slf4j.Logger;
+
+public class DefaultPackerFactory implements PackerFactory<JSONObject> {
+  public final static String naiveFilter(final String d, final String k, final String val) {
+    String b = d;
+    b = b.replace("@" + k + "@", val);
+    b = b.replace("${" + k + "}", val);
+    return b;
+  }
+
+  public static boolean unwonkeyEquals(final Optional<GAV> a, final Optional<GAV> b) {
+    if (a.isPresent() && b.isPresent()) {
+      final GAV a1 = a.get();
+      final GAV b1 = b.get();
+      return a1.getGroupId().equals(b1.getGroupId()) && a1.getArtifactId().equals(b1.getArtifactId())
+          && a1.getClassifier().equals(b1.getClassifier()) && a1.getVersion().equals(b1.getVersion())
+          && a1.getExtension().equals(b1.getExtension());
+    }
+    if (!a.isPresent() && !b.isPresent())
+      return true;
+    return a.equals(b);
+  }
+
+  private final GAV artifact;
+  private final IBAuthenticationProducerFactory authProdFactory;
+  private List<ImageData<JSONObject>> builders = new LinkedList<>();
+  private final PlexusContainer container;
+  private Map<String, Map<String, PackerHintMapDAO>> hintMap;
+  private final Logger log;
+  private final PackerManifestPostProcessor manifestPP;
+  private final List<PackerManifest> manifests;
+  private final Path metaRoot;
+  private final Checksum packerChecksum;
+  private final Path packerExecutable;
+  private Optional<Path> packerFile = null;
+  private List<PackerPostProcessor> postProcessors = new LinkedList<>();
+  private final Properties props;
+  private List<PackerProvisioner<JSONObject>> provisioners = new LinkedList<>();
+  private final List<IBRInternalDependency> requirements;
+  private final Path root;
+
+  private final Path target;
+
+  private Map<String, String> variables = new HashMap<>();
+
+  public DefaultPackerFactory(
+
+      final PlexusContainer container,
+
+      final Logger log,
+
+      final Path metaRoot,
+
+      final Path root,
+
+      final Path targetRelativePath,
+
+      final List<PackerManifest> artifactData,
+
+      final ImageBuilder packerImageBuilder,
+
+      final IBAuthenticationProducerFactory authFactory,
+
+      final Path packerExec,
+
+      final Properties p,
+
+      final GAV coords,
+
+      final List<IBRInternalDependency> requirements,
+
+      final boolean copyToOtherRegions) {
+    this.requirements = Objects.requireNonNull(requirements);
+    this.container = Objects.requireNonNull(container);
+    authProdFactory = Objects.requireNonNull(authFactory);
+    this.log = Objects.requireNonNull(log);
+    this.metaRoot = Objects.requireNonNull(metaRoot);
+    packerExecutable = Objects.requireNonNull(packerExec).toAbsolutePath();
+    packerChecksum = new Checksum(packerExecutable);
+    props = Objects.requireNonNull(p);
+    artifact = Objects.requireNonNull(coords);
+    this.root = PackerException.et.withReturningTranslation(() -> Objects.requireNonNull(root).toAbsolutePath());
+    target = Objects.requireNonNull(targetRelativePath);
+    if (target.isAbsolute())
+      throw new PackerException("Target [" + target.toString() + "] must be relative (will be applied to root ["
+          + this.root.toString() + "]");
+    if (!Files.isDirectory(this.root) || !Files.isWritable(this.root))
+      throw new PackerException(this.root + " (temp directory) is not a writable directory");
+    final Path path = this.root.resolve(target);
+    if (!Files.exists(path)) {
+      PackerException.et.withTranslation(() -> Files.createDirectories(path));
+    }
+    manifestPP = new PackerManifestPostProcessor();
+    manifests = Objects.requireNonNull(artifactData);
+    update(Objects.requireNonNull(manifestPP));
+    et.withTranslation(() -> {
+      final Map<ImageData<JSONObject>, Type> builders = new HashMap<>();
+
+      for (final String hint : packerImageBuilder.getTypeHints()) {
+        log.info("Builder -> " + hint);
+        @SuppressWarnings("unchecked")
+        final ImageData<JSONObject> c = this.container.lookup(ImageData.class, hint);
+//        log.debug("  " + hint + " found");
+        c.setLog(this.log);
+        c.setCopyToOtherRegions(copyToOtherRegions);
+        final Type thisType = packerImageBuilder.getTypeFor(hint).get();
+        builders.put(c, thisType);
+      }
+//      if (builders.size() == 0)
+//        log.debug(" -> 0 builders");
+      for (final ImageData<JSONObject> imageData : builders.keySet()) {
+        final Type type = builders.get(imageData);
+        final Optional<GAV> parent = Optional.ofNullable(type.getParent().orElse(null));
+        final String targetType = imageData.getLookupHint().get();
+        log.info("  --> " + targetType + " type " + imageData.getPackerType());
+
+        final Set<IBAuthentication> auth = imageData.getAuthType()
+            .map(authType -> authProdFactory.getAuthenticationsForType(authType)).orElse(new HashSet<>());
+        for (final IBAuthentication a : auth) {
+          @SuppressWarnings("unchecked")
+          final ImageData<JSONObject> b1 = this.container.lookup(ImageData.class, targetType);
+          b1.setCopyToOtherRegions(copyToOtherRegions);
+          b1.setLog(getLog());
+          b1.setInstanceAuthentication(a);
+          b1.setTags(packerImageBuilder.getTags());
+//          b1.setOutputFileName(outputFileName); // TODO Maybe set some other settables on the ImageData here?
+
+          final String aKey = a.getId();
+
+          final Map<ImageBuildResult, PackerManifest> mmap = new HashMap<>(1);
+          for (final PackerManifest lm : manifests) {
+            final Optional<GAV> manifestCoords = lm.getCoords();
+            if (DefaultPackerFactory.unwonkeyEquals(parent, manifestCoords)) {
+              final List<ImageBuildResult> items = lm.getBuildsForType(a).orElse(new ArrayList<>());
+              for (final ImageBuildResult item : items)
+                if (item.getOriginalAuthId().isPresent()) {
+                  if (item.getOriginalAuthId().get().equals(aKey)) {
+                    mmap.put(item, lm);
+                  } else {
+                    log.debug(item.getOriginalAuthId().get() + " != " + aKey);
+                  }
+                } else {
+                  log.debug("Original auth id for " + item + " was not present");
+                }
+            } else {
+              log.debug("Parent " + parent + " != " + manifestCoords);
+            }
+          }
+          Optional<ImageBuildResult> m = Optional.empty();
+          if (mmap.size() > 1)
+            throw new PackerException("Too much tuna! There are " + mmap.size() + " entries");
+          if (mmap.size() == 1) {
+            m = Optional.of(mmap.keySet().iterator().next());
+          }
+          if (!b1.getSizes().contains(packerImageBuilder.getSize()))
+            throw new PackerException(
+                "Size  " + packerImageBuilder.getSize() + " is not available for " + imageData);
+
+          Optional<Type> updateData = Optional.empty();
+          final Optional<String> keyPrime = imageData.getLookupHint();
+
+          if (!keyPrime.isPresent()) {
+            log.warn("No local type is present for " + imageData.getId()
+                + " so no update data could possibly be available");
+          } else {
+            final String keyPrimeHint = keyPrime.get();
+            updateData = packerImageBuilder.getTypeFor(keyPrimeHint);
+            log.info("Update data set to " + updateData);
+          }
+          b1.updateBuilderWithInstanceData(packerImageBuilder.getSize(), a, m, packerImageBuilder.getDisks(),
+              updateData);
+          b1.addRequiredItemsToFactory(a, this);
+        }
+      }
+      for (final String ppHint : packerImageBuilder.getPostProcessingHints()) {
+        log.info("Postprocessor -> " + ppHint);
+        final PackerPostProcessor p1 = this.container.lookup(PackerPostProcessor.class, ppHint);
+        log.debug("  " + ppHint + " found");
+        p1.setLog(log);
+        p1.setTags(packerImageBuilder.getTags());
+
+        if (p1.isMultiAuthCapable()) {
+          for (final IBAuthentication a : authProdFactory.getAuthenticationsForType(p1.getLookupHint().orElse(DEFAULT))) {
+            final PackerPostProcessor p2 = this.container.lookup(PackerPostProcessor.class, ppHint);
+            p2.setLog(log);
+            p2.setTags(packerImageBuilder.getTags());
+            p2.addRequiredItemsToFactory(Optional.of(a), this);
+          }
+        } else {
+          p1.addRequiredItemsToFactory(Optional.empty(), this);
+        }
+      }
+    });
+  }
+
+  @Override
+  public DefaultPackerFactory addBuilder(final ImageData<JSONObject> b) {
+    update(Objects.requireNonNull(b));
+    builders.add(b);
+    return this;
+  }
+
+  @Override
+  public DefaultPackerFactory addPostProcessor(final PackerPostProcessor p) {
+    update(Objects.requireNonNull(p));
+    if (p instanceof PackerManifestPostProcessor)
+      throw new PackerException(
+          "Manifest processor is injected by the factory.  Use getManifestPath() to read it's value");
+    postProcessors.add(Objects.requireNonNull(p));
+    return this;
+  }
+
+  @Override
+  public DefaultPackerFactory addProvisioner(final PackerProvisioner<JSONObject> p) {
+    update(Objects.requireNonNull(p));
+    provisioners.add(Objects.requireNonNull(p));
+    return this;
+  }
+
+  @Override
+  public PackerFactory<JSONObject> addUniqueBuilder(final java.util.Comparator<ImageData<JSONObject>> b, final ImageData<JSONObject> b1) {
+    return !builders.stream().filter(x -> b.compare(x, b1) == 0).findFirst().isPresent() ? addBuilder(b1) : this;
+  }
+
+  @Override
+  public PackerFactory<JSONObject> addUniquePostProcessor(final java.util.Comparator<PackerPostProcessor> b,
+      final PackerPostProcessor p) {
+    return !postProcessors.stream().filter(x -> b.compare(x, p) == 0).findFirst().isPresent() ? addPostProcessor(p)
+        : this;
+  }
+
+  @Override
+  public PackerFactory<JSONObject> addUniqueProvisioner(final java.util.Comparator<PackerProvisioner<JSONObject>> b,
+      final PackerProvisioner<JSONObject> p) {
+    return !provisioners.stream().filter(x -> b.compare(x, p) == 0).findFirst().isPresent() ? addProvisioner(p) : this;
+  }
+
+  @Override
+  public PackerFactory<JSONObject> addVariable(final String name, final String value) {
+    variables.put(Objects.requireNonNull(name), Objects.requireNonNull(value));
+    return this;
+  }
+
+  @Override
+  public JSONObject asFilteredJSON(final Properties props) {
+    final RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
+    interpolator.addValueSource(new PropertiesBasedValueSource(Objects.requireNonNull(props)));
+    try {
+      interpolator.addValueSource(new EnvarBasedValueSource());
+    } catch (IOException e) {
+      log.warn("Failed to use environment variables for interpolation: " + e.getMessage());
+    }
+    return new JSONObject(
+        PackerException.et.withReturningTranslation(() -> interpolator.interpolate(getBuilderOutputData().toString())));
+  }
+
+  @Override
+  public Map<String, Path> collectAllForcedOutput() {
+    final Map<String, Path> val = new HashMap<>();
+    if (packerFile != null) {
+      Arrays.asList(builders, postProcessors, provisioners).stream().forEach(list -> {
+        list.forEach(item -> {
+          item.getForcedOutput().ifPresent(map -> {
+            map.keySet().stream().forEach(item2 -> {
+              if (val.containsKey(item2)) {
+                log.error("Attempting to overwrite a value in the forced output map. IGNORING VALUE.  Key" + item2
+                    + " id " + item.getId() + " localtype " + item.getLookupHint());
+              } else {
+                val.put(item2, root.resolve(map.get(item2)));
+              }
+            });
+          });
+        });
+      });
+    }
+    return val;
+  }
+
+  @Override
+  public Optional<Path> get() {
+    if (packerFile == null) {
+
+      hintMap = new HashMap<>();
+      postProcessors.add(manifestPP);
+
+      postProcessors.forEach(p -> p.setArtifact(artifact));
+      postProcessors = Collections.unmodifiableList(postProcessors);
+
+      hintMap.put(POST_PROCESSOR, postProcessors.stream().map(ImageBaseObject::getHintMapForType)
+          .collect(Collectors.toMap(k -> k.getId(), Function.identity())));
+
+      builders = Collections.unmodifiableList(builders);
+      builders.forEach(p -> p.setArtifact(artifact));
+
+      hintMap.put(BUILDER, builders.stream().map(ImageBaseObject::getHintMapForType)
+          .collect(Collectors.toMap(k -> k.getId(), Function.identity())));
+      provisioners = Collections.unmodifiableList(provisioners);
+      provisioners.forEach(p -> p.setArtifact(artifact));
+      provisioners.forEach(p -> p.setBuilders(builders));
+      hintMap.put(PROVISIONER,
+
+          provisioners.stream().map(ImageBaseObject::getHintMapForType)
+              .collect(Collectors.toMap(k -> k.getId(), Function.identity())));
+
+      variables = Collections.unmodifiableMap(variables);
+
+      packerFile = Optional.ofNullable(PackerException.et
+          .withReturningTranslation(() -> writeString(root.resolve(UUID.randomUUID().toString() + ".json"),
+              asFilteredJSON(Objects.requireNonNull(props)).toString(2))));
+
+    }
+    return packerFile;
+  }
+
+  @Override
+  public PlexusContainer getContainer() {
+    return container;
+  }
+
+  @Override
+  public Optional<Map<String, Map<String, PackerHintMapDAO>>> getHintMap() {
+    return Optional.ofNullable(hintMap);
+  }
+
+  @Override
+  public Logger getLog() {
+    return log;
+  }
+
+  @Override
+  public Path getManifestPath() {
+    return manifestPP.getOutputPath().orElseThrow(() -> new PackerException("No manifest path available"));
+  }
+
+  @Override
+  public Path getManifestTargetPath() {
+    final Path manifestTarget = getRoot().resolve(getManifestPath());
+    if (!Files.exists(manifestTarget.getParent())) {
+      et.withTranslation(() -> Files.createDirectories(manifestTarget.getParent()));
+    }
+    return manifestTarget;
+  }
+
+  @Override
+  public Optional<Path> getMetaRoot() {
+    return Optional.of(metaRoot);
+  }
+
+  @Override
+  public Optional<Checksum> getPackerChecksum() {
+    return Optional.of(packerChecksum);
+  }
+
+  @Override
+  public Path getPackerExecutable() {
+    return packerExecutable;
+  }
+
+  @Override
+  public JSONObject getBuilderOutputData() {
+    final JSONObject packerJSON = new JSONObject();
+    for (final PackerTypeMapperProcessingSection section : PackerTypeMapperProcessingSection.values()) {
+      switch (section) {
+      case VARIABLE:
+        packerJSON.put(section.getKeyString(), new JSONObject(variables));
+        break;
+      case BUILDER:
+        builders.stream().forEach(x -> x.setLog(getLog()));
+        builders.stream().forEach(ImageData::validate);
+        packerJSON.put(section.getKeyString(),
+            new JSONArray(builders.stream().map(ImageData::asJSON).collect(toList())));
+        break;
+      case PROVISIONER:
+        provisioners.stream().forEach(x -> x.setLog(getLog()));
+        provisioners = provisioners.stream().map(pp -> {
+          pp.validate();
+          return pp.updateWithOverrides(builders);
+        }).collect(Collectors.toList());
+        packerJSON.put(section.getKeyString(),
+            new JSONArray(provisioners.stream().map(PackerProvisioner::asJSON).collect(toList())));
+        break;
+      case POST_PROCESSOR:
+        postProcessors.stream().forEach(x -> x.setLog(getLog()));
+        postProcessors.stream().forEach(PackerPostProcessor::validate);
+
+        packerJSON.put(section.getKeyString(),
+            new JSONArray(postProcessors.stream().map(PackerPostProcessor::asJSONArray).collect(toList())));
+        break;
+      }
+    }
+    return packerJSON;
+  }
+
+  @Override
+  public List<IBRInternalDependency> getRequirements() {
+    return requirements;
+  }
+
+  @Override
+  public Path getRoot() {
+    return root;
+  }
+
+  private void update(final ImageBaseObject p) {
+    p.setWorkingRootDirectory(root);
+    p.setTargetDirectory(target);
+  }
+}

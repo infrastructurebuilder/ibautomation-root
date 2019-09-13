@@ -1,0 +1,12 @@
+1522588559,,ui,say,==> googlecompute: Checking image does not exist...
+1522588560,,ui,say,==> googlecompute: Creating temporary SSH key for instance...
+1522588562,,ui,say,==> googlecompute: Using image: debian-7-wheezy-v20150127
+1522588562,,ui,say,==> googlecompute: Creating instance...
+1522588562,,ui,message,    googlecompute: Loading zone: us-east1-b
+1522588562,,ui,error,==> googlecompute: Error creating instance: googleapi: Error 403: Required 'compute.zones.get' permission for 'projects/stable-smithy-146922/zones/us-east1-b'%!(PACKER_COMMA) forbidden
+1522588562,,ui,error,Build 'googlecompute' errored: Error creating instance: googleapi: Error 403: Required 'compute.zones.get' permission for 'projects/stable-smithy-146922/zones/us-east1-b'%!(PACKER_COMMA) forbidden
+1522588562,,error-count,1
+1522588562,,ui,error,\n==> Some builds didn't complete successfully and had errors:
+1522588562,googlecompute,error,Error creating instance: googleapi: Error 403: Required 'compute.zones.get' permission for 'projects/stable-smithy-146922/zones/us-east1-b'%!(PACKER_COMMA) forbidden
+1522588562,,ui,error,--> googlecompute: Error creating instance: googleapi: Error 403: Required 'compute.zones.get' permission for 'projects/stable-smithy-146922/zones/us-east1-b'%!(PACKER_COMMA) forbidden
+1522588562,,ui,say,\n==> Builds finished but no artifacts were created.

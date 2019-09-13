@@ -1,0 +1,11 @@
+{
+	"builder-id": "mitchellh.amazonebs",
+	"id-string": "us-west-2:ami-047035b0aae326699:OOPS",
+	"index": 0,
+	"files-count": 0,
+	"Maven-Coordinates": "org.infrastructurebuilder.infrastructure:dev-image-test:0.2.0-SNAPSHOT:packer",
+	"id-map": {
+		"us-west-2": "ami-047035b0aae326699"
+	},
+	"target": "amazon-west2"
+}
