@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>4</version>
+    <version>10</version>
   </parent>
   <groupId>org.infrastructurebuilder.automation</groupId>
   <artifactId>ibautomation-root</artifactId>
@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <name>${project.artifactId}</name>
   <inceptionYear>2019</inceptionYear>
-  <description>A set oflibraries and plugins to support the use of Hashicorp's Packer</description>
+  <description>A set oflibraries and plugins to support the building of infrastructure components </description>
   <url>${ib.site.view.url}</url>
   <scm>
     <connection>scm:git:${git.url}</connection>
@@ -55,14 +55,14 @@
       <dependency>
         <groupId>org.infrastructurebuilder</groupId>
         <artifactId>maven-import-bom</artifactId>
-        <version>${maven.version}.2</version>
+        <version>${maven.version}.0</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
       <dependency>
         <groupId>org.infrastructurebuilder.util</groupId>
         <artifactId>ibcore-bom</artifactId>
-        <version>0.10.0.0</version>
+        <version>0.11.1.0</version>
         <scope>import</scope>
         <type>pom</type>
       </dependency>
