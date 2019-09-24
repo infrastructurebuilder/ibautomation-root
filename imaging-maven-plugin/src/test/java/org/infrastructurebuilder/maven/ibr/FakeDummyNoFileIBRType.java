@@ -21,9 +21,9 @@ import java.util.TreeSet;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.configuration.management.DummyIBRType;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
-import org.infrastructurebuilder.configuration.management.DummyIBRType;
 
 @Named("fake2")
 @Typed(IBRType.class)

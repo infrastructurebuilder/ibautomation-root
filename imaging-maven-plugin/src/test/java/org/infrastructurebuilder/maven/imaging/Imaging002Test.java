@@ -17,11 +17,9 @@ package org.infrastructurebuilder.maven.imaging;
 
 import static org.junit.Assert.fail;
 
-import java.io.File;
 import java.util.UUID;
 
 import org.infrastructurebuilder.IBException;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.maven.MockedPackerBean;
 import org.joor.Reflect;
 import org.junit.Test;

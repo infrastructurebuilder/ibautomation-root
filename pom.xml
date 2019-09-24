@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>10</version>
+    <version>13-SNAPSHOT</version>
   </parent>
   <groupId>org.infrastructurebuilder.automation</groupId>
   <artifactId>ibautomation-root</artifactId>

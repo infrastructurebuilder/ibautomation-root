@@ -25,7 +25,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
 
-import org.infrastructurebuilder.maven.ibr.DefaultIBRBuilderConfigElement;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
