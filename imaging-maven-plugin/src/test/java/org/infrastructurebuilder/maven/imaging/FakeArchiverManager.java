@@ -32,7 +32,7 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.codehaus.plexus.util.FileUtils;
 import org.codehaus.plexus.util.StringUtils;
 
-public class DefaultArchiverManager implements ArchiverManager {
+public class FakeArchiverManager implements ArchiverManager {
 
   private static @Nonnull String getFileExtention(@Nonnull final File file) {
     final String path = file.getAbsolutePath();

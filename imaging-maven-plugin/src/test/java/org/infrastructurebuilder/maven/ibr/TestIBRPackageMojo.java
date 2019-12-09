@@ -52,7 +52,7 @@ import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.ansible.AnsibleIBRType;
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleIBRValidator;
-import org.infrastructurebuilder.maven.imaging.DefaultArchiverManager;
+import org.infrastructurebuilder.maven.imaging.FakeArchiverManager;
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
 import org.json.JSONObject;
@@ -153,7 +153,7 @@ public class TestIBRPackageMojo {
   @Test
   public void testIBRAbstractMojoPortions() {
     m.setArchive(new MavenArchiveConfiguration());
-    m.setArchiverManager(new DefaultArchiverManager());
+    m.setArchiverManager(new FakeArchiverManager());
     m.setArtifactHandler(new DefaultArtifactHandler());
     m.setArtifactHandlerManager(new DefaultArtifactHandlerManager());
     m.setClassesDirectory(target.toFile());

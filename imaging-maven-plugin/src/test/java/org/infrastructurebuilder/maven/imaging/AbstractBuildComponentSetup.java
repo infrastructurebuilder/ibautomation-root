@@ -96,7 +96,7 @@ public class AbstractBuildComponentSetup {
     test = ps.get();
     target = test.getParent();
 
-    m = new DefaultImageBuildMojoExecutor(new DefaultArchiverManager());
+    m = new DefaultImageBuildMojoExecutor(new FakeArchiverManager());
     final MockedPackerBean b = new MockedPackerBean("defaultPasWithNothing", null);
     Reflect.on(m).set("data", b);
 
