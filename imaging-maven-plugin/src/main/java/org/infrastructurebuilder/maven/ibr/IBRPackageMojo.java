@@ -68,8 +68,7 @@ public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
       for (final IBRValidationOutput validation : v.getOutput()) {
         final Path entryRelativized = getWorkDirectory().relativize(validation.getPath());
         final String entryType = v.getBuilder().getType();
-        getLog().info(
-            String.format("Adding metadata to IBArchive: %s -> %s", entryType, entryRelativized.toString()));
+        getLog().info(String.format("Adding metadata to IBArchive: %s -> %s", entryType, entryRelativized.toString()));
         ibrArchive.addMetadata(entryType, entryRelativized);
       }
 
@@ -98,9 +97,7 @@ public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
           getProject().getArtifact().setFile(a);
         }
       });
-    } catch (
-
-    final Exception e) {
+    } catch (final Exception e) {
       getLog().error("Failed to create archive", e);
       throw new MojoExecutionException("Failed to create archive!");
     }
