@@ -15,39 +15,42 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import java.nio.file.Files;
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.isDirectory;
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toSet;
+import static org.infrastructurebuilder.configuration.management.IBArchiveException.et;
+
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
-import org.infrastructurebuilder.util.config.PathSupplier;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 
 public abstract class AbstractIBRType<T> implements IBRType<T> {
   private Optional<IBConfigSupplier> config;
 
-  private String id = UUID.randomUUID().toString();
-  private String name;
-  private final PathSupplier rcs;
+  private String                id = UUID.randomUUID().toString();
+  private String                name;
+  private final AutomationUtils rcs;
 
   private final List<IBRValidator<T>> validators;
 
-  public AbstractIBRType(final PathSupplier rps, final List<IBRValidator<T>> validators) {
-    rcs = Objects.requireNonNull(rps);
-    this.validators = Objects.requireNonNull(validators);
+  public AbstractIBRType(final AutomationUtils rps, final List<IBRValidator<T>> validators) {
+    rcs = requireNonNull(rps);
+    this.validators = requireNonNull(validators);
   }
 
   @Override
   public SortedSet<IBRValidationOutput> collectValidatedOutput() {
     final SortedSet<IBRValidationOutput> o = new TreeSet<>();
-    final String subPath = (String) Objects.requireNonNull(getConfig().get().get("file"));
+    final String subPath = (String) requireNonNull(getConfig().get().get("file"));
 
     for (final IBRValidator<?> v : getRelevantValidators()) {
       o.addAll(v.validate(getRoot().resolve(Paths.get(subPath))));
@@ -56,8 +59,8 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
   }
 
   @Override
-  public Path getArchiveSubPath() {
-    return Paths.get(getName());
+  public AutomationUtils getAutomationUtils() {
+    return rcs;
   }
 
   @Override
@@ -77,13 +80,13 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
 
   @Override
   public Set<IBRValidator<T>> getRelevantValidators() {
-    return getValidators().stream().filter(v -> v.respondsTo(this)).collect(Collectors.toSet());
+    return getValidators().stream().filter(v -> v.respondsTo(this)).collect(toSet());
   }
 
   public Path getRoot() {
-    final Path root = rcs.get();
-    if (!Files.isDirectory(root)) {
-      IBArchiveException.et.withTranslation(() -> Files.createDirectories(root));
+    final Path root = rcs.getWorkingPath();
+    if (!isDirectory(root)) {
+      et.withTranslation(() -> createDirectories(root));
     }
     return root;
   }

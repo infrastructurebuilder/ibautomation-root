@@ -20,15 +20,18 @@ import static org.infrastructurebuilder.configuration.management.IBRConstants.AN
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +40,15 @@ import org.slf4j.LoggerFactory;
 public class DefaultAnsibleIBRValidator extends AbstractAnsibleIBRValidator {
   private static final Logger log = LoggerFactory.getLogger(DefaultAnsibleIBRValidator.class);
 
-  private final DefaultAnsibleValidator fileValidator = new DefaultAnsibleValidator();
+  private final DefaultAnsibleValidator fileValidator;
+
+  private final AutomationUtils ibr;
+
+  @Inject
+  public DefaultAnsibleIBRValidator(AutomationUtils ibr, DefaultAnsibleValidator f) {
+    this.ibr = Objects.requireNonNull(ibr);
+    this.fileValidator = Objects.requireNonNull(f);
+  }
 
   @Override
   public Set<IBRValidationOutput> validate(final Path path) {

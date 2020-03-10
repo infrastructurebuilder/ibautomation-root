@@ -19,7 +19,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import org.infrastructurebuilder.configuration.management.IBRBuilderConfigElement;
 import org.json.JSONObject;
 
 public class MockIBRBuilderConfigElement implements IBRBuilderConfigElement {

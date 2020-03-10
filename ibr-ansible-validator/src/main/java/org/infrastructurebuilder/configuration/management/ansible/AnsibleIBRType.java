@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.configuration.management.ansible;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.infrastructurebuilder.configuration.management.IBRConstants.AMAZONEBS;
 import static org.infrastructurebuilder.configuration.management.IBRConstants.PLAYBOOK_FILE;
 import static org.infrastructurebuilder.configuration.management.IBRConstants.TYPE;
@@ -23,7 +25,6 @@ import static org.infrastructurebuilder.configuration.management.ansible.Ansible
 
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -32,20 +33,20 @@ import javax.inject.Named;
 import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.configuration.management.AbstractIBRType;
 import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerConstantsV1;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.json.JSONObject;
 
-@Named("ansible")
+@Named(ANSIBLE)
 @Typed(IBRType.class)
 public class AnsibleIBRType extends AbstractIBRType<JSONObject> {
 
   @Inject
-  public AnsibleIBRType(@Named("default") final IBRRootPathSupplier rps,
+  public AnsibleIBRType(@Named(AutomationUtils.DEFAULT_NAME) final AutomationUtils rps,
       final List<IBRValidator<JSONObject>> validators) {
     super(rps, validators);
     setName(ANSIBLE);
@@ -55,11 +56,11 @@ public class AnsibleIBRType extends AbstractIBRType<JSONObject> {
   public JSONObject transformToProvisionerEntry(final String typeName, final Path root, final Path targetFile,
       final Optional<IBArchive> archive, final List<ImageData<JSONObject>> builders) {
 
-    final JSONObject j = JSONBuilder.newInstance(Optional.ofNullable(getRoot()))
+    final JSONObject j = JSONBuilder.newInstance(ofNullable(getRoot()))
 
         .addString(TYPE, getName())
 
-        .addPath(PLAYBOOK_FILE, Objects.requireNonNull(targetFile))
+        .addPath(PLAYBOOK_FILE, requireNonNull(targetFile))
 
         .asJSON();
     getOverridesFor(builders).ifPresent(o -> j.put(PackerConstantsV1.OVERRIDES, o));
@@ -69,18 +70,19 @@ public class AnsibleIBRType extends AbstractIBRType<JSONObject> {
   private Optional<JSONObject> getOverridesFor(final List<ImageData<JSONObject>> builders) {
 
     final JSONObject j = new JSONObject();
-    for (final ImageData b : Objects.requireNonNull(builders)) {
+    for (final ImageData<JSONObject> b : requireNonNull(builders)) {
       switch (b.getPackerType()) {
-      case AMAZONEBS:
-        if (b.getProvisioningUser().isPresent()) {
-          j.put(b.getBuildExecutionName(), new JSONObject().put(AWS_PROVISIONING_USER, b.getProvisioningUser().get()));
-        }
-        break;
-      default:
-        break;
+        case AMAZONEBS:
+          if (b.getProvisioningUser().isPresent()) {
+            j.put(b.getBuildExecutionName(),
+                new JSONObject().put(AWS_PROVISIONING_USER, b.getProvisioningUser().get()));
+          }
+          break;
+        default:
+          break;
       }
     }
-    return Optional.ofNullable(j.keySet().size() > 0 ? j : null);
+    return ofNullable(j.keySet().size() > 0 ? j : null);
   }
 
 }

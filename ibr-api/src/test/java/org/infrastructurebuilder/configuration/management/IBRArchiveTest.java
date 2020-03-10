@@ -23,11 +23,10 @@ import static org.junit.Assert.fail;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.util.IBUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -37,11 +36,11 @@ import org.junit.Test;
 
 public class IBRArchiveTest {
 
-  private Path target;
-  private Path test;
+  private Path      target;
+  private Path      test;
   private IBArchive archive;
-  private Path test2;
-  private Path test4;
+  private Path      test2;
+  private Path      test4;
 
   @Before
   public void setUp() throws Exception {
@@ -85,7 +84,7 @@ public class IBRArchiveTest {
   public void testAddMetadataAddl() {
     final Path tt = test2.toAbsolutePath();
     archive.addMetadata("X", tt);
-    final Path t3 = archive.getPathList().iterator().next().v2();
+    final Path t3 = archive.getPathList().iterator().next().getPath();
     assertNotEquals(t3, tt);
     assertEquals(t3, test4);
   }
@@ -93,7 +92,7 @@ public class IBRArchiveTest {
   @Test
   public void testAddMetadataAddl2() {
     archive.addMetadata("X", test4);
-    final Path t3 = archive.getPathList().iterator().next().v2();
+    final Path t3 = archive.getPathList().iterator().next().getPath();
     assertEquals(t3, test4);
   }
 
@@ -101,6 +100,9 @@ public class IBRArchiveTest {
   public void testGetPathList() {
     archive.addMetadata("X", test2);
     assertTrue(archive.getPathList().size() == 1);
+
+    List<String> x1 = archive.getPathKeys();
+    assertEquals(1, x1.size());
   }
 
 }

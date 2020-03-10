@@ -24,19 +24,24 @@ import java.util.List;
 import java.util.Optional;
 
 import org.infrastructurebuilder.configuration.management.AbstractIBRType;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.configuration.management.ansible.AbstractAnsibleIBRValidator;
 import org.infrastructurebuilder.configuration.management.ansible.AnsibleIBRType;
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleIBRValidator;
+import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.json.JSONObject;
 import org.junit.Test;
+
 public class TestAnsibleIBRValidator {
+  private AutomationUtils ibr = new AutomationUtilsTesting();
+
   private class TestIBRType extends AbstractIBRType<JSONObject> {
 
     public TestIBRType() {
-      super(new DefaultIBRRootPathSupplier(), Arrays.asList(new DefaultAnsibleIBRValidator()));
+      super(ibr, Arrays.asList(new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator())));
     }
 
     @Override
@@ -49,9 +54,9 @@ public class TestAnsibleIBRValidator {
 
   @Test
   public void testTypes() {
-    final AbstractAnsibleIBRValidator validator = new DefaultAnsibleIBRValidator();
-    assertTrue(validator.respondsTo(
-        new AnsibleIBRType(new DefaultIBRRootPathSupplier(), Arrays.asList(new DefaultAnsibleIBRValidator()))));
+    final AbstractAnsibleIBRValidator validator = new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator());
+    assertTrue(validator.respondsTo(new AnsibleIBRType(new AutomationUtilsTesting(),
+        Arrays.asList(new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator())))));
     assertFalse(validator.respondsTo(new TestIBRType()));
   }
 }

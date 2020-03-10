@@ -17,14 +17,10 @@ package org.infrastructurebuilder.configuration.management;
 
 import java.nio.file.Path;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.infrastructurebuilder.configuration.management.IBRType;
-import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
-import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.json.JSONObject;
 
 public class MockValidatorImpl implements IBRValidator<JSONObject> {

@@ -40,33 +40,35 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   private String buildExecutionName;
 
-  private String content;
-  private boolean copyToOtherRegions;
-  private List<String> copyToRegions;
-  private String credentialsProfile;
-  private String description = null;
+  private String              content;
+  private boolean             copyToOtherRegions;
+  private List<String>        copyToRegions;
+  private String              credentialsProfile;
+  private String              description          = null;
   private List<ImageDataDisk> disk;
-  private String encryptionIdentifier = null;
+  private String              encryptionIdentifier = null;
 
-  private boolean forceDeleteSnapshot = true;
-  private boolean forceDeregister = true;
+  private boolean             forceDeleteSnapshot           = true;
+  private boolean             forceDeregister               = true;
   private Map<String, String> forcedTags;
-  private String instanceType;
-  private String launchUser;
-  private String networkId;
-  private String region;
+  private String              instanceType;
+  private String              launchUser;
+  private String              networkId;
+  private String              region;
   private Map<String, String> regionalEncryptionIdentifiers = null;
-  private String sourceImage = null;
-  private String ssh_username;
-  private String subnetId;
+  private String              sourceImage                   = null;
+  private String              ssh_username;
+  private String              subnetId;
+  private IBRDialect          dialect;
 
-  private Path targetOutput;
+  private Path          targetOutput;
   private final boolean terminateOnShutdown = false;
 
   private Path userDataFile;
 
   protected JSONObject sourceFilter = null;
 
+  @SuppressWarnings("unchecked")
   @Override
   public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory<T> f) {
     setInstanceAuthentication(a);
@@ -394,7 +396,7 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
   }
 
   @Override
-  public void updateBuilderWithInstanceData(final PackerSizing size, final IBAuthentication a,
+  public void updateBuilderWithInstanceData(final String size, final IBAuthentication a,
       final Optional<ImageBuildResult> manifest, final List<ImageStorage> disks, final Optional<Type> builderData) {
 
   }
@@ -410,5 +412,14 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   protected boolean isCopyToOtherRegions() {
     return copyToOtherRegions;
+  }
+
+  public void setDialect(IBRDialect dialect) {
+    this.dialect = dialect;
+  }
+
+  @Override
+  public IBRDialect getDialect() {
+    return dialect;
   }
 }

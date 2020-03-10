@@ -22,12 +22,12 @@ import java.util.Optional;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.ImageDataDisk;
 import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.PackerFactory;
-import org.infrastructurebuilder.imaging.PackerSizing;
 import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONObject;
@@ -35,6 +35,10 @@ import org.json.JSONObject;
 @Named(SpecificPackerAWSBuilder.SPECIFIC_AMAZONEBS)
 @Typed(ImageData.class)
 public class SpecificPackerAWSBuilder extends PackerAWSBuilder {
+
+  public SpecificPackerAWSBuilder(IBRDialectMapper mapper) {
+    super(mapper);
+  }
 
   public static final String SPECIFIC_AMAZONEBS = "specific-amazonebs";
 
@@ -44,12 +48,12 @@ public class SpecificPackerAWSBuilder extends PackerAWSBuilder {
   }
 
   @Override
-  public Map<PackerSizing, Optional<List<ImageDataDisk>>> getSizeToStorageMap() {
+  public Map<String, Optional<List<ImageDataDisk>>> getSizeToStorageMap() {
     return super.getSizeToStorageMap();
   }
 
   @Override
-  public void updateBuilderWithInstanceData(final PackerSizing size, final IBAuthentication a,
+  public void updateBuilderWithInstanceData(final String size, final IBAuthentication a,
       final Optional<ImageBuildResult> manifest, final List<ImageStorage> disks, final Optional<Type> builderData) {
 
     super.updateBuilderWithInstanceData(size, a, manifest, disks, builderData);

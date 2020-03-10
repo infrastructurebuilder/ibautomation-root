@@ -57,7 +57,7 @@ abstract public class AbstractPackerProvisioner<T> extends AbstractPackerBaseObj
     return this;
   }
 
-  protected Optional<JSONObject> addOverrideForType(final ImageData b) {
+  protected Optional<JSONObject> addOverrideForType(final ImageData<T> b) {
     getLog().debug("No override for builder " + b.getId() + " in " + getId());
     return Optional.empty();
   }

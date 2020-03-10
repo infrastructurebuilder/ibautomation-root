@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -27,7 +29,7 @@ import org.json.JSONObject;
 
 @Named(FakeAbstractPackerBuilder.FAKE)
 @Typed(ImageData.class)
-public class FakeAbstractPackerBuilder extends AbstractPackerBuilder {
+public class FakeAbstractPackerBuilder extends AbstractPackerBuilder<JSONObject> {
 
   public class FakeBuildResult extends AbstractPackerBuildResult implements ImageBuildResult {
     public FakeBuildResult(final JSONObject j) {
@@ -67,8 +69,8 @@ public class FakeAbstractPackerBuilder extends AbstractPackerBuilder {
   }
 
   @Override
-  public List<PackerSizing> getSizes() {
-    return Arrays.asList(PackerSizing.values());
+  public List<String> getSizes() {
+    return Arrays.asList(PackerSizing2.values()).stream().map(PackerSizing2::name).collect(toList());
   }
 
   @Override

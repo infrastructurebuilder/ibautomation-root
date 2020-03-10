@@ -27,7 +27,7 @@ import java.util.Map;
 
 import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.PackerException;
-import org.infrastructurebuilder.imaging.PackerSizing;
+import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.junit.Before;
 import org.junit.Test;
@@ -35,7 +35,7 @@ import org.junit.Test;
 public class PackerImageBuilderTest {
 
   private PackerImageBuilder p;
-  private ImageStorage s;
+  private ImageStorage       s;
 
   @Before
   public void setUp() throws Exception {
@@ -87,9 +87,9 @@ public class PackerImageBuilderTest {
 
   @Test
   public void testGetSize() {
-    assertEquals(PackerSizing.small, p.getSize());
-    p.setSize(PackerSizing.stupid);
-    assertEquals(PackerSizing.stupid, p.getSize());
+    assertEquals(PackerSizing2.small.name(), p.getSize());
+    p.setSize(PackerSizing2.stupid.name());
+    assertEquals(PackerSizing2.stupid.name(), p.getSize());
   }
 
   @Test

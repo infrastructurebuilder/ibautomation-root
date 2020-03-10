@@ -15,10 +15,9 @@
  */
 package org.infrastructurebuilder.deployment;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
 import org.junit.Before;

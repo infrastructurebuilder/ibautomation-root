@@ -243,8 +243,8 @@ public class PackerBeanTest {
 
   @Test
   public void testGetPackerFActoryTwice() throws PackerException, ComponentLookupException {
-    final PackerFactory a = med.getPackerFactory();
-    final PackerFactory b = med.getPackerFactory();
+    final PackerFactory<JSONObject> a = med.getPackerFactory();
+    final PackerFactory<JSONObject> b = med.getPackerFactory();
     assertTrue(a == b);
   }
 

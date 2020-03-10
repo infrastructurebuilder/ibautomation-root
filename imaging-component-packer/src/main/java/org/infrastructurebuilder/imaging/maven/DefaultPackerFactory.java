@@ -15,6 +15,11 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.exists;
+import static java.nio.file.Files.isDirectory;
+import static java.nio.file.Files.isWritable;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDER;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DEFAULT;
@@ -24,7 +29,6 @@ import static org.infrastructurebuilder.imaging.PackerException.et;
 import static org.infrastructurebuilder.util.IBUtils.writeString;
 
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -87,23 +91,23 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
     return a.equals(b);
   }
 
-  private final GAV artifact;
-  private final IBAuthenticationProducerFactory authProdFactory;
-  private List<ImageData<JSONObject>> builders = new LinkedList<>();
-  private final PlexusContainer container;
+  private final GAV                                  artifact;
+  private final IBAuthenticationProducerFactory      authProdFactory;
+  private List<ImageData<JSONObject>>                builders       = new LinkedList<>();
+  private final PlexusContainer                      container;
   private Map<String, Map<String, PackerHintMapDAO>> hintMap;
-  private final Logger log;
-  private final PackerManifestPostProcessor manifestPP;
-  private final List<PackerManifest> manifests;
-  private final Path metaRoot;
-  private final Checksum packerChecksum;
-  private final Path packerExecutable;
-  private Optional<Path> packerFile = null;
-  private List<PackerPostProcessor> postProcessors = new LinkedList<>();
-  private final Properties props;
-  private List<PackerProvisioner<JSONObject>> provisioners = new LinkedList<>();
-  private final List<IBRInternalDependency> requirements;
-  private final Path root;
+  private final Logger                               log;
+  private final PackerManifestPostProcessor          manifestPP;
+  private final List<PackerManifest>                 manifests;
+  private final Path                                 metaRoot;
+  private final Checksum                             packerChecksum;
+  private final Path                                 packerExecutable;
+  private Optional<Path>                             packerFile     = null;
+  private List<PackerPostProcessor>                  postProcessors = new LinkedList<>();
+  private final Properties                           props;
+  private List<PackerProvisioner<JSONObject>>        provisioners   = new LinkedList<>();
+  private final List<IBRInternalDependency>          requirements;
+  private final Path                                 root;
 
   private final Path target;
 
@@ -136,29 +140,29 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
       final List<IBRInternalDependency> requirements,
 
       final boolean copyToOtherRegions) {
-    this.requirements = Objects.requireNonNull(requirements);
-    this.container = Objects.requireNonNull(container);
-    authProdFactory = Objects.requireNonNull(authFactory);
-    this.log = Objects.requireNonNull(log);
-    this.metaRoot = Objects.requireNonNull(metaRoot);
-    packerExecutable = Objects.requireNonNull(packerExec).toAbsolutePath();
+    this.requirements = requireNonNull(requirements);
+    this.container = requireNonNull(container);
+    authProdFactory = requireNonNull(authFactory);
+    this.log = requireNonNull(log);
+    this.metaRoot = requireNonNull(metaRoot);
+    packerExecutable = requireNonNull(packerExec).toAbsolutePath();
     packerChecksum = new Checksum(packerExecutable);
-    props = Objects.requireNonNull(p);
-    artifact = Objects.requireNonNull(coords);
-    this.root = PackerException.et.withReturningTranslation(() -> Objects.requireNonNull(root).toAbsolutePath());
-    target = Objects.requireNonNull(targetRelativePath);
+    props = requireNonNull(p);
+    artifact = requireNonNull(coords);
+    this.root = et.withReturningTranslation(() -> requireNonNull(root).toAbsolutePath());
+    target = requireNonNull(targetRelativePath);
     if (target.isAbsolute())
       throw new PackerException("Target [" + target.toString() + "] must be relative (will be applied to root ["
           + this.root.toString() + "]");
-    if (!Files.isDirectory(this.root) || !Files.isWritable(this.root))
+    if (!isDirectory(this.root) || !isWritable(this.root))
       throw new PackerException(this.root + " (temp directory) is not a writable directory");
     final Path path = this.root.resolve(target);
-    if (!Files.exists(path)) {
-      PackerException.et.withTranslation(() -> Files.createDirectories(path));
+    if (!exists(path)) {
+      et.withTranslation(() -> createDirectories(path));
     }
     manifestPP = new PackerManifestPostProcessor();
-    manifests = Objects.requireNonNull(artifactData);
-    update(Objects.requireNonNull(manifestPP));
+    manifests = requireNonNull(artifactData);
+    update(requireNonNull(manifestPP));
     et.withTranslation(() -> {
       final Map<ImageData<JSONObject>, Type> builders = new HashMap<>();
 
@@ -196,7 +200,7 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
           final Map<ImageBuildResult, PackerManifest> mmap = new HashMap<>(1);
           for (final PackerManifest lm : manifests) {
             final Optional<GAV> manifestCoords = lm.getCoords();
-            if (DefaultPackerFactory.unwonkeyEquals(parent, manifestCoords)) {
+            if (Objects.equals(parent, manifestCoords)) {
               final List<ImageBuildResult> items = lm.getBuildsForType(a).orElse(new ArrayList<>());
               for (final ImageBuildResult item : items)
                 if (item.getOriginalAuthId().isPresent()) {
@@ -219,15 +223,14 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
             m = Optional.of(mmap.keySet().iterator().next());
           }
           if (!b1.getSizes().contains(packerImageBuilder.getSize()))
-            throw new PackerException(
-                "Size  " + packerImageBuilder.getSize() + " is not available for " + imageData);
+            throw new PackerException("Size  " + packerImageBuilder.getSize() + " is not available for " + imageData);
 
           Optional<Type> updateData = Optional.empty();
           final Optional<String> keyPrime = imageData.getLookupHint();
 
           if (!keyPrime.isPresent()) {
-            log.warn("No local type is present for " + imageData.getId()
-                + " so no update data could possibly be available");
+            log.warn(
+                "No local type is present for " + imageData.getId() + " so no update data could possibly be available");
           } else {
             final String keyPrimeHint = keyPrime.get();
             updateData = packerImageBuilder.getTypeFor(keyPrimeHint);
@@ -246,7 +249,8 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
         p1.setTags(packerImageBuilder.getTags());
 
         if (p1.isMultiAuthCapable()) {
-          for (final IBAuthentication a : authProdFactory.getAuthenticationsForType(p1.getLookupHint().orElse(DEFAULT))) {
+          for (final IBAuthentication a : authProdFactory
+              .getAuthenticationsForType(p1.getLookupHint().orElse(DEFAULT))) {
             final PackerPostProcessor p2 = this.container.lookup(PackerPostProcessor.class, ppHint);
             p2.setLog(log);
             p2.setTags(packerImageBuilder.getTags());
@@ -261,30 +265,31 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
 
   @Override
   public DefaultPackerFactory addBuilder(final ImageData<JSONObject> b) {
-    update(Objects.requireNonNull(b));
+    update(requireNonNull(b));
     builders.add(b);
     return this;
   }
 
   @Override
   public DefaultPackerFactory addPostProcessor(final PackerPostProcessor p) {
-    update(Objects.requireNonNull(p));
+    update(requireNonNull(p));
     if (p instanceof PackerManifestPostProcessor)
       throw new PackerException(
           "Manifest processor is injected by the factory.  Use getManifestPath() to read it's value");
-    postProcessors.add(Objects.requireNonNull(p));
+    postProcessors.add(requireNonNull(p));
     return this;
   }
 
   @Override
   public DefaultPackerFactory addProvisioner(final PackerProvisioner<JSONObject> p) {
-    update(Objects.requireNonNull(p));
-    provisioners.add(Objects.requireNonNull(p));
+    update(requireNonNull(p));
+    provisioners.add(requireNonNull(p));
     return this;
   }
 
   @Override
-  public PackerFactory<JSONObject> addUniqueBuilder(final java.util.Comparator<ImageData<JSONObject>> b, final ImageData<JSONObject> b1) {
+  public PackerFactory<JSONObject> addUniqueBuilder(final java.util.Comparator<ImageData<JSONObject>> b,
+      final ImageData<JSONObject> b1) {
     return !builders.stream().filter(x -> b.compare(x, b1) == 0).findFirst().isPresent() ? addBuilder(b1) : this;
   }
 
@@ -303,21 +308,21 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
 
   @Override
   public PackerFactory<JSONObject> addVariable(final String name, final String value) {
-    variables.put(Objects.requireNonNull(name), Objects.requireNonNull(value));
+    variables.put(requireNonNull(name), requireNonNull(value));
     return this;
   }
 
   @Override
   public JSONObject asFilteredJSON(final Properties props) {
     final RegexBasedInterpolator interpolator = new RegexBasedInterpolator();
-    interpolator.addValueSource(new PropertiesBasedValueSource(Objects.requireNonNull(props)));
+    interpolator.addValueSource(new PropertiesBasedValueSource(requireNonNull(props)));
     try {
       interpolator.addValueSource(new EnvarBasedValueSource());
     } catch (IOException e) {
       log.warn("Failed to use environment variables for interpolation: " + e.getMessage());
     }
     return new JSONObject(
-        PackerException.et.withReturningTranslation(() -> interpolator.interpolate(getBuilderOutputData().toString())));
+        et.withReturningTranslation(() -> interpolator.interpolate(getBuilderOutputData().toString())));
   }
 
   @Override
@@ -370,9 +375,9 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
 
       variables = Collections.unmodifiableMap(variables);
 
-      packerFile = Optional.ofNullable(PackerException.et
-          .withReturningTranslation(() -> writeString(root.resolve(UUID.randomUUID().toString() + ".json"),
-              asFilteredJSON(Objects.requireNonNull(props)).toString(2))));
+      packerFile = Optional.ofNullable(
+          et.withReturningTranslation(() -> writeString(root.resolve(UUID.randomUUID().toString() + ".json"),
+              asFilteredJSON(requireNonNull(props)).toString(2))));
 
     }
     return packerFile;
@@ -401,8 +406,8 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   @Override
   public Path getManifestTargetPath() {
     final Path manifestTarget = getRoot().resolve(getManifestPath());
-    if (!Files.exists(manifestTarget.getParent())) {
-      et.withTranslation(() -> Files.createDirectories(manifestTarget.getParent()));
+    if (!exists(manifestTarget.getParent())) {
+      et.withTranslation(() -> createDirectories(manifestTarget.getParent()));
     }
     return manifestTarget;
   }
@@ -427,31 +432,31 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
     final JSONObject packerJSON = new JSONObject();
     for (final PackerTypeMapperProcessingSection section : PackerTypeMapperProcessingSection.values()) {
       switch (section) {
-      case VARIABLE:
-        packerJSON.put(section.getKeyString(), new JSONObject(variables));
-        break;
-      case BUILDER:
-        builders.stream().forEach(x -> x.setLog(getLog()));
-        builders.stream().forEach(ImageData::validate);
-        packerJSON.put(section.getKeyString(),
-            new JSONArray(builders.stream().map(ImageData::asJSON).collect(toList())));
-        break;
-      case PROVISIONER:
-        provisioners.stream().forEach(x -> x.setLog(getLog()));
-        provisioners = provisioners.stream().map(pp -> {
-          pp.validate();
-          return pp.updateWithOverrides(builders);
-        }).collect(Collectors.toList());
-        packerJSON.put(section.getKeyString(),
-            new JSONArray(provisioners.stream().map(PackerProvisioner::asJSON).collect(toList())));
-        break;
-      case POST_PROCESSOR:
-        postProcessors.stream().forEach(x -> x.setLog(getLog()));
-        postProcessors.stream().forEach(PackerPostProcessor::validate);
+        case VARIABLE:
+          packerJSON.put(section.getKeyString(), new JSONObject(variables));
+          break;
+        case BUILDER:
+          builders.stream().forEach(x -> x.setLog(getLog()));
+          builders.stream().forEach(ImageData::validate);
+          packerJSON.put(section.getKeyString(),
+              new JSONArray(builders.stream().map(ImageData::asJSON).collect(toList())));
+          break;
+        case PROVISIONER:
+          provisioners.stream().forEach(x -> x.setLog(getLog()));
+          provisioners = provisioners.stream().map(pp -> {
+            pp.validate();
+            return pp.updateWithOverrides(builders);
+          }).collect(Collectors.toList());
+          packerJSON.put(section.getKeyString(),
+              new JSONArray(provisioners.stream().map(PackerProvisioner::asJSON).collect(toList())));
+          break;
+        case POST_PROCESSOR:
+          postProcessors.stream().forEach(x -> x.setLog(getLog()));
+          postProcessors.stream().forEach(PackerPostProcessor::validate);
 
-        packerJSON.put(section.getKeyString(),
-            new JSONArray(postProcessors.stream().map(PackerPostProcessor::asJSONArray).collect(toList())));
-        break;
+          packerJSON.put(section.getKeyString(),
+              new JSONArray(postProcessors.stream().map(PackerPostProcessor::asJSONArray).collect(toList())));
+          break;
       }
     }
     return packerJSON;

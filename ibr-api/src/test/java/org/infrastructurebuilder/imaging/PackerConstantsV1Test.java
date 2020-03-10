@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 
 import java.time.Duration;
 
-import org.infrastructurebuilder.imaging.PackerConstantsV1;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -27,19 +27,20 @@ import java.util.stream.Collectors;
 import org.infrastructurebuilder.imaging.ImageBuilder;
 import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.PackerException;
-import org.infrastructurebuilder.imaging.PackerSizing;
+import org.infrastructurebuilder.imaging.PackerSizing2;
 
 public class PackerImageBuilder implements ImageBuilder {
 
-  private final List<ImageStorage> disks = new ArrayList<>();
-  private final List<String> postProcessingHints = new ArrayList<>();
-  private PackerSizing size = PackerSizing.small;
-  private Map<String, String> tags = new HashMap<>();
-  private final List<Type> types = new ArrayList<>();
+  private final List<ImageStorage> disks               = new ArrayList<>();
+  private final List<String>       postProcessingHints = new ArrayList<>();
+  private String                   size                = PackerSizing2.small.name();
+  private Map<String, String>      tags                = new HashMap<>();
+  private final List<Type>         types               = new ArrayList<>();
 
   public PackerImageBuilder() {
 
   }
+
   @Override
   public List<ImageStorage> getDisks() {
     int i = 0;
@@ -55,7 +56,7 @@ public class PackerImageBuilder implements ImageBuilder {
   }
 
   @Override
-  public PackerSizing getSize() {
+  public String getSize() {
     return size;
   }
 
@@ -87,7 +88,7 @@ public class PackerImageBuilder implements ImageBuilder {
     Objects.requireNonNull(postProcs).forEach(this::addPostProcessingHint);
   }
 
-  public void setSize(final PackerSizing size) {
+  public void setSize(final String size) {
     this.size = size;
   }
 

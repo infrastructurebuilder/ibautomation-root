@@ -29,23 +29,18 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 
-import org.infrastructurebuilder.configuration.management.AbstractIBRType;
-import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
-import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
-import org.infrastructurebuilder.configuration.management.IBRValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.ImageData;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
 import org.json.JSONObject;
 
 public class DummyIBRType extends AbstractIBRType<JSONObject> {
   private static Map<String, String> params = new HashMap<>();
-  private final static IBRRootPathSupplier rps = new DefaultIBRRootPathSupplier();
+  private final static AutomationUtilsTesting rps = new AutomationUtilsTesting();
   static {
     params.put("file", "required");
   }
 
-  public static IBRRootPathSupplier getRps() {
+  public static AutomationUtilsTesting getRps() {
     return rps;
   }
 

@@ -15,49 +15,47 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.util.IBUtils.asJSONObjectStream;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
-import org.jooq.lambda.tuple.Tuple;
-import org.jooq.lambda.tuple.Tuple2;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class IBArchive implements JSONOutputEnabled {
-  public static final String IBR = "ibr";
-  public static final String DATA = "data";
-  public static final String ID = "id";
+  public static final String IBR           = "ibr";
+  public static final String DATA          = "data";
+  public static final String ID            = "id";
   public static final String RELATIVE_ROOT = "root";
-  private final String id;
+  private final String       id;
 
-  private final boolean locked;
-  private final Path root;
-  private final List<Tuple2<String, Path>> theList;
+  private final boolean            locked;
+  private final Path               root;
+  private final List<PathMapEntry> theList;
 
   public IBArchive(final JSONObject j, final Path root) {
     locked = true;
-    id = Objects.requireNonNull(j).getString(ID);
-    this.root = Objects.requireNonNull(root);
-    theList = Collections.unmodifiableList(asJSONObjectStream(j.getJSONArray(DATA)).map(j2 -> {
+    id = requireNonNull(j).getString(ID);
+    this.root = requireNonNull(root);
+    theList = unmodifiableList(asJSONObjectStream(j.getJSONArray(DATA)).map(j2 -> {
       final String key = j2.keys().next();
-      return Tuple.tuple(key, Paths.get(j2.getString(key)));
+      return new PathMapEntry(key, Paths.get(j2.getString(key)));
     }).collect(toList()));
   }
 
   public IBArchive(final Path root) {
     id = UUID.randomUUID().toString();
     theList = new ArrayList<>();
-    this.root = Objects.requireNonNull(root);
+    this.root = requireNonNull(root);
     locked = false;
   }
 
@@ -67,7 +65,7 @@ public class IBArchive implements JSONOutputEnabled {
     if (out.isAbsolute()) {
       out = root.relativize(out);
     }
-    theList.add(Tuple.tuple(Objects.requireNonNull(builder), Objects.requireNonNull(out)));
+    theList.add(new PathMapEntry(builder, out));
     return this;
   }
 
@@ -82,15 +80,20 @@ public class IBArchive implements JSONOutputEnabled {
         .asJSON();
   }
 
-  public List<Tuple2<String, Path>> getPathList() {
-    return theList;
+  public List<String> getPathKeys() {
+    return theList.stream().map(PathMapEntry::getKey).distinct().collect(toList());
+  }
+
+  public List<PathMapEntry> getPathList() {
+    return theList.stream().collect(toList());
   }
 
   private JSONArray asJSONArray() {
-    return new JSONArray(theList.stream().map(t -> new JSONObject().put(t.v1(), t.v2().toString())).collect(toList()));
+    return new JSONArray(theList.stream().map(JSONOutputEnabled::asJSON).collect(toList()));
   }
 
   private String getId() {
     return id;
   }
+
 }

@@ -15,6 +15,10 @@
  */
 package org.infrastructurebuilder.maven.imaging;
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.isDirectory;
+import static java.util.UUID.randomUUID;
+import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
 import static org.infrastructurebuilder.configuration.management.IBRConstants.IBR_METADATA_FILENAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER;
 import static org.infrastructurebuilder.imaging.PackerException.et;
@@ -24,7 +28,6 @@ import static org.infrastructurebuilder.util.IBUtils.readJsonObject;
 import java.io.File;
 import java.io.PrintStream;
 import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,7 +37,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
-import java.util.UUID;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -60,6 +62,7 @@ import org.slf4j.Logger;
 
 @Named
 public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecutor {
+
   protected final static String PACKER_ARCHIVE_FINALIZER_CONFIG = "_PACKER_ARCHIVE_DESCRIPTOR";
 
   public static boolean matchArtifact(final IBRInternalDependency d, final Artifact a) {
@@ -165,8 +168,8 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
   @Override
   public Optional<Map<String, Path>> execute(final String executionId, final Set<Artifact> artifacts) {
 
-    if (executionId.contains("executionId"))
-      throw new IBException("Execution Id cannot contain the string 'executionId'");
+    if (executionId.contains(EXECUTION_ID))
+      throw new IBException("Execution Id cannot contain the string '"+EXECUTION_ID+"'");
     getLog().info("ExecutionId : " + executionId);
     try {
       if (isSkip()) {
@@ -175,7 +178,7 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
       }
 
       packerArtifactData = resolve(artifacts);
-      getLog().info("For execution " + executionId + " we have acquired " + packerArtifactData.size() + " elements");
+      getLog().info("Execution " + executionId + " has acquired " + packerArtifactData.size() + " elements");
       ibrArtifactData = extract(getRequirements(), artifacts);
       return data.setExecutionConfigFrom(this).executePacker(executionId);
     } catch (final Exception e) {
@@ -186,14 +189,14 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
   public List<IBArchive> extract(final List<IBRInternalDependency> requirements,
       final Set<Artifact> resolvedArtifacts) {
 
-    if (!Files.isDirectory(getWorkingDirectory())) {
-      et.withTranslation(() -> Files.createDirectories(getWorkingDirectory()));
+    if (!isDirectory(getWorkingDirectory())) {
+      et.withTranslation(() -> createDirectories(getWorkingDirectory()));
     }
 
     final List<IBArchive> ibrArchives = new ArrayList<>();
 
     for (final IBRInternalDependency a : requirements) {
-      getLog().info("Dependency checking is " + a);
+      getLog().debug("Checking for " + a);
       final List<Artifact> list1 = new ArrayList<>();
 
       for (final Artifact a1 : resolvedArtifacts) {
@@ -203,31 +206,32 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
         }
       }
       if (list1.size() == 0)
-        throw new IBException("There was no matching artifact for " + a);
+        throw new IBException("No matching artifact for " + a);
 
-      for (final Artifact xx : list1) {
-        final Path instanceWorkingDir = IBArchive.IBR.equals(xx.getType())
-            ? getWorkingDirectory().toAbsolutePath().resolve(UUID.randomUUID().toString())
-            : getWorkingDirectory().toAbsolutePath();
-        getLog().info("Writing " + xx + " to " + instanceWorkingDir);
+      Path awd = getWorkingDirectory().toAbsolutePath();
+      for (final Artifact art : list1) {
+        final Path instanceWorkingDir = IBR.equals(art.getType())
+            ? awd.resolve(randomUUID().toString())
+            : awd;
+        getLog().info("Writing " + art + " to " + instanceWorkingDir);
         if (a.isUnpack().orElse(false)) {
-          final UnArchiver aa = et.withReturningTranslation(() -> getArchiverManager().getUnArchiver(xx.getFile()));
+          final UnArchiver aa = et.withReturningTranslation(() -> getArchiverManager().getUnArchiver(art.getFile()));
           aa.setDestDirectory(instanceWorkingDir.toFile());
           aa.setOverwrite(a.isOverwrite());
-          et.withTranslation(() -> Files.createDirectories(aa.getDestDirectory().toPath()));
-          aa.setSourceFile(xx.getFile());
+          et.withTranslation(() -> createDirectories(aa.getDestDirectory().toPath()));
+          aa.setSourceFile(art.getFile());
           getLog().info("Unpacking " + aa.getSourceFile() + " to " + instanceWorkingDir);
           aa.extract();
           a.setFile(instanceWorkingDir);
         } else {
-          final Path targetPath = instanceWorkingDir.resolve(xx.getFile().getName());
-          getLog().info("Copying " + xx.getFile().toPath() + " to " + targetPath);
-          et.withTranslation(() -> copy(xx.getFile().toPath(), targetPath));
+          final Path targetPath = instanceWorkingDir.resolve(art.getFile().getName());
+          getLog().info("Copying " + art.getFile().toPath() + " to " + targetPath);
+          et.withTranslation(() -> copy(art.getFile().toPath(), targetPath));
           a.setFile(targetPath);
         }
         a.applyTargetDir(instanceWorkingDir);
-        if (IBArchive.IBR.equals(xx.getType())) {
-          getLog().info("Reading Manifest from " + xx.getFile().toPath());
+        if (IBR.equals(art.getType())) {
+          getLog().info("Reading Manifest from " + art.getFile().toPath());
           final IBArchive archive = et.withReturningTranslation(() -> new IBArchive(
               readJsonObject(instanceWorkingDir.resolve(IBR_METADATA_FILENAME)), instanceWorkingDir));
 

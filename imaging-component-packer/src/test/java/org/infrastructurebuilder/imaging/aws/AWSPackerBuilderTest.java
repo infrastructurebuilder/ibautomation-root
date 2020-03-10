@@ -26,7 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.infrastructurebuilder.imaging.PackerSizing;
+import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.json.JSONObject;
@@ -40,7 +40,7 @@ public class AWSPackerBuilderTest {
 
   @Before
   public void setUp() throws Exception {
-    pb = new PackerAWSBuilder();
+    pb = new PackerAWSBuilder(new FakeIBRAWSMapper());
     pb.setSourceImage("A");
     final GAV artifact = new DefaultGAV("org.junit:junit:1.2.3:jar");
     pb.setArtifact(artifact);
@@ -144,7 +144,7 @@ public class AWSPackerBuilderTest {
 
   @Test
   public void testSizing() {
-    assertEquals(PackerSizing.values().length, pb.getSizes().size());
+    assertEquals(PackerSizing2.values().length, pb.getSizes().size());
   }
 
   @Test

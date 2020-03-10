@@ -20,8 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.infrastructurebuilder.imaging.ImageBaseObject;
-import org.infrastructurebuilder.imaging.PackerHintMapDAO;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONObject;

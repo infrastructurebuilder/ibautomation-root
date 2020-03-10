@@ -27,7 +27,7 @@ public interface ImageBuilder {
 
   List<String> getPostProcessingHints();
 
-  PackerSizing getSize();
+  String getSize();
 
   Map<String, String> getTags();
 

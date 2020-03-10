@@ -16,7 +16,6 @@
 package org.infrastructurebuilder.deployment;
 
 import java.nio.file.Path;
-import java.util.Optional;
 
 public class BasicTestDeployableSupplier extends AbstractDeployableSupplier {
 

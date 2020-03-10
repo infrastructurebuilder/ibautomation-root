@@ -17,7 +17,6 @@ package org.infrastructurebuilder.configuration.management;
 
 import static org.junit.Assert.assertEquals;
 
-import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.junit.Test;
 
 public class TestCMException {

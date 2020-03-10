@@ -32,7 +32,7 @@
   <properties>
     <mavenVersion>${maven.version}</mavenVersion>
     <test.coverage.percentage.required>63</test.coverage.percentage.required>
-    <jacoco.max.missed.classes>0</jacoco.max.missed.classes>
+    <jacoco.max.missed.classes>1</jacoco.max.missed.classes>
     <packer.location>${env.HOME}/bin/packer</packer.location>
     <plexus.interpolation.version>1.24</plexus.interpolation.version>
   </properties>

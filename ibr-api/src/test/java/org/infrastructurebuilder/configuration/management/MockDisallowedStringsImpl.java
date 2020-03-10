@@ -15,7 +15,6 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import org.infrastructurebuilder.configuration.management.IBRStaticAnalyzer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

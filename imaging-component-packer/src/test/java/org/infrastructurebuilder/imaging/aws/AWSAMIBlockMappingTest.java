@@ -32,12 +32,10 @@ public class AWSAMIBlockMappingTest {
 
   private static final String NAME = "name";
   private PackerAWSBuilderDisk bm;
-  private JSONObject j;
   private ImageStorage s;
 
   @Before
   public void setUp() throws Exception {
-    j = new JSONObject();
     bm = new PackerAWSBuilderDisk();
     s = new ImageStorage();
     s.setDeviceName("X");

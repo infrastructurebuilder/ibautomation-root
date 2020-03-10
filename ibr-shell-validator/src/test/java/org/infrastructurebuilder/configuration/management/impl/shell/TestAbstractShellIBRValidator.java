@@ -25,18 +25,18 @@ import java.util.Optional;
 
 import org.infrastructurebuilder.configuration.management.AbstractIBRType;
 import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.shell.AbstractShellIBRValidator;
-import org.infrastructurebuilder.configuration.management.shell.ShellIBRType;
-import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.configuration.management.shell.DefaultShellIBRValidator;
+import org.infrastructurebuilder.configuration.management.shell.ShellIBRType;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
+import org.infrastructurebuilder.imaging.ImageData;
 import org.json.JSONObject;
 import org.junit.Test;
 
 public class TestAbstractShellIBRValidator {
   private class TestIBRType extends AbstractIBRType<JSONObject> {
     public TestIBRType() {
-      super(new DefaultIBRRootPathSupplier(), Arrays.asList(new DefaultShellIBRValidator()));
+      super(new AutomationUtilsTesting(), Arrays.asList(new DefaultShellIBRValidator()));
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TestAbstractShellIBRValidator {
   public void testTypes() {
     final AbstractShellIBRValidator validator = new DefaultShellIBRValidator();
     assertTrue(validator.respondsTo(
-        new ShellIBRType(new DefaultIBRRootPathSupplier(), Arrays.asList(new DefaultShellIBRValidator()))));
+        new ShellIBRType(new AutomationUtilsTesting(), Arrays.asList(new DefaultShellIBRValidator()))));
     assertFalse(validator.respondsTo(new TestIBRType()));
   }
 }

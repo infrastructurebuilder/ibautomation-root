@@ -18,7 +18,6 @@ package org.infrastructurebuilder.configuration.management;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
-import org.infrastructurebuilder.configuration.management.IBRType;
 
 @Named(FakeTestCMType.FAKE_TEST_CMTYPE)
 @Typed(IBRType.class)

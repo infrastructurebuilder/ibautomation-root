@@ -15,11 +15,14 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
+
 import java.nio.file.Path;
-import java.util.Objects;
 import java.util.Optional;
 
-import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.util.artifacts.GAV;
 
 public class IBRInternalDependency {
@@ -31,19 +34,19 @@ public class IBRInternalDependency {
   private Optional<Boolean> unpack = Optional.empty();
 
   public void applyTargetDir(final Path target) {
-    _tdir = Objects.requireNonNull(target);
+    _tdir = requireNonNull(target);
   }
 
   public Optional<Path> getFile() {
-    return Optional.ofNullable(file);
+    return ofNullable(file);
   }
 
   public Optional<String> getRemote() {
-    return Optional.ofNullable(remote);
+    return ofNullable(remote);
   }
 
   public Optional<Path> getTargetDir() {
-    return Optional.ofNullable(_tdir);
+    return ofNullable(_tdir);
   }
 
   public boolean isOverwrite() {
@@ -55,7 +58,7 @@ public class IBRInternalDependency {
   }
 
   public Optional<Boolean> isUnpack() {
-    return IBArchive.IBR.equals(type) ? Optional.of(true) : unpack;
+    return IBR.equals(type) ? of(true) : unpack;
   }
 
   public boolean matches(final GAV a) {
@@ -87,7 +90,7 @@ public class IBRInternalDependency {
   }
 
   public void setFile(final Path file) {
-    this.file = Objects.requireNonNull(file);
+    this.file = requireNonNull(file);
   }
 
   public void setGroupId(final String groupId) {
@@ -107,7 +110,7 @@ public class IBRInternalDependency {
   }
 
   public void setUnpack(final boolean unpack) {
-    this.unpack = Optional.of(Boolean.valueOf(unpack));
+    this.unpack = of(Boolean.valueOf(unpack));
   }
 
   @Override

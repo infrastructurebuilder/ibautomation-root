@@ -15,8 +15,6 @@
  */
 package org.infrastructurebuilder.imaging;
 
-import org.infrastructurebuilder.imaging.PackerException;
-
 public class PackerInterruptedException extends PackerException {
 
   /**

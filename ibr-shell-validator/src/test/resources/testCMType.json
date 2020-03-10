@@ -1,4 +1,4 @@
 {
   "type": "shell",
-  "script": "../abc.xml"
+  "script": "abc.xml"
 }

@@ -27,7 +27,6 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.infrastructurebuilder.imaging.PackerHintMapDAO;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

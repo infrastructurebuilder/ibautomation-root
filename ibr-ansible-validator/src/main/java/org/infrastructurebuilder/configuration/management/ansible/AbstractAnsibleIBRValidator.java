@@ -15,9 +15,8 @@
  */
 package org.infrastructurebuilder.configuration.management.ansible;
 
+import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE;
-
-import java.util.Objects;
 
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
@@ -27,7 +26,7 @@ public abstract class AbstractAnsibleIBRValidator implements IBRValidator<JSONOb
 
   @Override
   public boolean respondsTo(final IBRType<JSONObject> type) {
-    return ANSIBLE.equals(Objects.requireNonNull(type).getName());
+    return ANSIBLE.equals(requireNonNull(type).getName());
   }
 
 }

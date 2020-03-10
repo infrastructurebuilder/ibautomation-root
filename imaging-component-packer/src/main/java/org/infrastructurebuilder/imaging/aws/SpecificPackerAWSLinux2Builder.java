@@ -20,6 +20,7 @@ import java.util.Optional;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageData;
 
 @Named(SpecificPackerAWSLinux2Builder.SPECIFIC_AMAZONEBS_LINUX2)
@@ -27,6 +28,9 @@ import org.infrastructurebuilder.imaging.ImageData;
 public class SpecificPackerAWSLinux2Builder extends SpecificPackerAWSBuilder {
   public static final String SPECIFIC_AMAZONEBS_LINUX2 = "specific-amazonebs-linux2";
 
+  public SpecificPackerAWSLinux2Builder(IBRDialectMapper mapper) {
+    super(mapper);
+  }
   @Override
   public Optional<String> getLookupHint() {
     return Optional.of(SPECIFIC_AMAZONEBS_LINUX2);

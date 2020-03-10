@@ -15,8 +15,12 @@
  */
 package org.infrastructurebuilder.maven.imaging;
 
+import static java.util.Optional.ofNullable;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.COMPILE;
+import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER;
 import static org.infrastructurebuilder.imaging.PackerException.et;
+import static org.infrastructurebuilder.imaging.ibr.PackerGenericIBRArchiveProvisioner.GENERIC_IBR;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -24,18 +28,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.function.BiFunction;
 
+import org.apache.maven.artifact.Artifact;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecution;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Component;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.apache.maven.project.MavenProject;
 import org.apache.maven.project.MavenProjectHelper;
 import org.apache.maven.settings.Settings;
@@ -47,7 +49,6 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.Contextualizable;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.PackerException;
-import org.infrastructurebuilder.imaging.ibr.PackerGenericIBRArchiveProvisioner;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
@@ -55,12 +56,12 @@ import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
 import org.infrastructurebuilder.util.logging.SLF4JFromMavenLogger;
 
-@Mojo(name = "imaging", requiresProject = true, threadSafe = false, requiresDependencyResolution = ResolutionScope.RUNTIME, defaultPhase = LifecyclePhase.COMPILE)
+@Mojo(name = "imaging", requiresProject = true, threadSafe = false, requiresDependencyResolution = RUNTIME, defaultPhase = COMPILE)
 public final class ImageBuildMojo extends AbstractMojo implements Contextualizable {
-  public final static BiFunction<org.apache.maven.artifact.Artifact, String, DefaultGAV> toDefaultGAV = (art,
-      classifier) -> {
+  public final static BiFunction<Artifact, String, DefaultGAV> toDefaultGAV = (art, classifier) -> {
     return new DefaultGAV(art.getGroupId(), art.getArtifactId(), classifier, art.getVersion(), PACKER);
   };
+
   protected final static String PACKER_ARCHIVE_FINALIZER_CONFIG = "_PACKER_ARCHIVE_DESCRIPTOR";
 
   private List<IBArchive> ibrArtifactData;
@@ -70,7 +71,7 @@ public final class ImageBuildMojo extends AbstractMojo implements Contextualizab
   @Parameter
   Map<String, String> additionalEnvironment = new HashMap<>();
 
-  @Parameter(defaultValue = PackerGenericIBRArchiveProvisioner.GENERIC_IBR)
+  @Parameter(defaultValue = GENERIC_IBR)
   String ibrHandler;
 
   final Map<IBArchive, IBRInternalDependency> ibrMapping = new HashMap<>();
@@ -106,7 +107,8 @@ public final class ImageBuildMojo extends AbstractMojo implements Contextualizab
   String finalName;
 
   @Parameter(property = "image.force", required = false)
-  final boolean force = false;
+  final boolean      force = false;
+
   @Parameter(required = true)
   PackerImageBuilder image;
 
@@ -170,17 +172,74 @@ public final class ImageBuildMojo extends AbstractMojo implements Contextualizab
   File workingDir;
 
   public ImageBuildMojoExecutor applyParameters() {
-    return executor.setAdditionalEnvironment(additionalEnvironment).setAuthConfig(authConfig)
-        .setBaseAuthentications(baseAuthentications).setClassifier(classifier).setDescription(description)
-        .setEncoding(encoding).setFinalName(finalName).setImage(image).setOutputDirectory(outputDirectory)
-        .setOverwrite(overwrite).setPackerExecutable(packerExecutable).setRequirements(requirements)
-        .setSettings(settings).setSkipActualPackerRun(skipActualPackerRun).setTimeout(timeout).setTmpDir(tmpDir)
-        .setVarFile(varFile).setVars(vars).setWorkingDir(workingDir).setIBRArtifactData(ibrArtifactData)
-        .setIBRHandler(ibrHandler).setCleanupOnError(cleanupOnError).setCopyToOtherRegions(copyToOtherRegions)
-        .setExcept(except).setName(project.getName()).setProperties(project.getProperties())
-        .setCoordinates(toDefaultGAV.apply(project.getArtifact(), classifier)).setOnly(only)
-        .setPackerArtifactData(packerArtifactData).setParallel(parallel).setPlexusContainer(plexusContainer)
-        .setProjectBuildDirectory(projectBuildDirectory).setSkipIfEmpty(skipIfEmpty)
+    return executor
+        // Addl env
+        .setAdditionalEnvironment(additionalEnvironment)
+        // Auth config
+        .setAuthConfig(authConfig)
+        // Base authentications
+        .setBaseAuthentications(baseAuthentications)
+        // Classifications
+        .setClassifier(classifier)
+        // Description
+        .setDescription(description)
+        // Encodinmg
+        .setEncoding(encoding)
+        // Final name
+        .setFinalName(finalName)
+        // Image
+        .setImage(image)
+        // Output dir
+        .setOutputDirectory(outputDirectory)
+        // Overwrite?
+        .setOverwrite(overwrite)
+        // PAcker executable
+        .setPackerExecutable(packerExecutable)
+        // REquirements
+        .setRequirements(requirements)
+        // The settings
+        .setSettings(settings)
+        // Skip packer run
+        .setSkipActualPackerRun(skipActualPackerRun)
+        // Timeout
+        .setTimeout(timeout)
+        // Temp dir
+        .setTmpDir(tmpDir)
+        // Var file
+        .setVarFile(varFile)
+        // Vars
+        .setVars(vars)
+        // Working dir
+        .setWorkingDir(workingDir)
+        // Artifact data
+        .setIBRArtifactData(ibrArtifactData)
+        // Handler
+        .setIBRHandler(ibrHandler)
+        // Cleanup on error?
+        .setCleanupOnError(cleanupOnError)
+        // Copy to other regions?
+        .setCopyToOtherRegions(copyToOtherRegions)
+        // "Except"s
+        .setExcept(except)
+        // Name
+        .setName(project.getName())
+        // Project properties
+        .setProperties(project.getProperties())
+        // Coords
+        .setCoordinates(toDefaultGAV.apply(project.getArtifact(), classifier))
+        // "only"?
+        .setOnly(only)
+        // Packer artifactData
+        .setPackerArtifactData(packerArtifactData)
+        // Parallel?
+        .setParallel(parallel)
+        // Container FIXME
+        .setPlexusContainer(plexusContainer)
+        // Project build dir
+        .setProjectBuildDirectory(projectBuildDirectory)
+        // Skip if empty
+        .setSkipIfEmpty(skipIfEmpty)
+        // Logger
         .setLog(new SLF4JFromMavenLogger(getLog()));
   }
 
@@ -202,7 +261,7 @@ public final class ImageBuildMojo extends AbstractMojo implements Contextualizab
         return;
       }
       applyParameters().execute(executionId, project.getArtifacts()).ifPresent(out -> {
-        Optional.ofNullable(out.get(PACKER)).ifPresent(finalPath -> {
+        ofNullable(out.get(PACKER)).ifPresent(finalPath -> {
           et.withTranslation(() -> {
             if (skipIfEmpty && Files.size(finalPath) == 0) {
               getLog().info("Skipping packaging of the " + PACKER);

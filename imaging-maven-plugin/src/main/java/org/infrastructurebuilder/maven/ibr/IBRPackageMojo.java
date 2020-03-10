@@ -15,28 +15,29 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
+import static java.util.Optional.ofNullable;
+import static org.apache.maven.plugins.annotations.InstantiationStrategy.PER_LOOKUP;
+import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
+import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
+import static org.infrastructurebuilder.configuration.management.IBArchiveException.et;
 import static org.infrastructurebuilder.configuration.management.IBRConstants.IBR_METADATA_FILENAME;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.plugins.annotations.InstantiationStrategy;
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.ResolutionScope;
 import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.configuration.management.IBRDataObject;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
+import org.infrastructurebuilder.configuration.management.IBRDataObject;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.util.IBUtils;
 import org.json.JSONObject;
 
-@Mojo(name = "package", requiresProject = true, threadSafe = true, instantiationStrategy = InstantiationStrategy.PER_LOOKUP, defaultPhase = LifecyclePhase.PACKAGE, requiresDependencyResolution = ResolutionScope.RUNTIME)
+@Mojo(name = "package", requiresProject = true, threadSafe = true, instantiationStrategy = PER_LOOKUP, defaultPhase = PACKAGE, requiresDependencyResolution = RUNTIME)
 public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
 
   @SuppressWarnings("unchecked")
@@ -48,11 +49,10 @@ public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
     }
 
     getLog().info("Getting compile order for package run");
-    final List<String> order = (List<String>) Optional.ofNullable(getPluginContext().get(COMPILE_ORDER))
+    final List<String> order = (List<String>) ofNullable(getPluginContext().get(COMPILE_ORDER))
         .orElseThrow(() -> new MojoExecutionException("No compilation data order available"));
     getLog().info("Getting compile items for package run");
-    final Map<String, IBRDataObject<JSONObject>> map = (Map<String, IBRDataObject<JSONObject>>) Optional
-        .ofNullable(getPluginContext().get(COMPILE_ITEMS))
+    final Map<String, IBRDataObject<JSONObject>> map = (Map<String, IBRDataObject<JSONObject>>) ofNullable(getPluginContext().get(COMPILE_ITEMS))
         .orElseThrow(() -> new MojoExecutionException("No compilation map data available"));
 
     getLog().info("configuration-management-maven-plugin is executing!");
@@ -82,11 +82,11 @@ public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
 
     final Path mdfile = getWorkDirectory().resolve(IBR_METADATA_FILENAME);
     getLog().info("Writing metadata to " + mdfile);
-    IBArchiveException.et.withTranslation(() -> IBUtils.writeString(mdfile, ibrArchive.asJSON().toString(2)));
+    et.withTranslation(() -> IBUtils.writeString(mdfile, ibrArchive.asJSON().toString(2)));
     try {
       final File a = createArchive();
       getLog().info(String.format("Created archive: %s", a.toString()));
-      IBArchiveException.et.withTranslation(() -> {
+      et.withTranslation(() -> {
         if (getClassifier() != null) {
           getLog().info(String.format("Classifier was set: %s", getClassifier()));
           getMavenProjectHelper().attachArtifact(getProject(), "ibr", getClassifier(), a);

@@ -29,10 +29,9 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBConfigSupplier;
 import org.infrastructurebuilder.configuration.management.IBRConstants;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.DefaultFakeImageData;
 import org.infrastructurebuilder.util.IBUtils;
 import org.json.JSONException;
@@ -45,14 +44,14 @@ public class AnsibleIBRTypeTest {
 
   private IBConfigSupplier acs;
   private Map<String, String> params;
-  private IBRRootPathSupplier rps;
+  private AutomationUtilsTesting rps;
   private AnsibleIBRType t;
 
   @Before
   public void setUp() throws Exception {
-    rps = new DefaultIBRRootPathSupplier().setPath(Paths.get("."));
+    rps = new AutomationUtilsTesting();
     acs = new DefaultIBConfigSupplier().setConfig(new HashMap<>());
-    t = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator()));
+    t = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator())));
     t.setConfigSupplier(acs);
     assertNotNull(t);
   }
@@ -64,7 +63,7 @@ public class AnsibleIBRTypeTest {
 
   @Test
   public void testTransformToProvisionerEntry() throws JSONException, IOException {
-    final Path p = Paths.get("abc.xml");
+    final Path p = Paths.get("abc.xml").toAbsolutePath();
     final JSONObject j = new JSONObject(IBUtils.readToString(getClass().getResourceAsStream("/testCMType.json")));
     final JSONObject g = t.transformToProvisionerEntry(ANSIBLE, null, p, null, Collections.emptyList());
     JSONAssert.assertEquals(j, g, true);
@@ -72,9 +71,9 @@ public class AnsibleIBRTypeTest {
 
   @Test
   public void testTransformToProvisionerEntryWithOverrides() throws JSONException, IOException {
-    final Path p = Paths.get("abc.xml");
+    final Path p = Paths.get("abc.xml").toAbsolutePath();
     final JSONObject j = new JSONObject(
-        "{\"type\":\"ansible\",\"playbook_file\":\"../abc.xml\",\"override\":{\"test\":{\"user\":\"X\"}}}");
+        "{\"type\":\"ansible\",\"playbook_file\":\"../../abc.xml\",\"override\":{\"test\":{\"user\":\"X\"}}}");
     final JSONObject g = t.transformToProvisionerEntry(ANSIBLE, null, p, null,
         Arrays.asList(new DefaultFakeImageData(IBRConstants.AMAZONEBS, Optional.of("X"))));
     JSONAssert.assertEquals(j, g, true);

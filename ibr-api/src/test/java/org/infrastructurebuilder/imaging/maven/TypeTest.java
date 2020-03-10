@@ -22,7 +22,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.infrastructurebuilder.imaging.PackerException;
-import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.junit.Before;
 import org.junit.Test;

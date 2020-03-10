@@ -17,7 +17,6 @@ package org.infrastructurebuilder.imaging;
 
 import static org.junit.Assert.assertEquals;
 
-import org.infrastructurebuilder.imaging.PackerException;
 import org.junit.Test;
 
 public class TestExceptions {

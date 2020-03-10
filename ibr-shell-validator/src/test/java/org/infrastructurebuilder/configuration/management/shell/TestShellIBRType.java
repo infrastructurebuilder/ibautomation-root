@@ -25,13 +25,11 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 
+import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
 import org.infrastructurebuilder.configuration.management.IBConfigSupplier;
 import org.infrastructurebuilder.configuration.management.IBRConstants;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
-import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
-import org.infrastructurebuilder.configuration.management.shell.ShellIBRType;
-import org.infrastructurebuilder.configuration.management.shell.DefaultShellIBRValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.util.IBUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -42,12 +40,12 @@ import org.skyscreamer.jsonassert.JSONAssert;
 public class TestShellIBRType {
 
   private IBConfigSupplier acs;
-  private IBRRootPathSupplier rps;
+  private AutomationUtils rps;
   private ShellIBRType t;
 
   @Before
   public void setUp() throws Exception {
-    rps = new DefaultIBRRootPathSupplier().setPath(Paths.get("."));
+    rps = new AutomationUtilsTesting();
     acs = new DefaultIBConfigSupplier().setConfig(new HashMap<>());
     t = new ShellIBRType(rps, Arrays.asList(new DefaultShellIBRValidator()));
     t.setConfigSupplier(acs);

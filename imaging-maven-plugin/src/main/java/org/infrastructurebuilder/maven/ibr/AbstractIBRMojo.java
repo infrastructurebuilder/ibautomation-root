@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
 
 import java.io.File;
@@ -26,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.apache.maven.archiver.MavenArchiveConfiguration;
 import org.apache.maven.artifact.handler.ArtifactHandler;
@@ -43,12 +44,15 @@ import org.codehaus.plexus.archiver.Archiver;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
+import org.infrastructurebuilder.configuration.management.IBRConstants;
 import org.infrastructurebuilder.configuration.management.IBRType;
+import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
 import org.infrastructurebuilder.util.IBUtils;
 
-abstract public class AbstractIBRMojo<T> extends AbstractMojo {
+abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initializable {
   public static final String COMPILE_ITEMS = "_compile_MAP_Items";
   public static final String COMPILE_ORDER = "_compile_MAP_Order";
 
@@ -108,8 +112,8 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
   @Parameter(property = "project", readonly = true, required = true)
   private MavenProject project;
 
-  @Component(hint = "default")
-  private IBRRootPathSupplier rootPathSupplier;
+  @Component(hint = IBRConstants.IBR_WORKING_PATH_SUPPLIER)
+  private IBRWorkingPathSupplier rootPathSupplier;
 
   @Parameter(defaultValue = "${session}", readonly = true, required = true)
   private MavenSession session;
@@ -181,7 +185,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
   }
 
   public Map<String, IBRType<T>> getMyTypes() {
-    rootPathSupplier.setPath(getWorkDirectory());
+    rootPathSupplier.setT(getWorkDirectory());
     return myTypes;
   }
 
@@ -285,7 +289,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
     this.project = project;
   }
 
-  public void setRootPathSupplier(final IBRRootPathSupplier rootPathSupplier) {
+  public void setRootPathSupplier(final IBRWorkingPathSupplier rootPathSupplier) {
     this.rootPathSupplier = rootPathSupplier;
   }
 
@@ -312,16 +316,16 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
     if (!Files.isDirectory(contentDirectory))
       return 0;
     return IBArchiveException.et.withReturningTranslation(
-        () -> Files.walk(contentDirectory).filter(Files::isRegularFile).collect(Collectors.toList()).size());
+        () -> Files.walk(contentDirectory).filter(Files::isRegularFile).collect(toList()).size());
   }
 
-  protected Optional<Path> copyCMTypeSourcesAndResourcesToTarget(final IBRType type) {
+  protected Optional<Path> copyCMTypeSourcesAndResourcesToTarget(final IBRType<?> type) {
     final Path src = getSources().resolve(type.getArchiveSubPath());
     final Path dest = getWorkDirectory().resolve(type.getName());
     final Path resourceDestination = getWorkDirectory();
     final Path resources = getUnfilteredResourceDirectory();
     final List<Path> paths = IBArchiveException.et.withReturningTranslation(
-        () -> Files.walk(src).filter(Files::isRegularFile).map(src::relativize).collect(Collectors.toList()));
+        () -> Files.walk(src).filter(Files::isRegularFile).map(src::relativize).collect(toList()));
     long count = paths.stream().map(file -> {
       final Path dFile = dest.resolve(file);
       if (!Files.exists(dFile.getParent())) {
@@ -334,7 +338,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
 
     if (Files.exists(resources)) {
       final List<Path> resourcePaths = IBArchiveException.et.withReturningTranslation(() -> Files.walk(resources)
-          .filter(Files::isRegularFile).map(resources::relativize).collect(Collectors.toList()));
+          .filter(Files::isRegularFile).map(resources::relativize).collect(toList()));
       getLog().info(String.format("resourcePaths are %s, size is %d", resourcePaths, resourcePaths.size()));
       count += resourcePaths.stream().map(file -> {
         getLog().info(file.toString());
@@ -350,7 +354,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
       getLog().info("No resource directory existed");
     }
 
-    return Optional.ofNullable(count > 0L ? dest : null);
+    return ofNullable(count > 0L ? dest : null);
   }
 
   protected File getJarFile(final File basedir, final String resultFinalName, final String classifier) {
@@ -399,4 +403,9 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo {
     }
   }
 
+  @Override
+  public void initialize() throws InitializationException {
+    this.rootPathSupplier.setT(getWorkDirectory());
+
+  }
 }

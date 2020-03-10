@@ -15,11 +15,13 @@
  */
 package org.infrastructurebuilder.configuration.management.ansible;
 
+import static java.util.regex.Pattern.compile;
+
 import java.util.regex.Pattern;
 
 public interface AnsibleConstants {
-  String ANSIBLE = "ansible";
-  Pattern ANSIBLE_DRY_RUN_DISABLE_PATTERN = Pattern.compile("check_mode\\s*:\\s*no");
-  String AWS_PROVISIONING_USER = "user";
+  String  ANSIBLE                         = "ansible";
+  Pattern ANSIBLE_DRY_RUN_DISABLE_PATTERN = compile("check_mode\\s*:\\s*no");
+  String  AWS_PROVISIONING_USER           = "user";
 
 }

@@ -20,6 +20,7 @@ import java.util.Optional;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
@@ -30,6 +31,9 @@ import org.json.JSONObject;
 public class SpecificPackerAWSLinuxDLBuilder extends SpecificPackerAWSBuilder {
   public static final String SPECIFIC_AMAZONEBS_LINUX_DL = "specific-amazonebs-linux-dl";
 
+  public SpecificPackerAWSLinuxDLBuilder(IBRDialectMapper mapper) {
+    super(mapper);
+  }
   @Override
   public Optional<String> getLookupHint() {
     return Optional.of(SPECIFIC_AMAZONEBS_LINUX_DL);

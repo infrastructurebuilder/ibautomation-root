@@ -15,11 +15,10 @@
  */
 package org.infrastructurebuilder.deployment;
 
-import java.nio.file.Path;
-import java.util.Optional;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
 
-import static java.util.Objects.*;
-import static java.util.Optional.*;
+import java.nio.file.Path;
 
 abstract public class AbstractDeployableSupplier implements DeployableSupplier {
 

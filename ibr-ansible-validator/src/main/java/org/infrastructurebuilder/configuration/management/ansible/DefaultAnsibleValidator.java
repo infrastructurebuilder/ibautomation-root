@@ -15,16 +15,23 @@
  */
 package org.infrastructurebuilder.configuration.management.ansible;
 
+import static java.nio.file.Files.createDirectories;
+import static java.nio.file.Files.createFile;
+import static java.nio.file.Files.delete;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
+import static org.infrastructurebuilder.configuration.management.IBArchiveException.et;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE_DRY_RUN_DISABLE_PATTERN;
+import static org.infrastructurebuilder.util.IBUtils.writeString;
 
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.regex.Matcher;
 
 import javax.inject.Named;
@@ -36,17 +43,19 @@ import org.infrastructurebuilder.util.DefaultProcessRunner;
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.ProcessExecutionResult;
 import org.infrastructurebuilder.util.ProcessRunner;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("ansible-ibr-validator")
 @Typed(DefaultAnsibleValidator.class)
-public class DefaultAnsibleValidator  {
-  private static final Logger log = LoggerFactory.getLogger(DefaultAnsibleValidator.class);
-  private Path targetPath = null;
+public class DefaultAnsibleValidator {
+  private static final Logger       log        = LoggerFactory.getLogger(DefaultAnsibleValidator.class);
+  private Path                      targetPath = null;
+  private final TestingPathSupplier wps        = new TestingPathSupplier();
 
   public boolean checkFile(final Path path) throws IBArchiveException {
-    return IBArchiveException.et.withReturningTranslation(() -> {
+    return et.withReturningTranslation(() -> {
       return check(IBUtils.readFile(path));
     });
   }
@@ -72,27 +81,27 @@ public class DefaultAnsibleValidator  {
 
     final String inventoryString = "[default]\r\n127.0.0.1";
 
-    return IBArchiveException.et.withReturningTranslation(() -> {
+    return et.withReturningTranslation(() -> {
 
-      final Path tempDirectory = Paths.get(getTargetPath().toString(), UUID.randomUUID().toString());
+      final Path tempDirectory = Paths.get(getTargetPath().toString(), randomUUID().toString());
 
       final Path tempPlaybookFile = Paths.get(tempDirectory.toString(), "playbook.yml");
       final Path tempInventoryFile = Paths.get(tempDirectory.toString(), "inventory.yml");
 
-      Files.createDirectories(tempDirectory);
+      createDirectories(tempDirectory);
 
-      Files.createFile(tempPlaybookFile);
-      Files.createFile(tempInventoryFile);
+      createFile(tempPlaybookFile);
+      createFile(tempInventoryFile);
 
-      IBUtils.writeString(tempPlaybookFile, string);
-      IBUtils.writeString(tempInventoryFile, inventoryString);
+      writeString(tempPlaybookFile, string);
+      writeString(tempInventoryFile, inventoryString);
 
       final Map<String, ProcessExecutionResult> resultMap = executeAgainst(
           tempPlaybookFile.toAbsolutePath().toRealPath().toString(),
           tempInventoryFile.toAbsolutePath().toRealPath().toString());
 
-      Files.delete(tempPlaybookFile);
-      Files.delete(tempInventoryFile);
+      delete(tempPlaybookFile);
+      delete(tempInventoryFile);
       for (final ProcessExecutionResult res : resultMap.values()) {
         final Optional<Integer> resultCode = res.getResultCode();
         res.getStdOut().stream().forEach(line -> {
@@ -113,23 +122,20 @@ public class DefaultAnsibleValidator  {
   private Map<String, ProcessExecutionResult> executeAgainst(final String playbookFileName,
       final String inventoryFileName) throws Exception {
     final List<String> args = Arrays.asList(playbookFileName, "--syntax-check", "-i", inventoryFileName);
-    final Path scratchDirectory = Paths.get(getTargetPath().toString(), UUID.randomUUID().toString());
-    Files.createDirectories(scratchDirectory.getParent());
-    try (ProcessRunner pr = new DefaultProcessRunner(scratchDirectory, Optional.empty(), Optional.of(log),
-        Optional.empty())) {
-      return IBArchiveException.et.withReturningTranslation(() -> pr.addExecution(UUID.randomUUID().toString(),
-          "ansible-playbook", args, Optional.empty(), Optional.empty(), Optional.of(getTargetPath()), Optional.empty(),
-          false, Optional.empty(), Optional.empty(), Optional.empty(), false).lock().get().get().getResults());
+    final Path scratchDirectory = Paths.get(getTargetPath().toString(), randomUUID().toString());
+    createDirectories(scratchDirectory.getParent());
+    try (ProcessRunner pr = new DefaultProcessRunner(scratchDirectory, empty(), of(log), empty())) {
+      return et
+          .withReturningTranslation(
+              () -> pr
+                  .addExecution(randomUUID().toString(), "ansible-playbook", args, empty(), empty(),
+                      of(getTargetPath()), empty(), false, empty(), empty(), empty(), false)
+                  .lock().get().get().getResults());
     }
   }
 
   private Path getTargetPath() throws IBArchiveException {
-    if (targetPath == null) {
-      IBArchiveException.et.withTranslation(() -> {
-        targetPath = Paths.get(Optional.ofNullable(System.getProperty("target_directory")).orElse("./target"));
-      });
-    }
-    return targetPath;
+    return ofNullable(targetPath).orElse(wps.getRoot());
   }
 
 }

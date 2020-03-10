@@ -27,7 +27,7 @@ abstract public class AbstractPackerPostProcessor extends AbstractPackerBaseObje
   protected static final String APP_ARRAY_KEY = "ABSTRACT_PACKER_POST_PROCESSOR_ARRAY";
 
   @Override
-  public void addRequiredItemsToFactory(final Optional<IBAuthentication> a, final PackerFactory f) {
+  public void addRequiredItemsToFactory(final Optional<IBAuthentication> a, final PackerFactory<?> f) {
     Objects.requireNonNull(a).ifPresent(this::setInstanceAuthentication);
     f.addPostProcessor(this);
   }

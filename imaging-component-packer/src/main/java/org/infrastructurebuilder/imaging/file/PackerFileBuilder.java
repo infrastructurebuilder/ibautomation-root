@@ -35,7 +35,7 @@ import org.infrastructurebuilder.imaging.AbstractPackerBuilder;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerException;
-import org.infrastructurebuilder.imaging.PackerSizing;
+import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.json.JSONObject;
 
@@ -86,8 +86,8 @@ public class PackerFileBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   @Override
-  public List<PackerSizing> getSizes() {
-    return Arrays.asList(PackerSizing.small);
+  public List<String> getSizes() {
+    return Arrays.asList(PackerSizing2.small.name());
   }
 
   @Override

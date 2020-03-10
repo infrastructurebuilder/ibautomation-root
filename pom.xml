@@ -15,14 +15,16 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>26</version>
+    <version>30-SNAPSHOT</version>
   </parent>
   <groupId>org.infrastructurebuilder.automation</groupId>
   <artifactId>ibautomation-root</artifactId>
@@ -49,7 +51,7 @@
     <imaging.plugin.version>${project.version}</imaging.plugin.version>
     <ibauth.version>0.9.2-SNAPSHOT</ibauth.version>
     <iblog.version>0.10.0</iblog.version>
-    <ibcore.bom.version>0.15.0.0</ibcore.bom.version>
+    <ibcore.bom.version>0.17.0.0-SNAPSHOT</ibcore.bom.version>
     <maven.bom.version>${maven.version}.1</maven.bom.version>
   </properties>
   <dependencyManagement>
@@ -94,6 +96,12 @@
         <artifactId>ibr-api</artifactId>
         <version>${project.version}</version>
       </dependency>
+            <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>ibr-aws-dialect</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>ibr-ansible-validator</artifactId>
@@ -171,6 +179,13 @@
   </dependencyManagement>
   <dependencies>
     <dependency>
+      <groupId>org.infrastructurebuilder</groupId>
+      <artifactId>ibcore</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
     </dependency>
@@ -226,24 +241,8 @@
           </configuration>
         </plugin>
         <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-surefire-plugin</artifactId>
-          <configuration>
-            <systemPropertyVariables>
-              <target_dir>${project.build.directory}</target_dir>
-            </systemPropertyVariables>
-          </configuration>
-        </plugin>
-        <plugin>
           <groupId>com.googlecode.maven-download-plugin</groupId>
           <artifactId>download-maven-plugin</artifactId>
-          <configuration>
-            <unpack>true</unpack>
-            <checkSignature>true</checkSignature>
-            <url>${hashicorp.packer.url}</url>
-            <sha1>${hashicorp.packer.download.sha1}</sha1>
-            <outputDirectory>${project.build.directory}</outputDirectory>
-          </configuration>
           <executions>
             <execution>
               <id>getPacker</id>
@@ -251,6 +250,13 @@
               <goals>
                 <goal>wget</goal>
               </goals>
+              <configuration>
+                <unpack>true</unpack>
+                <checkSignature>true</checkSignature>
+                <url>${hashicorp.packer.url}</url>
+                <sha1>${hashicorp.packer.download.sha1}</sha1>
+                <outputDirectory>${project.build.directory}</outputDirectory>
+              </configuration>
             </execution>
           </executions>
         </plugin>
@@ -319,10 +325,11 @@
     be used -->
   <modules>
     <module>ibr-api</module>
+    <module>ibr-aws-dialect</module>
     <module>ibr-shell-validator</module>
     <module>ibr-ansible-validator</module>
     <module>imaging-test-fixtures</module>
-    <module>imaging-component-docker</module>
+    <module>imaging-component-container</module>
     <module>imaging-component-packer</module>
     <module>imaging-maven-plugin</module>
     <module>ibr-generator-terraform</module>

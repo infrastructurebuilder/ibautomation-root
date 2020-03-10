@@ -18,6 +18,7 @@ package org.infrastructurebuilder.imaging.maven;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isReadable;
 import static java.nio.file.Files.isRegularFile;
+import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.MR_PARAMS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.NO_TIMEOUT_SPECIFIED;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER;
@@ -39,7 +40,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
@@ -92,33 +92,33 @@ public class PackerBean {
       throw new PackerException("No " + string);
   }
 
-  private Map<String, String> additionalEnvironment = new HashMap<>();
-  private List<IBArchive> ibrArchives;
-  private String ibrHandler;
+  private Map<String, String>                   additionalEnvironment = new HashMap<>();
+  private List<IBArchive>                       ibrArchives;
+  private String                                ibrHandler;
   private Map<IBArchive, IBRInternalDependency> ibrMapping;
-  private ArchiverManager archiverManager;
-  private IBAuthenticationProducerFactory authFactory;
-  private Optional<String> classifier = Optional.empty();
-  private boolean cleanupOnError = false;
-  private Optional<GAV> coords = Optional.empty();
-  private boolean copyToOtherRegions;
-  private String description;
-  private Charset encoding = StandardCharsets.UTF_8;
-  private Optional<String> except = Optional.empty();
-  private String finalName;
-  private boolean force = false;
-  private Supplier<PackerManifest> generator;
-  private ImageBuilder image;
-  private Logger log = LoggerFactory.getLogger(PackerBean.class);
-  private String name;
-  private Optional<String> only = Optional.empty();
-  private Path outputDirectory;
-  private List<PackerManifest> packerArtifactData;
-  private Path packerExecutable;
+  private ArchiverManager                       archiverManager;
+  private IBAuthenticationProducerFactory       authFactory;
+  private Optional<String>                      classifier            = Optional.empty();
+  private boolean                               cleanupOnError        = false;
+  private Optional<GAV>                         coords                = Optional.empty();
+  private boolean                               copyToOtherRegions;
+  private String                                description;
+  private Charset                               encoding              = StandardCharsets.UTF_8;
+  private Optional<String>                      except                = Optional.empty();
+  private String                                finalName;
+  private boolean                               force                 = false;
+  private Supplier<PackerManifest>              generator;
+  private ImageBuilder                          image;
+  private Logger                                log                   = LoggerFactory.getLogger(PackerBean.class);
+  private String                                name;
+  private Optional<String>                      only                  = Optional.empty();
+  private Path                                  outputDirectory;
+  private List<PackerManifest>                  packerArtifactData;
+  private Path                                  packerExecutable;
 
   private PackerFactory<JSONObject> packerFactory;
 
-  private boolean parallel = true;
+  private boolean         parallel = true;
   private PlexusContainer plexusContainer;
 
   private Optional<Path> projectBuildDirectory = Optional.empty();
@@ -142,7 +142,7 @@ public class PackerBean {
   private Path varFile;
 
   private Map<String, String> vars;
-  private Path workingDirectory;
+  private Path                workingDirectory;
 
   public Map<String, String> getAdditionalEnvironment() {
     return additionalEnvironment;
@@ -286,11 +286,11 @@ public class PackerBean {
   }
 
   public void setAdditionalEnvironment(final Map<String, String> additionalEnvironment) {
-    this.additionalEnvironment = Objects.requireNonNull(additionalEnvironment);
+    this.additionalEnvironment = requireNonNull(additionalEnvironment);
   }
 
   public void setIBRArchives(final List<IBArchive> ibrARchives) {
-    ibrArchives = Objects.requireNonNull(ibrARchives);
+    ibrArchives = requireNonNull(ibrARchives);
   }
 
   public void setClassifier(final String classifier) {
@@ -306,7 +306,7 @@ public class PackerBean {
   }
 
   public void setEncoding(final Charset encoding) {
-    this.encoding = Objects.requireNonNull(encoding);
+    this.encoding = requireNonNull(encoding);
   }
 
   public void setExcept(final String except) {
@@ -316,19 +316,19 @@ public class PackerBean {
   @SuppressWarnings("deprecation")
   public final PackerBean setExecutionConfigFrom(final ImageBuildExecutionConfig c) throws ComponentLookupException {
 
-    archiverManager = Objects.requireNonNull(c.getArchiverManager());
-    properties = Objects.requireNonNull(c.getProperties());
-    image = Objects.requireNonNull(c.getImage());
+    archiverManager = requireNonNull(c.getArchiverManager());
+    properties = requireNonNull(c.getProperties());
+    image = requireNonNull(c.getImage());
     setRequirements(c.getRequirements());
-    setPlexusContainer(Objects.requireNonNull(c.getPlexusContainer()));
+    setPlexusContainer(requireNonNull(c.getPlexusContainer()));
 
-    setSettingsJSON(Objects.requireNonNull(c.getSettingsJSON()));
-    tempDirectory = forceCreateDir.apply(Objects.requireNonNull(c.getTmpDir()));
-    final IBAuthConfigBean iBAuthConfigBean = Objects.requireNonNull(c.getAuthFileWriter());
-    authFactory = setupAuthFactory(iBAuthConfigBean, iBAuthConfigBean.mergedUpdatedAuthList(settingsJSON,
-        Objects.requireNonNull(c.getBaseAuthentications())));
+    setSettingsJSON(requireNonNull(c.getSettingsJSON()));
+    tempDirectory = forceCreateDir.apply(requireNonNull(c.getTmpDir()));
+    final IBAuthConfigBean iBAuthConfigBean = requireNonNull(c.getAuthFileWriter());
+    authFactory = setupAuthFactory(iBAuthConfigBean,
+        iBAuthConfigBean.mergedUpdatedAuthList(settingsJSON, requireNonNull(c.getBaseAuthentications())));
 
-    ibrMapping = Objects.requireNonNull(c.getIBRMapping());
+    ibrMapping = requireNonNull(c.getIBRMapping());
     setPackerManifests(c.getPackerManifests());
     setIBRHandler(c.getIBRHandler());
     setIBRArchives(c.getIBRArchives());
@@ -351,15 +351,16 @@ public class PackerBean {
     setVarFile(c.getVarFile());
     setVars(c.getVars());
     stdOut = Optional.ofNullable(c.getAdditionalPrintStream());
-    name = Objects.requireNonNull(c.getName());
-    description = Objects.requireNonNull(c.getDescription());
+    name = requireNonNull(c.getName());
+    description = requireNonNull(c.getDescription());
     copyToOtherRegions = c.isCopyToOtherRegions();
 
     packerFactory = getPackerFactory();
     return this;
   }
 
-  IBAuthenticationProducerFactory setupAuthFactory(IBAuthConfigBean iBAuthConfigBean, List<IBAuthentication> list) throws ComponentLookupException {
+  IBAuthenticationProducerFactory setupAuthFactory(IBAuthConfigBean iBAuthConfigBean, List<IBAuthentication> list)
+      throws ComponentLookupException {
     IBAuthenticationProducerFactory af = getPlexusContainer().lookup(IBAuthenticationProducerFactory.class, "default");
     af.setAuthentications(list);
     af.setTemp(iBAuthConfigBean.getTempDirectory());
@@ -367,7 +368,7 @@ public class PackerBean {
   }
 
   public void setFinalName(final String finalName) {
-    this.finalName = Objects.requireNonNull(finalName);
+    this.finalName = requireNonNull(finalName);
   }
 
   public void setForce(final boolean force) {
@@ -379,7 +380,7 @@ public class PackerBean {
   }
 
   public void setLog(final Logger slf4jFromMavenLogger) {
-    log = Objects.requireNonNull(slf4jFromMavenLogger);
+    log = requireNonNull(slf4jFromMavenLogger);
   }
 
   public void setOnly(final String only) {
@@ -388,17 +389,17 @@ public class PackerBean {
   }
 
   public void setOutputDirectory(final Path o) {
-    outputDirectory = forceCreateDir.apply(Objects.requireNonNull(o));
+    outputDirectory = forceCreateDir.apply(requireNonNull(o));
   }
 
   public void setPackerExecutable(final Path packerExecutable) {
     this.packerExecutable = et.withReturningTranslation(() -> {
-      return Objects.requireNonNull(packerExecutable).toRealPath().toAbsolutePath();
+      return requireNonNull(packerExecutable).toRealPath().toAbsolutePath();
     });
   }
 
   public void setPackerManifests(final List<PackerManifest> packerManifests) {
-    packerArtifactData = Objects.requireNonNull(packerManifests);
+    packerArtifactData = requireNonNull(packerManifests);
   }
 
   public void setParallel(final boolean parallel) {
@@ -406,7 +407,7 @@ public class PackerBean {
   }
 
   public void setPlexusContainer(final PlexusContainer plexusContainer) {
-    this.plexusContainer = Objects.requireNonNull(plexusContainer);
+    this.plexusContainer = requireNonNull(plexusContainer);
   }
 
   public void setProjectBuildDirectory(final File pbd) {
@@ -414,11 +415,11 @@ public class PackerBean {
   }
 
   public void setRequirements(final List<IBRInternalDependency> requirements) {
-    this.requirements = Objects.requireNonNull(requirements);
+    this.requirements = requireNonNull(requirements);
   }
 
   public void setSettingsJSON(final JSONObject settingsJSON) {
-    this.settingsJSON = Objects.requireNonNull(settingsJSON);
+    this.settingsJSON = requireNonNull(settingsJSON);
   }
 
   public void setSkipActualPackerRun(final boolean skipActualPackerRun) {
@@ -434,11 +435,11 @@ public class PackerBean {
   }
 
   public void setVars(final Map<String, String> vars) {
-    this.vars = Objects.requireNonNull(vars);
+    this.vars = requireNonNull(vars);
   }
 
   public void setWorkingDirectory(final Path workingDir) {
-    workingDirectory = forceCreateDir.apply(Objects.requireNonNull(workingDir));
+    workingDirectory = forceCreateDir.apply(requireNonNull(workingDir));
   }
 
   public Path writeJSON(final JSONObject o) throws JSONException, IOException {
@@ -491,7 +492,7 @@ public class PackerBean {
 
           Paths.get(UUID.randomUUID().toString()),
 
-          Objects.requireNonNull(packerArtifactData, "packer manifest data for getPackerFactory"),
+          requireNonNull(packerArtifactData, "packer manifest data for getPackerFactory"),
 
           getImage().orElseThrow(() -> new PackerException("No Image to build")),
 
@@ -507,7 +508,8 @@ public class PackerBean {
           final IBRInternalDependency d = ibrMapping.get(ibr);
           PackerIBRProvisioner<JSONObject> p;
           try {
-            p = ((PackerIBRProvisioner<JSONObject>) getPlexusContainer().lookup(PackerProvisioner.class, getIBRHandler()));
+            p = ((PackerIBRProvisioner<JSONObject>) getPlexusContainer().lookup(PackerProvisioner.class,
+                getIBRHandler()));
             p.setLog(getLog());
           } catch (final ComponentLookupException e) {
             throw new PackerException("Cannot location IBR Handler " + getIBRHandler());
@@ -523,7 +525,7 @@ public class PackerBean {
   }
 
   void validate(final String executionId) {
-    if (Objects.requireNonNull(executionId).contains("executionId"))
+    if (requireNonNull(executionId).contains("executionId"))
       throw new PackerException("Execution ids cannot contain the string 'executionId'");
     failNull(finalName, "finalName");
     failNull(log, "log");

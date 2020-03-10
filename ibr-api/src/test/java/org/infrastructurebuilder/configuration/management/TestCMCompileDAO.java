@@ -27,10 +27,7 @@ import java.util.Map;
 import java.util.TreeSet;
 import java.util.UUID;
 
-import org.infrastructurebuilder.configuration.management.IBRDataObject;
 import org.json.JSONObject;
-import org.infrastructurebuilder.configuration.management.IBArchiveException;
-import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -41,7 +38,6 @@ public class TestCMCompileDAO {
 
   @Before
   public void setupBefore() {
-    DummyIBRType.getRps().setPath(Paths.get("."));
     type = new DummyIBRType();
 
     configMap.put("file", "path/to/file");

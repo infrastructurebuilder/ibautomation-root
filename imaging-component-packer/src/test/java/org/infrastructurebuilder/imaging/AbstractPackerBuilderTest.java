@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.infrastructurebuilder.imaging.aws.FakeIBRAWSMapper;
 import org.infrastructurebuilder.imaging.aws.PackerAWSBuilder;
 import org.infrastructurebuilder.imaging.aws.PackerAWSBuilderDisk;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
@@ -363,7 +364,7 @@ public class AbstractPackerBuilderTest extends AbstractPackerTestRoot {
 
   @Before
   public void thisBefore() throws Exception {
-    pb = new PackerAWSBuilder();
+    pb = new PackerAWSBuilder(new FakeIBRAWSMapper());
     pb.setWorkingRootDirectory(getRoot());
     pb.setTargetDirectory(getTargetDir());
     servers = new JSONObject().put("A", "B");

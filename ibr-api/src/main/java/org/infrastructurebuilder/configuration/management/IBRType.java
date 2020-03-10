@@ -16,20 +16,25 @@
 package org.infrastructurebuilder.configuration.management;
 
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.SortedSet;
 
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.json.JSONObject;
 
 public interface IBRType<T> {
+  AutomationUtils getAutomationUtils();
 
   SortedSet<IBRValidationOutput> collectValidatedOutput();
 
-  Path getArchiveSubPath();
+  default Path getArchiveSubPath() {
+    return Paths.get(getName());
+  }
 
   Optional<Map<String, Object>> getConfig();
 
@@ -41,6 +46,6 @@ public interface IBRType<T> {
 
   void setConfigSupplier(IBConfigSupplier acs);
 
-  JSONObject transformToProvisionerEntry(String typeName, Path root, Path targetFile,
-      Optional<IBArchive> archive, List<ImageData<T>> builders);
+  JSONObject transformToProvisionerEntry(String typeName, Path root, Path targetFile, Optional<IBArchive> archive,
+      List<ImageData<T>> builders);
 }

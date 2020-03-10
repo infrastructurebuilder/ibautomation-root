@@ -30,9 +30,9 @@ import javax.inject.Named;
 import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.configuration.management.AbstractIBRType;
 import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.json.JSONObject;
@@ -42,7 +42,7 @@ import org.json.JSONObject;
 public class ShellIBRType extends AbstractIBRType<JSONObject> {
 
   @Inject
-  public ShellIBRType(final IBRRootPathSupplier rps, final List<IBRValidator<JSONObject>> validators) {
+  public ShellIBRType(final AutomationUtils rps, final List<IBRValidator<JSONObject>> validators) {
     super(rps, validators);
     setName(SHELL);
   }

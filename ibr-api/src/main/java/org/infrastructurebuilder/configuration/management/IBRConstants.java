@@ -27,5 +27,6 @@ public interface IBRConstants {
   String SHELL_FILE = "script";
   String TEST = "test";
   String TYPE = "type";
+  String IBR_WORKING_PATH_SUPPLIER = "IBR_WORKING_PATH_SUPPLIER";
 
 }

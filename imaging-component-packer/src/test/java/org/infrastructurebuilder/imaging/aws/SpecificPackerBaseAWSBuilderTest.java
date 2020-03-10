@@ -29,7 +29,7 @@ import java.util.UUID;
 
 import org.infrastructurebuilder.configuration.management.IBRConstants;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
-import org.infrastructurebuilder.imaging.PackerSizing;
+import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.imaging.maven.PackerManifestTest;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.json.JSONObject;
@@ -44,7 +44,7 @@ public class SpecificPackerBaseAWSBuilderTest extends PackerManifestTest {
   @Before
   public void setUp3() throws Exception {
     super.setUp2();
-    b = new SpecificPackerBaseAWSBuilder();
+    b = new SpecificPackerBaseAWSBuilder(new FakeIBRAWSMapper());
     a = new DefaultIBAuthentication();
   }
 
@@ -79,7 +79,8 @@ public class SpecificPackerBaseAWSBuilderTest extends PackerManifestTest {
 
   @Test
   public void testUpdateBuilderWithInstanceData() {
-    b.updateBuilderWithInstanceData(PackerSizing.gpu, a, Optional.empty(), Collections.emptyList(), Optional.empty());
+    b.updateBuilderWithInstanceData(PackerSizing2.gpu.name(), a, Optional.empty(), Collections.emptyList(),
+        Optional.empty());
   }
 
 }

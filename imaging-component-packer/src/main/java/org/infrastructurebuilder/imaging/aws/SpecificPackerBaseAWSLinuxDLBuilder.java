@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
@@ -32,6 +33,10 @@ import org.json.JSONObject;
 @Named(SpecificPackerBaseAWSLinuxDLBuilder.SPECIFIC_AMAZONEBS_BASE_LINUX_DL)
 @Typed(ImageData.class)
 public class SpecificPackerBaseAWSLinuxDLBuilder extends SpecificPackerAWSLinuxDLBuilder {
+  public SpecificPackerBaseAWSLinuxDLBuilder(IBRDialectMapper mapper) {
+    super(mapper);
+  }
+
   public static final String SPECIFIC_AMAZONEBS_BASE_LINUX_DL = "specific-amazonebs-base-linux-dl";
 
   @Override

@@ -26,7 +26,7 @@ public class SpecificPackerAWSLinuxDLBuilderTest {
 
   @Before
   public void setUp() throws Exception {
-    a = new SpecificPackerAWSLinuxDLBuilder();
+    a = new SpecificPackerAWSLinuxDLBuilder(new FakeIBRAWSMapper());
   }
 
   @Test

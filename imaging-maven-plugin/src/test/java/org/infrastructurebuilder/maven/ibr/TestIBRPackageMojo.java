@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -23,7 +24,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -45,16 +45,18 @@ import org.apache.maven.project.MavenProject;
 import org.codehaus.plexus.archiver.jar.JarArchiver;
 import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.DummyIBRType;
 import org.infrastructurebuilder.configuration.management.IBRDataObject;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.ansible.AnsibleIBRType;
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleIBRValidator;
+import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
+import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
 import org.infrastructurebuilder.maven.imaging.FakeArchiverManager;
 import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
@@ -64,18 +66,18 @@ import org.junit.rules.ExpectedException;
 
 public class TestIBRPackageMojo {
   @Rule
-  public ExpectedException expected = ExpectedException.none();
+  public ExpectedException               expected = ExpectedException.none();
   private DefaultIBRBuilderConfigElement builderEntry;
 
-  private Path emptyWorkDirectory;
-  private IBRPackageMojo m;
-  private Map<Object, Object> mavenMap;
-  private final WorkingPathSupplier ps = new WorkingPathSupplier();
-  private IBRRootPathSupplier rps;
-  private File sneakyFile;
+  private Path                      emptyWorkDirectory;
+  private IBRPackageMojo            m;
+  private Map<Object, Object>       mavenMap;
+  private final TestingPathSupplier ps = new TestingPathSupplier();
+  private AutomationUtils           rps;
+  private File                      sneakyFile;
 
-  private Path target;
-  private Path test;
+  private Path                target;
+  private Path                test;
   private IBRType<JSONObject> testFakeCMType;
   private IBRType<JSONObject> testFakeNoFileCMType;
 
@@ -94,9 +96,7 @@ public class TestIBRPackageMojo {
   @Before
   public void setup() throws Exception {
     target = ps.getRoot();
-    rps = new DefaultIBRRootPathSupplier().setPath(target);
-
-    DummyIBRType.getRps().setPath(target);
+    rps = new AutomationUtilsTesting();
 
     test = Paths.get(target.toString(), FakeDummyIBRType.FAKE_TYPE_FILE);
     sneakyFile = Paths.get(target.toString(), "sneakyFile").toFile();
@@ -120,10 +120,9 @@ public class TestIBRPackageMojo {
     mavenMap = new HashMap<>();
 
     final Map<String, IBRDataObject<JSONObject>> itemMap = new HashMap<>();
-    itemMap.put(FakeDummyIBRType.FAKE_TYPE_FILE,
-        new IBRDataObject<>(testFakeCMType, Paths.get("."), builderEntry));
+    itemMap.put(FakeDummyIBRType.FAKE_TYPE_FILE, new IBRDataObject<>(testFakeCMType, Paths.get("."), builderEntry));
 
-    mavenMap.put(AbstractIBRMojo.COMPILE_ORDER, Arrays.asList(FakeDummyIBRType.FAKE_TYPE_FILE));
+    mavenMap.put(AbstractIBRMojo.COMPILE_ORDER, asList(FakeDummyIBRType.FAKE_TYPE_FILE));
     mavenMap.put(AbstractIBRMojo.COMPILE_ITEMS, itemMap);
 
     final ArtifactHandler artifactHandler = new DefaultArtifactHandler("jar");
@@ -141,10 +140,13 @@ public class TestIBRPackageMojo {
     m.setPluginContext(mavenMap);
     m.setOutputDirectory(target.toFile());
     m.setWorkDirectory(target.toFile());
-    m.setRootPathSupplier(rps);
-    final IBRType<JSONObject> a = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator()));
+    IBRWorkingPathSupplier i = new IBRWorkingPathSupplier();
+    i.setT(rps.getWorkingPath());
+    m.setRootPathSupplier(i);
+    final IBRType<JSONObject> a = new AnsibleIBRType(rps,
+        asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator())));
     a.setConfigSupplier(new DefaultIBConfigSupplier().setConfig(new HashMap<>()));
-    final Map<String, IBRType<JSONObject>> myTypes = Arrays.asList(a).stream()
+    final Map<String, IBRType<JSONObject>> myTypes = asList(a).stream()
         .collect(Collectors.toMap(k -> a.getName(), Function.identity()));
     m.setMyTypes(myTypes);
 

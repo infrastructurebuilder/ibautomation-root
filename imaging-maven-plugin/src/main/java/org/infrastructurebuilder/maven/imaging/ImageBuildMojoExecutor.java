@@ -38,6 +38,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 
 public interface ImageBuildMojoExecutor extends ImageBuildExecutionConfig {
+  public static final String EXECUTION_ID = "executionId";
 
   Optional<Map<String, Path>> execute(String executionId, Set<Artifact> artifacts);
 

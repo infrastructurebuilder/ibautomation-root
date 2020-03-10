@@ -18,7 +18,6 @@ package org.infrastructurebuilder.imaging;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import org.infrastructurebuilder.imaging.PackerSizing;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -30,10 +29,10 @@ public class PackerSizingTest {
 
   @Test
   public void test() {
-    final PackerSizing a = PackerSizing.small;
-    assertTrue(a.compareTo(PackerSizing.stupid) < 0);
-    assertEquals(6, PackerSizing.values().length);
-    assertEquals(a, PackerSizing.valueOf("small"));
+    final PackerSizing2 a = PackerSizing2.small;
+    assertTrue(a.compareTo(PackerSizing2.stupid) < 0);
+    assertEquals(6, PackerSizing2.values().length);
+    assertEquals(a, PackerSizing2.valueOf("small"));
   }
 
 }

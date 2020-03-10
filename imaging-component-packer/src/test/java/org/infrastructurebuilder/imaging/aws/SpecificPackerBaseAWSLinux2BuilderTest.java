@@ -30,7 +30,7 @@ public class SpecificPackerBaseAWSLinux2BuilderTest extends PackerManifestTest {
 
   @Before
   public void setUp3() throws Exception {
-    b = new SpecificPackerBaseAWSLinux2Builder();
+    b = new SpecificPackerBaseAWSLinux2Builder(new FakeIBRAWSMapper());
     a = new DefaultIBAuthentication();
   }
 

@@ -15,33 +15,34 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
-import org.junit.Before;
 import org.junit.Test;
 
 public class AbstractIBRTypeTest {
 
   AbstractIBRType<JSONObject> t;
-  final WorkingPathSupplier wps = new WorkingPathSupplier();
+  final TestingPathSupplier wps = new TestingPathSupplier();
   final Path target = wps.getRoot();
 
   @Test
   public void testGetRoot() {
     Path p = wps.get();
     IBUtils.deletePath(p);
-    DummyIBRType.getRps().setPath(p);
     t = new DummyIBRType();
     assertFalse(Files.exists(p));
     Path r = t.getRoot();
-    assertEquals(p,r);
     assertTrue(Files.exists(r));
+    assertNotNull(t.getAutomationUtils());
 
   }
 

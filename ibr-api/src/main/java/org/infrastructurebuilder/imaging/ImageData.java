@@ -65,7 +65,7 @@ public interface ImageData<T> extends ImageBaseObject {
 
   Optional<Map<String, String>> getRegionalEncryptionIdentifiers();
 
-  List<PackerSizing> getSizes();
+  List<String> getSizes();
 
   Optional<Map<String, Object>> getSourceFilter();
 
@@ -134,10 +134,12 @@ public interface ImageData<T> extends ImageBaseObject {
 
   void setUserDataFile(Path userDataFile);
 
-  void updateBuilderWithInstanceData(PackerSizing size, IBAuthentication a, Optional<ImageBuildResult> manifest,
+  void updateBuilderWithInstanceData(String size, IBAuthentication a, Optional<ImageBuildResult> manifest,
       List<ImageStorage> list, Optional<Type> updateData);
 
   @Override
   void validate();
+
+  IBRDialect getDialect();
 
 }

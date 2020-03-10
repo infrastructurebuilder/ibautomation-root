@@ -30,15 +30,22 @@ import org.json.JSONObject;
 
 public class DefaultIBRBuilderConfigElement implements IBRBuilderConfigElement {
   private Map<String, Object> config = new HashMap<>();
-  private final String id = UUID.randomUUID().toString();
+  private final String        id     = UUID.randomUUID().toString();
 
   private boolean test = false;
-  private String type;
+  private String  type;
 
   @Override
   public JSONObject asJSON() {
-    return JSONBuilder.newInstance().addString(ID, getId()).addString(TYPE, getType())
-        .addJSONObject(CONFIG, new JSONObject(get())).addBoolean(TEST, isTest()).asJSON();
+    return JSONBuilder.newInstance()
+        // id
+        .addString(ID, getId())
+        // Type
+        .addString(TYPE, getType())
+        // Config
+        .addJSONObject(CONFIG, new JSONObject(get()))
+        // test
+        .addBoolean(TEST, isTest()).asJSON();
   }
 
   @Override

@@ -22,6 +22,7 @@ import java.util.Optional;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
@@ -34,6 +35,9 @@ import org.json.JSONObject;
 public class SpecificPackerBaseAWSLinux2Builder extends SpecificPackerAWSLinux2Builder {
   public static final String SPECIFIC_AMAZONEBS_BASE_LINUX2 = "specific-amazonebs-base-linux2";
 
+  public SpecificPackerBaseAWSLinux2Builder(IBRDialectMapper mapper) {
+    super(mapper);
+  }
   @Override
   public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory<JSONObject> f) {
     super.addRequiredItemsToFactory(a, f);

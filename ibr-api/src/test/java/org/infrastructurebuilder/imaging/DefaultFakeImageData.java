@@ -24,12 +24,6 @@ import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.configuration.management.IBRConstants;
-import org.infrastructurebuilder.imaging.ImageBuildResult;
-import org.infrastructurebuilder.imaging.ImageData;
-import org.infrastructurebuilder.imaging.ImageDataDisk;
-import org.infrastructurebuilder.imaging.PackerFactory;
-import org.infrastructurebuilder.imaging.PackerSizing;
-import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONObject;
@@ -156,7 +150,7 @@ public class DefaultFakeImageData extends FakePackerBaseObject implements ImageD
   }
 
   @Override
-  public List<PackerSizing> getSizes() {
+  public List<String> getSizes() {
 
     return null;
   }
@@ -332,8 +326,13 @@ public class DefaultFakeImageData extends FakePackerBaseObject implements ImageD
   }
 
   @Override
-  public void updateBuilderWithInstanceData(final PackerSizing size, final IBAuthentication a,
+  public void updateBuilderWithInstanceData(final String size, final IBAuthentication a,
       final Optional<ImageBuildResult> manifest, final List<ImageStorage> list, final Optional<Type> builderData) {
 
+  }
+
+  @Override
+  public IBRDialect getDialect() {
+    return null;
   }
 }

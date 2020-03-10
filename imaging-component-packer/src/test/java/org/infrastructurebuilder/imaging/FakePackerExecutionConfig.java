@@ -48,9 +48,7 @@ import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
-import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
-import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
 import org.json.JSONObject;
 
 public class FakePackerExecutionConfig implements ImageBuildExecutionConfig {
@@ -60,7 +58,6 @@ public class FakePackerExecutionConfig implements ImageBuildExecutionConfig {
   private final Path actualProjectBuildDirectory;
   private final DefaultGAV artifact;
   private final List<DefaultIBAuthentication> authentications;
-  private final IBAuthenticationProducerFactory authProdFactory;
   private PackerBean data = new PackerBean();
   private final ContainerConfiguration dpcreq;
   private PackerImageBuilder image;
@@ -81,7 +78,6 @@ public class FakePackerExecutionConfig implements ImageBuildExecutionConfig {
     this.targetDirectory = targetDirectory;
     a = new DefaultIBAuthentication();
     settings = new JSONObject().put("A", new JSONObject().put("username", "Auser").put("password", "Bpassword"));
-    authProdFactory = new DummyNOPAuthenticationProducerFactory(() -> temp);
     a.setServerId("A");
     a.setType("amazon-ebs");
     a.setTarget("X");
@@ -303,5 +299,9 @@ public class FakePackerExecutionConfig implements ImageBuildExecutionConfig {
 
   public void setData(final PackerBean data) {
     this.data = data;
+  }
+
+  public PackerBean getData() {
+    return data;
   }
 }

@@ -1,4 +1,4 @@
 {
   "type": "ansible",
-  "playbook_file": "../abc.xml"
+  "playbook_file": "../../abc.xml"
 }

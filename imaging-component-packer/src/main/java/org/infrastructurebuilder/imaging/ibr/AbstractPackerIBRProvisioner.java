@@ -26,7 +26,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,17 +40,18 @@ import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.json.JSONObject;
 
-public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProvisioner<T> implements PackerIBRProvisioner<T> {
+public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProvisioner<T>
+    implements PackerIBRProvisioner<T> {
 
   @Named(GenericProvisioner.GENERIC_IBR_PROVISIONER)
   @Typed(PackerProvisioner.class)
   @Description("Generic IBR Provisioner add-on")
   public static class GenericProvisioner<T> extends AbstractPackerProvisioner<T> {
-    public static final String GENERIC_IBR_PROVISIONER = "generic-ibr-provisioner";
+    public static final String        GENERIC_IBR_PROVISIONER = "generic-ibr-provisioner";
     private final Optional<IBArchive> archive;
-    private final IBRType<T> iBRType;
-    private final String lType;
-    private final Path path;
+    private final IBRType<T>          iBRType;
+    private final String              lType;
+    private final Path                path;
 
     public GenericProvisioner(final IBRType<T> thisType, final String ltype, final Path p,
         final Optional<IBArchive> arch) {
@@ -88,7 +88,7 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
 
   }
 
-  private IBArchive archive;
+  private IBArchive                     archive;
   private final Map<String, IBRType<T>> cmTypes;
 
   @Inject
@@ -102,17 +102,16 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
     this.archive = requireNonNull(archive);
     final List<PackerProvisioner<T>> list = new ArrayList<>();
     getArchive().ifPresent(a -> {
-      final List<String> notfound = new ArrayList<>(
-          a.getPathList().stream().map(pl -> pl.v1()).distinct().collect(Collectors.toList()));
+      final List<String> notfound = a.getPathKeys();
       notfound.removeAll(cmTypes.keySet());
 
       if (notfound.size() > 0)
         throw new IBArchiveException("The following types were not available as a IBRType : " + notfound);
 
       a.getPathList().forEach(pl -> {
-        final Path p = getWorkingRootDirectory().resolve(pl.v2());
-        final IBRType<T> type = cmTypes.get(pl.v1());
-        final GenericProvisioner<T> gp = new GenericProvisioner<T>(type, pl.v1(), p, getArchive());
+        final Path p = getWorkingRootDirectory().resolve(pl.getPath());
+        final IBRType<T> type = cmTypes.get(pl.getKey());
+        final GenericProvisioner<T> gp = new GenericProvisioner<T>(type, pl.getKey(), p, getArchive());
         gp.setBuilders(getBuilders());
         gp.setLog(getLog());
         list.add(gp);

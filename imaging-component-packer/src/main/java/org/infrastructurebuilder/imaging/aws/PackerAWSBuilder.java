@@ -15,12 +15,18 @@
  */
 package org.infrastructurebuilder.imaging.aws;
 
+import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.configuration.management.IBRConstants.AMAZONEBS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.ARTIFACT_ID;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.NAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.SSH_USERNAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TAGS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
+import static org.infrastructurebuilder.imaging.PackerException.et;
 import static org.infrastructurebuilder.imaging.aws.AWSConstants.AMI_DESCRIPTION;
 import static org.infrastructurebuilder.imaging.aws.AWSConstants.AMI_NAME;
 import static org.infrastructurebuilder.imaging.aws.AWSConstants.AMI_REGIONS;
@@ -44,14 +50,10 @@ import static org.infrastructurebuilder.imaging.aws.AWSConstants.VPC_ID;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
@@ -60,13 +62,15 @@ import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationExce
 import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.imaging.AbstractPackerBuildResult;
 import org.infrastructurebuilder.imaging.AbstractPackerBuilder;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.ImageDataDisk;
 import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
-import org.infrastructurebuilder.imaging.PackerSizing;
+import org.infrastructurebuilder.imaging.PackerSizing2;
+import org.infrastructurebuilder.imaging.aws.ami.IBRAWSAMISupplier;
 import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
@@ -87,9 +91,9 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
 
     @Override
     public Optional<String> getArtifactInfo() {
-      return Optional.ofNullable(getJSON().optString(ARTIFACT_ID)).map(a -> {
+      return ofNullable(getJSON().optString(ARTIFACT_ID)).map(a -> {
         final JSONObject artifactInfo = new JSONObject();
-        for (final String b : Arrays.asList(a.split(","))) {
+        for (final String b : asList(a.split(","))) {
           final String[] c = b.split(":");
           artifactInfo.put(c[0], c[1]);
         }
@@ -98,57 +102,42 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
     }
   }
 
-  public final static String AWS_AMAZON_EBS_PACKER_BUILDER = "aws-ebs-packer-builder";
-  public final static String DEFAULT_AMZN_LINUX_AMI_STRING = "amzn-ami*-ebs";
+  public final static String AWS_AMAZON_EBS_PACKER_BUILDER    = "aws-ebs-packer-builder";
+  public final static String DEFAULT_AMZN_LINUX_AMI_STRING    = "amzn-ami*-ebs";
   public final static String DEFAULT_AMZN_LINUX_DL_AMI_STRING = "Deep Learning Base AMI (Amazon Linux) Version 9.0";
 
   public final static String DEFAULT_AMZN2_LINUX_AMI_STRING = "amzn2-ami*-ebs";
-  public static final String DEFAULT_INSTANCE_TYPE = "t2.micro";
-  public static final String DEFAULT_REGION = "us-west-2";
-
-  private final static List<ImageDataDisk> EPHEMERAL = Arrays.asList();
+  public static final String DEFAULT_INSTANCE_TYPE          = "t2.micro";
+  public static final String DEFAULT_REGION                 = "us-west-2";
 
   private final static Logger log = LoggerFactory.getLogger(PackerAWSBuilder.class);
 
   private static final String PROVISIONING_USER = "ec2-user";
-  static final List<String> namedTypes = new ArrayList<String>() {
-    /**
-     *
-     */
-    private static final long serialVersionUID = -1828049483077683149L;
+  static final List<String>   namedTypes        = asList(AMAZONEBS);
 
-    /**
-     *
-     */
-
-    {
-      add(AMAZONEBS);
-    }
-  };
-
-  static Map<PackerSizing, String> sizeToInstanceMap = new HashMap<PackerSizing, String>() {
-    private static final long serialVersionUID = -7242895914690962787L;
-
-    {
-      put(PackerSizing.small, DEFAULT_INSTANCE_TYPE);
-      put(PackerSizing.medium, "t2.medium");
-      put(PackerSizing.large, "t2.large");
-      put(PackerSizing.gpu, "p3.2xlarge");
-      put(PackerSizing.gpularge, "p3.16xlarge");
-      put(PackerSizing.stupid, "c5d.18xlarge");
-    }
-  };
-
-  static Map<PackerSizing, Optional<List<ImageDataDisk>>> sizeToStorageMap = new HashMap<PackerSizing, Optional<List<ImageDataDisk>>>() {
+//  static Map<PackerSizing, String> sizeToInstanceMap = new HashMap<PackerSizing, String>() {
+//    private static final long serialVersionUID = -7242895914690962787L;
+//
+//    {
+//      put(PackerSizing.small, DEFAULT_INSTANCE_TYPE);
+//      put(PackerSizing.medium, "t2.medium");
+//      put(PackerSizing.large, "t2.large");
+//      put(PackerSizing.gpu, "p3.2xlarge");
+//      put(PackerSizing.gpularge, "p3.16xlarge");
+//      put(PackerSizing.stupid, "c5d.18xlarge");
+//    }
+//  };
+//
+  static Map<String, Optional<List<ImageDataDisk>>> sizeToStorageMap = new HashMap<String, Optional<List<ImageDataDisk>>>() {
     private static final long serialVersionUID = -5278926873567104925L;
 
     {
-      put(PackerSizing.small, Optional.empty());
-      put(PackerSizing.medium, Optional.empty());
-      put(PackerSizing.large, Optional.empty());
-      put(PackerSizing.gpu, Optional.empty());
-      put(PackerSizing.gpularge, Optional.empty());
-      put(PackerSizing.stupid, Optional.empty());
+      put(PackerSizing2.small.name(), empty());
+      put(PackerSizing2.medium.name(), empty());
+      put(PackerSizing2.large.name(), empty());
+      put(PackerSizing2.gpu.name(), empty());
+      put(PackerSizing2.gpularge.name(), empty());
+      put(PackerSizing2.stupid.name(), empty());
 
     }
   };
@@ -156,11 +145,11 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
   private static JSONObject getDefaultSourceFilter(final String name, final Optional<AWSVirtType> v,
       final Optional<AWSDeviceType> deviceType) {
     return JSONBuilder.newInstance().addBoolean("most_recent", true)
-        .addJSONArray("owners", new JSONArray(Arrays.asList("self", "amazon")))
+        .addJSONArray("owners", new JSONArray(asList("self", "amazon")))
         .addJSONObject("filters",
             JSONBuilder.newInstance().addString("virtualization-type", v.map(AWSVirtType::name))
                 .addString("root-device-type", deviceType.map(AWSDeviceType::getTypeString))
-                .addString("name", Objects.requireNonNull(name)).asJSON())
+                .addString("name", requireNonNull(name)).asJSON())
         .asJSON();
   }
 
@@ -168,11 +157,13 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
 
   private final String aws_source_name = DEFAULT_AMZN_LINUX_AMI_STRING;
 
-  private String AWS_SpotPrice;
+  private String       AWS_SpotPrice;
   private final String AWS_SpotPriceAutoProduct = "Linux/UNIX (Amazon VPC)";
-  private AWSVirtType AWS_VirtType = null;
+  private AWSVirtType  AWS_VirtType             = null;
 
-  public PackerAWSBuilder() {
+  public PackerAWSBuilder(IBRDialectMapper mapper) {
+    setDialect(mapper.getDialectFor(IBRAWSAMISupplier.TYPE, Optional.empty())
+        .orElseThrow(() -> new PackerException("No AWS Supplier!  FIXME!")));
   }
 
   @Override
@@ -183,30 +174,20 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
   @Override
   public JSONObject asJSON() {
     validate();
-    final JSONObject j = JSONBuilder.newInstance()
-        .addString(TYPE, getPackerType())
-        .addString(SSH_USERNAME, getSSHUsername())
-        .addString(NAME, getBuildExecutionName())
+    final JSONObject j = JSONBuilder.newInstance().addString(TYPE, getPackerType())
+        .addString(SSH_USERNAME, getSSHUsername()).addString(NAME, getBuildExecutionName())
         .addString(AMI_NAME, getImageName().orElseThrow(() -> new PackerException("No imageName available")))
-        .addString(REGION, getRegion().orElse(DEFAULT_REGION))
-        .addString(INSTANCE_TYPE, getInstanceType())
-        .addString(PROFILE, getCredentialsProfile())
-        .addString(KMS_KEY_ID, getEncryptionIdentifier())
-        .addString(IAM_INSTANCE_PROFILE, getLaunchUser())
-        .addString(SUBNET_ID, getSubnetId())
-        .addString(AVAILABILITY_ZONE, getAvailabilityZone())
-        .addString(VPC_ID, getNetworkId())
-        .addString(AMI_DESCRIPTION, getDescription())
-        .addBoolean(FORCE_DELETE_SNAPSHOT, isForceDeleteSnapshot())
-        .addBoolean(FORCE_DEREGISTER, isForceDeregister())
-        .addMapStringString(TAGS, getTags())
+        .addString(REGION, getRegion().orElse(DEFAULT_REGION)).addString(INSTANCE_TYPE, getInstanceType())
+        .addString(PROFILE, getCredentialsProfile()).addString(KMS_KEY_ID, getEncryptionIdentifier())
+        .addString(IAM_INSTANCE_PROFILE, getLaunchUser()).addString(SUBNET_ID, getSubnetId())
+        .addString(AVAILABILITY_ZONE, getAvailabilityZone()).addString(VPC_ID, getNetworkId())
+        .addString(AMI_DESCRIPTION, getDescription()).addBoolean(FORCE_DELETE_SNAPSHOT, isForceDeleteSnapshot())
+        .addBoolean(FORCE_DEREGISTER, isForceDeregister()).addMapStringString(TAGS, getTags())
         .addString(SHUTDOWN_BEHAVIOR, isTerminateOnShutdown() ? "terminate" : "stop")
-        .addString(SPOT_PRICE, getSpotPrice())
-        .addString(SPOT_PRICE_AUTO_PRODUCT, getSpotPriceAutoProduct())
+        .addString(SPOT_PRICE, getSpotPrice()).addString(SPOT_PRICE_AUTO_PRODUCT, getSpotPriceAutoProduct())
         .addString(USER_DATA_FILE, getUserDataFile().map(Path::toAbsolutePath).map(Path::toString))
         .addJSONArray(LAUNCH_BLOCK_DEVICE_MAPPINGS, getBlockDeviceMappings())
-        .addListString(AMI_REGIONS, getCopyToRegions())
-        .asJSON();
+        .addListString(AMI_REGIONS, getCopyToRegions()).asJSON();
     getSource().ifPresent(s -> j.put(s.v1(), s.v2()));
     return j;
   }
@@ -243,37 +224,38 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
   }
 
   @Override
-  public List<PackerSizing> getSizes() {
-    return Arrays.asList(PackerSizing.values());
+  public List<String> getSizes() {
+    return asList(PackerSizing2.values()).stream().map(PackerSizing2::name).collect(toList());
   }
 
-  public String getSizeToInstanceMapping(final PackerSizing size) {
-    return sizeToInstanceMap.get(Objects.requireNonNull(size));
+  public String getSizeToInstanceMapping(final String size) {
+
+    return getDialect().getImageSizeIdentifierFor(size).orElseThrow(
+        () -> new PackerException("No mapping for " + size + " in technology " + getDialect().getDialect()));
   }
 
-  public Map<PackerSizing, Optional<List<ImageDataDisk>>> getSizeToStorageMap() {
+  public Map<String, Optional<List<ImageDataDisk>>> getSizeToStorageMap() {
     return sizeToStorageMap;
   }
 
   @Override
   public Optional<Map<String, Object>> getSourceFilter() {
-    return Optional
-        .ofNullable(Optional.ofNullable(sourceFilter)
-            .orElse(getDefaultSourceFilter(getSourceFilterName(), getVirtType(), getDeviceType())))
-        .map(JSONObject::toMap);
+    return ofNullable(
+        ofNullable(sourceFilter).orElse(getDefaultSourceFilter(getSourceFilterName(), getVirtType(), getDeviceType())))
+            .map(JSONObject::toMap);
   }
 
   public Optional<String> getSpotPrice() {
-    return Optional.ofNullable(AWS_SpotPrice);
+    return ofNullable(AWS_SpotPrice);
   }
 
   public Optional<String> getSpotPriceAutoProduct() {
-    return getSpotPrice().filter(a -> a.equals("auto")).flatMap(b -> Optional.ofNullable(AWS_SpotPriceAutoProduct));
+    return getSpotPrice().filter(a -> a.equals("auto")).flatMap(b -> ofNullable(AWS_SpotPriceAutoProduct));
   }
 
   @Override
   public void initialize() throws InitializationException {
-    Optional.ofNullable(getLog())
+    ofNullable(getLog())
         .ifPresent(myLog -> myLog.debug("Initializing with " + isCopyToOtherRegions() + " and " + COPY_TO));
 
     setRegion(US_WEST_2);
@@ -291,37 +273,35 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
   public void setCopyToOtherRegions(final boolean copyToOtherRegions) {
 
     super.setCopyToOtherRegions(copyToOtherRegions);
-    PackerException.et.withTranslation(() -> initialize());
+    et.withTranslation(() -> initialize());
   }
 
   public void setDeviceType(final String deviceType) {
-    AWS_DeviceType = AWSDeviceType.valueOf(Objects.requireNonNull(deviceType));
+    AWS_DeviceType = AWSDeviceType.valueOf(requireNonNull(deviceType));
   }
 
   public void setSpotPrice(String spot) {
     final String s = spot;
     if (spot != null) {
       switch (spot) {
-      case "0":
-        spot = null;
-        break;
-      case "auto":
-        break;
-      default:
-        spot = PackerException.et.withReturningTranslation(() -> {
-          return new Long(s).toString();
-        });
+        case "0":
+          spot = null;
+          break;
+        case "auto":
+          break;
+        default:
+          spot = et.withReturningTranslation(() -> new Long(s).toString());
       }
     }
     AWS_SpotPrice = spot;
   }
 
   public void setVirtType(final String virtType) {
-    AWS_VirtType = AWSVirtType.valueOf(Objects.requireNonNull(virtType));
+    AWS_VirtType = AWSVirtType.valueOf(requireNonNull(virtType));
   }
 
   @Override
-  public void updateBuilderWithInstanceData(final PackerSizing size, final IBAuthentication a,
+  public void updateBuilderWithInstanceData(final String size, final IBAuthentication a,
       final Optional<ImageBuildResult> manifest, final List<ImageStorage> disks, final Optional<Type> builderData) {
     super.updateBuilderWithInstanceData(size, a, manifest, disks, builderData);
     final Map<String, String> fTags = getForcedTags().orElse(new HashMap<>());
@@ -333,9 +313,9 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
 
     setCredentialsProfile(a.getId());
 
-    setDisk(Objects.requireNonNull(disks).stream().map(PackerAWSBuilderDisk::new).collect(Collectors.toList()));
+    setDisk(requireNonNull(disks).stream().map(PackerAWSBuilderDisk::new).collect(toList()));
 
-    Objects.requireNonNull(manifest).ifPresent(m -> {
+    requireNonNull(manifest).ifPresent(m -> {
       final Optional<JSONObject> j = m.getArtifactInfo().map(JSONObject::new);
       j.ifPresent(lr -> {
         final String x = lr.getString(US_WEST_2);
@@ -344,7 +324,7 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
       });
 
     });
-    Objects.requireNonNull(builderData).ifPresent(bData -> {
+    requireNonNull(builderData).ifPresent(bData -> {
 
     });
   }
@@ -356,7 +336,7 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
   }
 
   private Optional<Tuple2<String, Object>> getSource() {
-    return Optional.ofNullable(
+    return ofNullable(
 
         getSourceImage().map(i -> tuple("source_ami", (Object) i))
 
@@ -367,21 +347,21 @@ public class PackerAWSBuilder extends AbstractPackerBuilder<JSONObject> implemen
                     .orElse(null)));
   }
 
-  protected String getInstanceTypeMappedUsername(final PackerSizing size) {
+  protected String getInstanceTypeMappedUsername(final String size) {
 
     return "ec2-user";
   }
 
   Optional<AWSDeviceType> getDeviceType() {
-    return Optional.ofNullable(AWS_DeviceType);
+    return ofNullable(AWS_DeviceType);
   }
 
   String getSourceFilterName() {
-    return Optional.ofNullable(aws_source_name).orElse(DEFAULT_AMZN_LINUX_AMI_STRING);
+    return ofNullable(aws_source_name).orElse(DEFAULT_AMZN_LINUX_AMI_STRING);
   }
 
   Optional<AWSVirtType> getVirtType() {
-    return Optional.ofNullable(AWS_VirtType);
+    return ofNullable(AWS_VirtType);
   }
 
 }

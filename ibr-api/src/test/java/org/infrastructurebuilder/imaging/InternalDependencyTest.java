@@ -27,8 +27,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.imaging.IBRInternalDependency;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;

@@ -30,28 +30,33 @@ import java.util.Map;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.DefaultMavenProjectHelper;
+import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.DefaultIBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.IBRRootPathSupplier;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.configuration.management.ansible.AnsibleIBRType;
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleIBRValidator;
+import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
+import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestIBRCompileMojo {
+  public final static Logger log = LoggerFactory.getLogger(TestIBRCompileMojo.class);
   @Rule
-  public ExpectedException expected = ExpectedException.none();
+  public ExpectedException                     expected = ExpectedException.none();
   private List<DefaultIBRBuilderConfigElement> builders;
-  private IBRCompileMojo m;
-  private final WorkingPathSupplier ps = new WorkingPathSupplier();
-
-  private Path target;
+  private IBRCompileMojo                       m;
+  private final TestingPathSupplier            ps       = new TestingPathSupplier();
+  private Path                target;
   private IBRType<JSONObject> testAnsibleCMType;
 
   private HashMap<String, IBRType<JSONObject>> typeMap;
@@ -59,21 +64,23 @@ public class TestIBRCompileMojo {
   @Before
   public void setup() throws Exception {
     target = ps.getRoot();
-    final Map<String, String> params = new HashMap<>();
-    params.put(IBRRootPathSupplier.AUTOMATION_ROOT_PATH, target.toAbsolutePath().toString());
-    params.put("file", "src/test/ansible/playbook.yml");
-    final IBRRootPathSupplier rps = new DefaultIBRRootPathSupplier();
+    Path workingPath = target.resolve("ibr-tmp");
+
+    m = new IBRCompileMojo();
+    m.setMavenProjectHelper(new DefaultMavenProjectHelper());
+    IBRWorkingPathSupplier i = new IBRWorkingPathSupplier();
+    i.setT(workingPath);
+    m.setRootPathSupplier(i);
+    m.setPluginContext(new HashMap<String, String>());
+    m.setWorkDirectory(workingPath.toFile());
+    final AutomationUtilsTesting rps = new AutomationUtilsTesting(() -> m.getWorkDirectory(), log);
     final IBConfigSupplier cms = new DefaultIBConfigSupplier().setConfig(new HashMap<>());
-    testAnsibleCMType = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator()));
+    testAnsibleCMType = new AnsibleIBRType(rps,
+        Arrays.asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator())));
     testAnsibleCMType.setConfigSupplier(cms);
     typeMap = new HashMap<>();
     typeMap.put(org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE, testAnsibleCMType);
-    m = new IBRCompileMojo();
-    m.setMavenProjectHelper(new DefaultMavenProjectHelper());
-    m.setRootPathSupplier(rps);
     m.setMyTypes(typeMap);
-    m.setPluginContext(new HashMap<String, String>());
-    m.setWorkDirectory(target.resolve("ibr-tmp").toFile());
     m.setSources(Paths.get("./src/test/").toFile());
     m.setUnfilteredResourcesDirectory(Paths.get("./src/test/resources").toFile());
 
@@ -94,7 +101,7 @@ public class TestIBRCompileMojo {
   }
 
   @Test
-  public void testExecuteWithFiles() throws MojoExecutionException, MojoFailureException {
+  public void testExecuteWithFiles() throws MojoExecutionException, MojoFailureException, InitializationException {
     final DefaultIBRBuilderConfigElement goodBuilder = new DefaultIBRBuilderConfigElement();
     goodBuilder.setTest(false);
     goodBuilder.setType(ANSIBLE);
@@ -112,9 +119,10 @@ public class TestIBRCompileMojo {
     builders.add(goodBuilder);
     builders.add(builder);
     m.setBuilders(builders);
-    assertEquals(0,m.getIncludes().length);
-    assertEquals(0,m.getExcludes().length);
+    assertEquals(0, m.getIncludes().length);
+    assertEquals(0, m.getExcludes().length);
     assertNotNull(m.getMavenProjectHelper());
+    m.initialize();
     m.execute();
   }
 

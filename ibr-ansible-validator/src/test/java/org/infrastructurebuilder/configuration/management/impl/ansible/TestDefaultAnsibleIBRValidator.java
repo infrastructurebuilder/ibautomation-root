@@ -39,6 +39,9 @@ import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleIBRValidator;
+import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
 import org.json.JSONObject;
@@ -47,6 +50,8 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestDefaultAnsibleIBRValidator {
+  private AutomationUtils ibr = new AutomationUtilsTesting();
+
   private final WorkingPathSupplier ps = new WorkingPathSupplier();
   private Path target;
   private IBRValidator<JSONObject> test;
@@ -77,6 +82,7 @@ public class TestDefaultAnsibleIBRValidator {
 
   @Before
   public void beforeClass() throws IOException, PlexusContainerException, ComponentLookupException {
+
     target = ps.getRoot();
     targetPath = ps.get();
     targetEmptyDirectory = target.resolve(UUID.randomUUID().toString());
@@ -105,7 +111,7 @@ public class TestDefaultAnsibleIBRValidator {
     }
     Files.write(fileSneakyMasquerader, "".getBytes());
     fileH.toFile().setReadable(false);
-    test = new DefaultAnsibleIBRValidator();
+    test = new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator());
   }
 
   @Test

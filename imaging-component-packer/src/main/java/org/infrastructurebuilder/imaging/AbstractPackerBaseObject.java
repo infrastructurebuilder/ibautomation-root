@@ -15,14 +15,16 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static java.util.UUID.randomUUID;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.JSON_EXTENSION;
 
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
 
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
@@ -31,24 +33,24 @@ import org.slf4j.Logger;
 abstract public class AbstractPackerBaseObject implements ImageBaseObject {
   private GAV artifact;
 
-  private final String id = UUID.randomUUID().toString();
+  private final String     id = randomUUID().toString();
   private IBAuthentication instanceAuthentication;
-  private Logger log;
-  private String outputFileName;
+  private Logger           log;
+  private String           outputFileName;
 
-  private Optional<Path> outputPath = Optional.empty();
-  private Path root;
-  private Map<String, String> tags = new HashMap<>();
-  private Path targetDirectory;
+  private Optional<Path>      outputPath = empty();
+  private Path                root;
+  private Map<String, String> tags       = new HashMap<>();
+  private Path                targetDirectory;
 
   @Override
   public Optional<GAV> getArtifact() {
-    return Optional.ofNullable(artifact);
+    return ofNullable(artifact);
   }
 
   @Override
   public Optional<Map<String, Path>> getForcedOutput() {
-    return Optional.empty();
+    return empty();
   }
 
   @Override
@@ -63,7 +65,7 @@ abstract public class AbstractPackerBaseObject implements ImageBaseObject {
 
   @Override
   public Optional<IBAuthentication> getInstanceAuthentication() {
-    return Optional.ofNullable(instanceAuthentication);
+    return ofNullable(instanceAuthentication);
   }
 
   @Override
@@ -73,19 +75,19 @@ abstract public class AbstractPackerBaseObject implements ImageBaseObject {
 
   @Override
   public Optional<String> getOutputFileName() {
-    return Optional.ofNullable(outputFileName);
+    return ofNullable(outputFileName);
   }
 
   @Override
   public Optional<Path> getOutputPath() {
-    return getOutputPath(Optional.empty());
+    return getOutputPath(empty());
   }
 
   @Override
   public Optional<Path> getOutputPath(final Optional<String> extension) {
     if (!outputPath.isPresent()) {
-      outputPath = getTargetDirectory().map(p -> p.resolve(
-          getOutputFileName().orElse(getId()) + "." + Objects.requireNonNull(extension).orElse(JSON_EXTENSION)));
+      outputPath = getTargetDirectory().map(
+          p -> p.resolve(getOutputFileName().orElse(getId()) + "." + requireNonNull(extension).orElse(JSON_EXTENSION)));
     }
     return outputPath;
   }
@@ -99,13 +101,13 @@ abstract public class AbstractPackerBaseObject implements ImageBaseObject {
 
   @Override
   public Optional<Path> getTargetDirectory() {
-    outputPath = Optional.empty();
-    return Optional.ofNullable(targetDirectory);
+    outputPath = empty();
+    return ofNullable(targetDirectory);
   }
 
   @Override
   public Path getWorkingRootDirectory() {
-    return Objects.requireNonNull(root);
+    return requireNonNull(root);
   }
 
   @Override
@@ -115,40 +117,40 @@ abstract public class AbstractPackerBaseObject implements ImageBaseObject {
 
   @Override
   public void setArtifact(final GAV artifact) {
-    this.artifact = Objects.requireNonNull(artifact);
+    this.artifact = requireNonNull(artifact);
   }
 
   @Override
   public void setInstanceAuthentication(final IBAuthentication a) {
-    instanceAuthentication = Objects.requireNonNull(a);
+    instanceAuthentication = requireNonNull(a);
   }
 
   @Override
   public void setLog(final Logger log) {
-    this.log = Objects.requireNonNull(log, "ATTEMPTED TO SET NULL LOG ");
+    this.log = requireNonNull(log, "ATTEMPTED TO SET NULL LOG ");
   }
 
   @Override
   public void setOutputFileName(final String outputFileName) {
-    outputPath = Optional.empty();
-    this.outputFileName = Objects.requireNonNull(outputFileName);
+    outputPath = empty();
+    this.outputFileName = requireNonNull(outputFileName);
   }
 
   @Override
   public void setTags(final Map<String, String> tags) {
-    this.tags = Objects.requireNonNull(tags);
+    this.tags = requireNonNull(tags);
   }
 
   @Override
   public void setTargetDirectory(final Path p) {
-    if (Objects.requireNonNull(p).isAbsolute())
+    if (requireNonNull(p).isAbsolute())
       throw new PackerException("Absolute directories are invalid " + p.toString());
     targetDirectory = p;
   }
 
   @Override
   public void setWorkingRootDirectory(final Path root) {
-    this.root = Objects.requireNonNull(root).toAbsolutePath().normalize();
+    this.root = requireNonNull(root).toAbsolutePath().normalize();
   }
 
 }

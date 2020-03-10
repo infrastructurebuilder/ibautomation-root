@@ -15,15 +15,17 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.lang.Class.forName;
+import static java.util.Objects.requireNonNull;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.ID;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.ORIGINAL_AUTH_ID;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE_CLASS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TARGET;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
+import static org.infrastructurebuilder.imaging.PackerException.et;
 import static org.infrastructurebuilder.util.IBUtils.getOptString;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
@@ -34,26 +36,26 @@ import org.json.JSONObject;
 public class PackerHintMapDAO implements JSONOutputEnabled {
   private final Optional<String> authId;
   private final Optional<String> hint;
-  private final String id;
-  private final Class<?> klass;
+  private final String           id;
+  private final Class<?>         klass;
   private final Optional<String> target;
   private final Optional<String> type;
 
   public PackerHintMapDAO(final JSONObject j) {
-    id = Objects.requireNonNull(j).getString(ID);
+    id = requireNonNull(j).getString(ID);
     authId = getOptString(j, ORIGINAL_AUTH_ID);
-    type = getOptString(Objects.requireNonNull(j), TYPE);
+    type = getOptString(requireNonNull(j), TYPE);
     target = getOptString(j, TARGET);
     hint = getOptString(j, SOURCE);
-    klass = PackerException.et.withReturningTranslation(() -> Class.forName(j.getString(SOURCE_CLASS)));
+    klass = et.withReturningTranslation(() -> forName(j.getString(SOURCE_CLASS)));
   }
 
   public PackerHintMapDAO(final Optional<IBAuthentication> a, final ImageBaseObject b) {
     id = b.getId();
-    authId = Objects.requireNonNull(a).map(IBAuthentication::getId);
-    type = Objects.requireNonNull(a).map(IBAuthentication::getType);
+    authId = requireNonNull(a).map(IBAuthentication::getId);
+    type = requireNonNull(a).map(IBAuthentication::getType);
     target = a.flatMap(IBAuthentication::getTarget);
-    hint = Objects.requireNonNull(b).getLookupHint();
+    hint = requireNonNull(b).getLookupHint();
     klass = b.getLookupClass();
   }
 

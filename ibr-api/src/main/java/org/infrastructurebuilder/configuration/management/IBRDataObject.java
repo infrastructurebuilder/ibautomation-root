@@ -15,11 +15,12 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.stream.Collectors.toList;
+
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Objects;
 import java.util.SortedSet;
-import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,13 +34,13 @@ public class IBRDataObject<T> {
 
   public IBRDataObject(final IBRType<T> type, final Path targetPath,
       final IBRBuilderConfigElement builderJson) {
-    name = Objects.requireNonNull(type).getName();
+    name = requireNonNull(type).getName();
 
     output = type.collectValidatedOutput();
     this.targetPath = targetPath;
-    builder = Objects.requireNonNull(builderJson);
+    builder = requireNonNull(builderJson);
 
-    final List<IBRValidationOutput> l = output.stream().filter(o -> !o.isValid()).collect(Collectors.toList());
+    final List<IBRValidationOutput> l = output.stream().filter(o -> !o.isValid()).collect(toList());
     l.forEach(ll -> log.error("Error!  Path is " + ll.getPath() + "\nException is " + ll.getException().get()));
     if (l.size() > 0)
       throw new IBArchiveException("Failure of " + l.size() + " entries");

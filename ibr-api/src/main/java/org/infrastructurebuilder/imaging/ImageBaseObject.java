@@ -20,12 +20,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.infrastructurebuilder.util.LoggerEnabled;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.slf4j.Logger;
 
-public interface ImageBaseObject extends JSONOutputEnabled {
+public interface ImageBaseObject extends JSONOutputEnabled, LoggerEnabled {
 
   Optional<GAV> getArtifact();
 
@@ -36,8 +37,6 @@ public interface ImageBaseObject extends JSONOutputEnabled {
   String getId();
 
   Optional<IBAuthentication> getInstanceAuthentication();
-
-  Logger getLog();
 
   Class<?> getLookupClass();
 

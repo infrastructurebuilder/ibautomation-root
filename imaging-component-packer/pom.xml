@@ -16,9 +16,11 @@
     limitations under the License.
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0"
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+>
   <parent>
     <groupId>org.infrastructurebuilder.automation</groupId>
     <artifactId>ibautomation-root</artifactId>
@@ -30,8 +32,8 @@
   <name>${project.artifactId}</name>
   <description>Maven Plugin to perform Hashicorp packer actions as part of a build</description>
   <properties>
-    <test.coverage.percentage.required>80</test.coverage.percentage.required>
-    <jacoco.max.missed.classes>0</jacoco.max.missed.classes>
+    <test.coverage.percentage.required>25</test.coverage.percentage.required>
+    <jacoco.max.missed.classes>40</jacoco.max.missed.classes>
   </properties>
   <dependencies>
     <dependency>
@@ -47,6 +49,10 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ibr-aws-dialect</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.infrastructurebuilder.util.auth</groupId>
       <artifactId>ibauth-api</artifactId>
       <type>test-jar</type>
@@ -57,7 +63,6 @@
       <artifactId>ibauth-aws</artifactId>
       <scope>test</scope>
     </dependency>
-
     <dependency>
       <groupId>org.infrastructurebuilder</groupId>
       <artifactId>ibexecutor</artifactId>
