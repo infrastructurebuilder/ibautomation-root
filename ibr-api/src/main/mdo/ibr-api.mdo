@@ -1,0 +1,680 @@
+<model
+  xmlns="http://codehaus-plexus.github.io/MODELLO/1.8.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://codehaus-plexus.github.io/MODELLO/1.8.0 http://codehaus-plexus.github.io/modello/xsd/modello-1.8.0.xsd"
+  java.suppressAllWarnings="false"
+  xml.namespace="https://resources.infrastructurebuilder.org/IBRManifest/${version}"
+  xml.schemaLocation="https://resources.infrastructurebuilder.org/xsd/IBRManifest-${version}"
+  xsd.namespace="https://resources.infrastructurebuilder.org/IBRManifest/${version}"
+  xsd.targetNamespace="https://resources.infrastructurebuilder.org/IBRManifest/${version}"
+>
+  <!-- namespaces above are all placeholders -->
+
+  <id>ibrmanifest</id>
+  <name>IBRManifest</name>
+  <description>Manifest persistence tooling</description>
+  <defaults>
+    <default>
+      <key>package</key>
+      <value>${project.groupId}.model</value>
+    </default>
+  </defaults>
+  <versionDefinition>
+    <type>field</type>
+    <value>modelVersion</value>
+  </versionDefinition>
+  <classes>
+    <!-- MODEL -->
+
+    <class
+      xml.tagName="manifest"
+      javag.generateToString="true"
+      rootElement="true"
+      java.clone.hook="mutatingManifestCloneHook"
+      java.clone="deep"
+    >
+      <name>Manifest</name>
+      <version>1.0.0+</version>
+      <interfaces>
+        <interface>
+          <![CDATA[org.infrastructurebuilder.automation.IBRManifest]]>
+        </interface>
+      </interfaces>
+      <description>
+        <![CDATA[
+        The <code>&lt;manifest&gt;</code> element contains information about an IBR build
+        ]]>
+      </description>
+      <fields>
+        <!-- ====================================================================== -->
+        <!-- Manifest Version -->
+        <!-- ====================================================================== -->
+        <field>
+          <name>modelVersion</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Declares to which version of project descriptor this configuration conforms.  This value is the api version (major.minor) of ibdata-api and conforms to semantic versioning</description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>uuid</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>UUID identifier of the manifest, which is the UUID of the checksum of the data.</description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>gav</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Building GAV</description>
+          <association>
+            <type>Dependency</type>
+            <multiplicity>1</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>environment</name>
+          <type>Properties</type>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Shell environment variables (may be filtered)</description>
+          <association xml.mapStyle="inline">
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>properties</name>
+          <type>Properties</type>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Project properties</description>
+          <association xml.mapStyle="inline">
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+
+        <field java.getter="false">
+          <name>name</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>The full name of the Manifest (from the builder pom).</description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>builderId</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>ID of a given builder</description>
+          <type>String</type>
+        </field>
+        <field java.getter="false">
+          <name>description</name>
+          <version>1.0.0+</version>
+          <required>false</required>
+          <description>Description from the bulding project pom </description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>start</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Creation date of this manifest, required</description>
+          <type>Date</type>
+        </field>
+        <field>
+          <name>end</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>End date of this manifest, required</description>
+          <type>Date</type>
+        </field>
+        <field java.getter="false">
+          <name>duration</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Duration of this run</description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>sha512</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Sha-512 Checksum  of this manifest</description>
+          <type>String</type>
+        </field>
+        <field
+          xdoc.separator="blank"
+          java.getter="false"
+        >
+          <name>exec</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>The dependent execution</description>
+          <association>
+            <type>DependentExecution</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+
+
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            // Default constructor
+  public Manifest() {
+    this.setStart(new java.util.Date());
+  }
+            ]]>
+          </code>
+        </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            // "Copy constructor"
+  public Manifest(Manifest ds) {
+    this.setStart(ds.getStart());
+    this.setEnd(ds.getEnd());
+    this.setDescription(ds.getDescription().orElse(null));
+    this.setName(ds.getName().orElse(null));
+    this.setSha512(ds.getSha512());
+    this.setUuid(ds.getUuid());
+    this.setDuration(ds.getDuration().toString());
+    this.setEnvironment((java.util.Properties)ds.getEnvironment().clone());
+    this.setProperties((java.util.Properties)ds.getProperties().clone());
+    this.setBuilderId(ds.getBuilderId());
+    this.setExec(ds.getExec().stream().map(DependentExecution::new ).collect(java.util.stream.Collectors.toList()));
+  }
+
+
+            ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            // "Copy constructor"
+  public java.util.List<org.infrastructurebuilder.automation.IBRDependentExecution> getDependentExecutions() {
+    return java.util.Collections.unmodifiableList(this.exec);
+  }
+
+  private java.util.List<DependentExecution> getExec() {
+    return this.exec;
+  }
+
+
+            ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            // Clone hooks
+
+  private void mutatingManifestCloneHook(Manifest s) {
+    if (s.getEnd() == null)
+      s.setEnd(new java.util.Date());
+    s.setDuration(s.getDuration().toString());
+    org.infrastructurebuilder.util.artifacts.Checksum c = asChecksum();
+    s.setSha512(c.toString());
+    s.setUuid(c.asUUID().get().toString());
+  }
+
+  ]]>
+          </code>
+        </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            // hash and equals
+
+
+  @Override
+  public int hashCode() {
+    return java.util.Objects.hash(
+        uuid
+        , builderId
+        , description
+        , start
+        , end
+        , duration
+        , environment
+        , gav
+        , location
+        , modelEncoding
+        , modelVersion
+        , name
+        , properties
+        , sha512
+        , exec
+        );
+  }
+
+  @Override
+  public boolean equals(Object obj) {
+    if (this == obj)
+      return true;
+    if (!(obj instanceof Manifest))
+      return false;
+    Manifest other = (Manifest) obj;
+    return
+           java.util.Objects.equals(builderId, other.builderId)
+        && java.util.Objects.equals(description, other.description)
+        && java.util.Objects.equals(start, other.start)
+        && java.util.Objects.equals(end, other.end)
+        && java.util.Objects.equals(duration, other.duration)
+        && java.util.Objects.equals(environment, other.environment)
+        && java.util.Objects.equals(gav, other.gav)
+        && java.util.Objects.equals(location, other.location)
+        && java.util.Objects.equals(modelEncoding, other.modelEncoding)
+        && java.util.Objects.equals(modelVersion, other.modelVersion)
+        && java.util.Objects.equals(name, other.name)
+        && java.util.Objects.equals(properties, other.properties)
+        && java.util.Objects.equals(sha512, other.sha512)
+        && java.util.Objects.equals(uuid, other.uuid)
+        && java.util.Objects.equals(exec, other.exec)
+        ;
+  }
+
+
+            ]]>
+          </code>
+        </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            //
+            // ID mapper Work
+            //
+  @Override
+  public java.util.UUID getId() {
+     return safeMapUUID.apply(getUuid()).orElse(null);
+  }            ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+  @Override
+  public java.util.Optional<String> getName() {
+    return java.util.Optional.ofNullable(name);
+  }
+
+  ]]>
+          </code>
+        </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+  @Override
+  public java.util.Optional<String> getDescription() {
+    return java.util.Optional.ofNullable(description);
+  }
+
+  ]]>
+          </code>
+        </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+
+  private org.infrastructurebuilder.automation.IBRExecutionDataReaderMapper mapper;
+
+  public Manifest setMapper(org.infrastructurebuilder.automation.IBRExecutionDataReaderMapper drm) {
+    this.mapper = java.util.Objects.requireNonNull(drm);
+    return this;
+  }
+
+  public java.util.Optional<org.infrastructurebuilder.automation.IBRExecutionDataReaderMapper> getMapper() {
+    return java.util.Optional.ofNullable(this.mapper);
+  }
+
+
+
+            ]]>
+          </code>
+        </codeSegment>
+
+
+      </codeSegments>
+    </class>
+    <class
+      locationTracker="locations"
+      java.clone="shallow"
+    >
+      <name>ManifestInputLocation</name>
+      <version>1.0.0+</version>
+      <fields>
+        <!-- line, column and source fields are auto-generated by Modello -->
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+
+    @Override
+    public String toString()
+    {
+        return getLineNumber() + " : " + getColumnNumber() + ", " + getSource();
+    }
+            ]]>
+          </code>
+        </codeSegment>
+      </codeSegments>
+    </class>
+    <class
+      sourceTracker="source"
+      java.clone="shallow"
+    >
+      <name>ManifestInputSource</name>
+      <version>1.0.0+</version>
+      <fields>
+        <field>
+          <name>modelId</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            The identifier of the deployment model in the format {@code <groupId>:<artifactId>:<version>}.
+            ]]>
+          </description>
+        </field>
+        <field>
+          <name>location</name>
+          <version>1.0.0+</version>
+          <type>String</type>
+          <description>
+            <![CDATA[
+            The path/URL of the deployment model or {@code null} if unknown.
+            ]]>
+          </description>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+    @Override
+    public String toString()
+    {
+        return getModelId() + " " + getLocation();
+    }
+            ]]>
+          </code>
+        </codeSegment>
+      </codeSegments>
+    </class>
+    <class
+      xml.tagName="gav"
+      java.clone="deep"
+    >
+      <name>Dependency</name>
+      <version>1.0.0+</version>
+      <interfaces>
+      <interface>org.infrastructurebuilder.util.artifacts.GAV</interface></interfaces>
+      <fields>
+        <field xml.attribute="true">
+          <name>groupId</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Group ID</description>
+          <type>String</type>
+        </field>
+        <field xml.attribute="true">
+          <name>artifactId</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>ArtifactId ID</description>
+          <type>String</type>
+        </field>
+        <field java.getter="false" xml.attribute="true">
+          <name>version</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>version</description>
+          <type>String</type>
+        </field>
+        <field xml.attribute="true">
+          <name>extension</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>extension (not type-mapped)</description>
+          <type>String</type>
+        </field>
+        <field java.getter="false" xml.attribute="true">
+          <name>classifier</name>
+          <version>1.0.0+</version>
+          <required>false</required>
+          <description>Addl classifier</description>
+          <type>String</type>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+
+  public Dependency() {
+  }
+  public Dependency(org.infrastructurebuilder.util.artifacts.GAV g) {
+    this.groupId = g.getGroupId();
+    this.artifactId = g.getArtifactId();
+    this.version = g.getVersion().orElse(null);
+    this.classifier = g.getClassifier().orElse(null);
+    this.extension = g.getExtension();
+  }
+
+  public Dependency copy() {
+    return new Dependency(this);
+  }
+
+  public java.util.Optional<String> getVersion() {
+    return java.util.Optional.ofNullable(this.version);
+  }
+
+  public java.util.Optional<String> getClassifier() {
+    return java.util.Optional.ofNullable(this.classifier);
+  }
+
+  @Override
+    public int hashCode() {
+      return java.util.Objects.hash(groupId, artifactId, classifier, extension, version);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      Dependency other = (Dependency) obj;
+      return
+             java.util.Objects.equals(groupId, other.groupId)
+          && java.util.Objects.equals(artifactId, other.artifactId)
+          && java.util.Objects.equals(classifier, other.classifier)
+          && java.util.Objects.equals(extension, other.extension)
+          && java.util.Objects.equals(version, other.version);
+    }
+
+  @Override
+    public String toString() {
+      return "Dependency [groupId=" + groupId + ", artifactId=" + artifactId + ", version=" + version + ", extension="
+          + extension + ", classifier=" + classifier + "]";
+    }
+
+    ]]>
+          </code>
+        </codeSegment>
+
+      </codeSegments>
+    </class>
+    <class
+      xml.tagName="execution"
+      java.clone="deep"
+    >
+      <name>DependentExecution</name>
+      <version>1.0.0+</version>
+      <interfaces>
+        <interface><![CDATA[org.infrastructurebuilder.automation.IBRDependentExecution]]></interface>
+      </interfaces>
+      <fields>
+        <field>
+          <name>parent</name>
+          <version>1.0.0+</version>
+          <association>
+            <type>Manifest</type>
+            <multiplicity>1</multiplicity>
+          </association>
+        </field>
+
+        <field>
+          <name>gav</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Executing GAV</description>
+          <association>
+            <type>Dependency</type>
+            <multiplicity>1</multiplicity>
+          </association>
+        </field>
+        <field>
+          <name>logLines</name>
+          <type>List</type>
+          <version>1.0.0+</version>
+          <required>false</required>
+          <description>Log entries</description>
+          <association xml.mapStyle="inline">
+            <type>String</type>
+            <multiplicity>*</multiplicity>
+          </association>
+        </field>
+        <field java.getter="false">
+          <name>executionData</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Individually addressable execution data</description>
+          <type>DOM</type>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+    public DependentExecution() {
+    }
+
+    ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+
+    public DependentExecution(DependentExecution o) {
+      this();
+      this.parent = o.parent;
+      this.gav = o.gav;
+      this.logLines = new java.util.ArrayList<String>();
+      this.logLines.addAll( o.logLines );
+      this.executionData = o.getTypedExecutionData().map(x -> x.get().copy()).orElseThrow(
+          () -> new org.infrastructurebuilder.automation.IBRAutomationException("Could not duplicate execution data"));
+    }
+
+    ]]>
+          </code>
+        </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+
+  @Override
+  public java.util.Optional<org.codehaus.plexus.util.xml.Xpp3Dom> getExecutionData() {
+    return java.util.Optional.ofNullable((org.codehaus.plexus.util.xml.Xpp3Dom) this.executionData);
+  }
+
+
+
+    ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+
+    ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(
+        executionData
+        , gav
+        );
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (!(obj instanceof DependentExecution))
+        return false;
+      DependentExecution other = (DependentExecution) obj;
+      return
+             java.util.Objects.equals(executionData, other.executionData)
+          && java.util.Objects.equals(gav, other.gav);
+    }
+
+    @Override
+    public String toString() {
+      StringBuilder builder = new StringBuilder();
+      builder
+        .append("DependentExecution [")
+        .append("gav=").append(gav)
+        .append(", executionData=").append(executionData)
+        .append("]");
+      return builder.toString();
+    }
+
+    ]]>
+          </code>
+        </codeSegment>
+
+      </codeSegments>
+    </class>
+
+
+
+  </classes>
+</model>

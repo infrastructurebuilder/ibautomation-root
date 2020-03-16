@@ -18,6 +18,7 @@ package org.infrastructurebuilder.imaging;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
+import static org.infrastructurebuilder.util.artifacts.Weighted.weighted;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
-import org.infrastructurebuilder.util.artifacts.Weighted;
 import org.infrastructurebuilder.util.artifacts.WeightedComparator;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 import org.infrastructurebuilder.util.config.DefaultConfigMapSupplier;
@@ -41,7 +41,7 @@ public class IBRDialectMapper {
   @Inject
   public IBRDialectMapper(AutomationUtils ibr, List<IBRDialectSupplier> ts) {
     this.ibr = requireNonNull(ibr);
-    tSupplierList = requireNonNull(ts).stream().sorted(Weighted.comparator()).collect(toList());
+    tSupplierList = requireNonNull(ts).stream().sorted(weighted).collect(toList());
   }
 
   public Optional<IBRDialect> getDialectFor(String type, Optional<ConfigMapSupplier> cms) {

@@ -34,17 +34,16 @@
   <properties>
     <test.coverage.percentage.required>25</test.coverage.percentage.required>
     <jacoco.max.missed.classes>40</jacoco.max.missed.classes>
+    <ibr.model.version>1.0.0</ibr.model.version>
   </properties>
   <dependencies>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ibr-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ibr-api</artifactId>
-      <version>${project.version}</version>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
@@ -176,6 +175,8 @@
       <plugin>
         <groupId>com.googlecode.maven-download-plugin</groupId>
         <artifactId>download-maven-plugin</artifactId>
+        <configuration>
+        <skip>true</skip></configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -193,6 +194,30 @@
           </execution>
         </executions>
       </plugin>
+            <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <configuration>
+          <version>${ibr.model.version}</version>
+          <domAsXpp3>true</domAsXpp3>
+          <packageWithVersion>true</packageWithVersion>
+          <models>
+          </models>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.infrastructurebuilder.modello</groupId>
+        <artifactId>modello-maven-plugin-usurped</artifactId>
+        <version>1.11.0.1-SNAPSHOT</version>
+        <configuration>
+          <version>${ibr.model.version}</version>
+          <domAsXpp3>true</domAsXpp3>
+          <packageWithVersion>true</packageWithVersion>
+          <models>
+          </models>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 </project>

@@ -23,7 +23,7 @@
       <plugin>
         <groupId>org.infrastructurebuilder.automation</groupId>
         <artifactId>imaging-maven-plugin</artifactId>
-        <version>${imaging.plugin.version}</version>
+        <version>${ibr.model.version}</version>
         <extensions>true</extensions>
         <configuration>
           <target>../packer-component/src/test/resources</target>

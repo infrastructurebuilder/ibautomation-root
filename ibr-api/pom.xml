@@ -28,13 +28,15 @@
   </parent>
   <modelVersion>4.0.0</modelVersion>
   <artifactId>ibr-api</artifactId>
+  <version>1.0.0-SNAPSHOT</version>
   <packaging>jar</packaging>
   <name>${project.artifactId}</name>
   <description>API for Maven Plugin that performs server configuration management packaging as part of a build</description>
   <inceptionYear>2019</inceptionYear>
   <properties>
-    <jacoco.max.missed.classes>0</jacoco.max.missed.classes>
-    <test.coverage.percentage.required>99</test.coverage.percentage.required>
+    <ibr.model.version>${ibversion.majorVersion}.${ibversion.minorVersion}.${ibversion.incrementalVersion}</ibr.model.version>
+    <jacoco.max.missed.classes>99</jacoco.max.missed.classes>
+    <test.coverage.percentage.required>1</test.coverage.percentage.required>
   </properties>
   <dependencies>
     <dependency>
@@ -90,7 +92,57 @@
 
   </dependencies>
   <build>
+    <pluginManagement>
+      <plugins>
+      <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <plugin>
+        <groupId>org.eclipse.m2e</groupId>
+        <artifactId>lifecycle-mapping</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <lifecycleMappingMetadata>
+            <pluginExecutions>
+              <pluginExecution>
+                <pluginExecutionFilter>
+                  <groupId>org.codehaus.mojo</groupId>
+                  <artifactId>build-helper-maven-plugin</artifactId>
+                  <versionRange>[3.1.0,)</versionRange>
+                  <goals>
+                    <goal>hostname</goal>
+                  </goals>
+                </pluginExecutionFilter>
+                <action>
+                  <ignore></ignore>
+                </action>
+              </pluginExecution>
+            </pluginExecutions>
+          </lifecycleMappingMetadata>
+        </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <inherited>true</inherited>
+        <executions>
+          <execution>
+            <id>formatVersion</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>parse-version</goal>
+              <goal>hostname</goal>
+              <goal>cpu-count</goal>
+              <goal>local-ip</goal>
+              <goal>released-version</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
@@ -99,6 +151,35 @@
         <groupId>org.eclipse.sisu</groupId>
         <artifactId>sisu-maven-plugin</artifactId>
       </plugin>
+      <plugin>
+        <groupId>org.codehaus.modello</groupId>
+        <artifactId>modello-maven-plugin</artifactId>
+        <inherited>true</inherited>
+        <configuration>
+          <version>${ibr.model.version}</version>
+          <domAsXpp3>true</domAsXpp3>
+          <packageWithVersion>true</packageWithVersion>
+          <models>
+          </models>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.infrastructurebuilder.modello</groupId>
+        <artifactId>modello-maven-plugin-usurped</artifactId>
+        <version>1.11.0.1-SNAPSHOT</version>
+        <configuration>
+          <version>${ibr.model.version}</version>
+          <domAsXpp3>true</domAsXpp3>
+          <packageWithVersion>true</packageWithVersion>
+          <models>
+          </models>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+      </plugin>
+
     </plugins>
   </build>
 </project>

@@ -34,6 +34,17 @@
   <inceptionYear>2019</inceptionYear>
   <description>A set oflibraries and plugins to support the building of infrastructure components </description>
   <url>${ib.site.view.url}</url>
+  <modules>
+    <module>ibr-api</module>
+    <module>ibr-aws-dialect</module>
+    <module>ibr-shell-validator</module>
+    <module>ibr-ansible-validator</module>
+    <module>imaging-test-fixtures</module>
+    <module>imaging-component-container</module>
+    <module>imaging-component-packer</module>
+    <module>imaging-maven-plugin</module>
+    <module>ibr-generator-terraform</module>
+  </modules>
   <scm>
     <connection>scm:git:${git.url}</connection>
     <url>scm:git:${git.url}</url>
@@ -48,7 +59,6 @@
     </site>
   </distributionManagement>
   <properties>
-    <imaging.plugin.version>${project.version}</imaging.plugin.version>
     <ibauth.version>0.9.2-SNAPSHOT</ibauth.version>
     <iblog.version>0.10.0</iblog.version>
     <ibcore.bom.version>0.17.0.0-SNAPSHOT</ibcore.bom.version>
@@ -94,9 +104,16 @@
       <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>ibr-api</artifactId>
-        <version>${project.version}</version>
+        <version>1.0.0-SNAPSHOT</version>
       </dependency>
-            <dependency>
+      <dependency>
+        <groupId>${project.groupId}</groupId>
+        <artifactId>ibr-api</artifactId>
+        <type>test-jar</type>
+        <scope>test</scope>
+        <version>1.0.0-SNAPSHOT</version>
+      </dependency>
+      <dependency>
         <groupId>${project.groupId}</groupId>
         <artifactId>ibr-aws-dialect</artifactId>
         <version>${project.version}</version>
@@ -206,6 +223,7 @@
     </dependency>
 
 
+
     <dependency>
       <groupId>org.apache.ant</groupId>
       <artifactId>ant</artifactId>
@@ -224,6 +242,78 @@
   <build>
     <pluginManagement>
       <plugins>
+        <plugin>
+          <groupId>org.codehaus.modello</groupId>
+          <artifactId>modello-maven-plugin</artifactId>
+          <configuration>
+            <useJava5>true</useJava5>
+            <models>
+              <model>target/classes/${project.artifactId}.mdo</model>
+            </models>
+          </configuration>
+          <executions>
+            <execution>
+              <id>make-java-sources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>java</goal>
+                <goal>xpp3-reader</goal>
+              </goals>
+            </execution>
+            <execution>
+              <id>make-site-doc</id>
+              <phase>pre-site</phase>
+              <goals>
+                <goal>xdoc</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+        <plugin>
+          <groupId>org.infrastructurebuilder.modello</groupId>
+          <artifactId>modello-maven-plugin-usurped</artifactId>
+          <version>1.11.0.0</version>
+          <configuration>
+            <useJava5>true</useJava5>
+            <models>
+              <model>target/classes/${project.artifactId}.mdo</model>
+            </models>
+          </configuration>
+          <executions>
+            <execution>
+              <id>make-java-sources</id>
+              <phase>generate-sources</phase>
+              <goals>
+                <goal>xpp3-writer-reflect</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+
+        <plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-resources-plugin</artifactId>
+          <executions>
+            <execution>
+              <id>copy-resources</id>
+              <!-- here the phase you need -->
+              <phase>validate</phase>
+              <goals>
+                <goal>copy-resources</goal>
+              </goals>
+              <configuration>
+                <outputDirectory>${project.build.outputDirectory}</outputDirectory>
+                <resources>
+                  <resource>
+                    <directory>src/main/mdo/</directory>
+                    <filtering>true</filtering>
+                  </resource>
+                </resources>
+              </configuration>
+            </execution>
+          </executions>
+        </plugin>
+
         <plugin>
           <groupId>org.infrastructurebuilder.automation</groupId>
           <artifactId>imaging-maven-plugin</artifactId>
@@ -320,18 +410,4 @@
       </plugin>
     </plugins>
   </reporting>
-
-  <!-- To download the packer binary based on OS. Assuming only 64 bit will
-    be used -->
-  <modules>
-    <module>ibr-api</module>
-    <module>ibr-aws-dialect</module>
-    <module>ibr-shell-validator</module>
-    <module>ibr-ansible-validator</module>
-    <module>imaging-test-fixtures</module>
-    <module>imaging-component-container</module>
-    <module>imaging-component-packer</module>
-    <module>imaging-maven-plugin</module>
-    <module>ibr-generator-terraform</module>
-  </modules>
 </project>
