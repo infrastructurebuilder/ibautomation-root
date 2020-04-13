@@ -23,6 +23,7 @@ import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
 import java.nio.file.Path;
 import java.util.Optional;
 
+import org.infrastructurebuilder.automation.IBRAutomationException;
 import org.infrastructurebuilder.util.artifacts.GAV;
 
 public class IBRInternalDependency {
@@ -78,7 +79,7 @@ public class IBRInternalDependency {
   }
 
   public void set_tdir(final Path _tdir) {
-    throw new PackerException("Cannot set _tdir");
+    throw new IBRAutomationException("Cannot set _tdir");
   }
 
   public void setArtifactId(final String artifactId) {

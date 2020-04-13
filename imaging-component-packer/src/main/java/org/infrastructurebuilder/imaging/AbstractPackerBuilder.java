@@ -15,39 +15,41 @@
  */
 package org.infrastructurebuilder.imaging;
 
-import java.nio.file.Files;
+import static java.io.File.separator;
+import static java.nio.file.Files.isDirectory;
+import static java.util.Collections.emptyList;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.empty;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.infrastructurebuilder.IBException.cet;
+import static org.infrastructurebuilder.util.IBUtils.readFile;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
-import org.infrastructurebuilder.IBException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.file.PackerFileProvisioner;
 import org.infrastructurebuilder.imaging.maven.Type;
-import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject implements ImageData<T> {
+abstract public class AbstractPackerBuilder extends AbstractPackerBaseObject implements ImageData {
 
-  private String availabilityZone;
-
-  private String buildExecutionName;
-
+  private String              availabilityZone;
+  private String              buildExecutionName;
   private String              content;
   private boolean             copyToOtherRegions;
   private List<String>        copyToRegions;
   private String              credentialsProfile;
-  private String              description          = null;
+  private String              description                   = null;
   private List<ImageDataDisk> disk;
-  private String              encryptionIdentifier = null;
-
+  private String              encryptionIdentifier          = null;
   private boolean             forceDeleteSnapshot           = true;
   private boolean             forceDeregister               = true;
   private Map<String, String> forcedTags;
@@ -60,43 +62,40 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
   private String              ssh_username;
   private String              subnetId;
   private IBRDialect          dialect;
-
-  private Path          targetOutput;
-  private final boolean terminateOnShutdown = false;
-
-  private Path userDataFile;
-
-  protected JSONObject sourceFilter = null;
+  private Path                targetOutput;
+  private final boolean       terminateOnShutdown           = false;
+  private Path                userDataFile;
+  protected JSONObject        sourceFilter                  = null;
 
   @SuppressWarnings("unchecked")
   @Override
-  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory<T> f) {
+  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory f) {
     setInstanceAuthentication(a);
     f.addBuilder(this);
     f.getRequirements().forEach(r -> {
       if (r.isSendToRemote()) {
         final PackerFileProvisioner p = new PackerFileProvisioner();
-        p.setBuilders(Collections.emptyList());
+        p.setBuilders(emptyList());
         final Path source = r.getFile().get().toAbsolutePath();
         String srcString = source.toString();
-        if (Files.isDirectory(source)) {
-          srcString += "/";
+        if (isDirectory(source) && !srcString.endsWith(separator)) {
+          srcString += separator;
         }
         p.setSource(srcString);
         p.setDestination(r.getRemote().get());
-        f.addProvisioner((PackerProvisioner<T>) p);
+        f.addProvisioner((PackerProvisioner) p);
       }
     });
   }
 
   @Override
   public Optional<List<String>> getAccessGroups() {
-    return Optional.empty();
+    return empty();
   }
 
   @Override
   public Optional<String> getAvailabilityZone() {
-    return Optional.ofNullable(availabilityZone);
+    return ofNullable(availabilityZone);
   }
 
   @Override
@@ -109,41 +108,41 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public Optional<String> getContent() {
-    return Optional.ofNullable(content);
+    return ofNullable(content);
   }
 
   @Override
   public Optional<List<String>> getCopyToRegions() {
-    return Optional.ofNullable(copyToRegions);
+    return ofNullable(copyToRegions);
   }
 
   @Override
   public Optional<String> getCredentialsProfile() {
-    return Optional.ofNullable(credentialsProfile);
+    return ofNullable(credentialsProfile);
   }
 
   @Override
   public Optional<String> getDescription() {
-    return Optional.ofNullable(description);
+    return ofNullable(description);
   }
 
   public Optional<List<ImageDataDisk>> getDisk() {
-    final List<ImageDataDisk> a = Optional.ofNullable(disk)
-        .map(d -> d.stream().filter(f -> !f.isValid()).collect(Collectors.toList())).orElse(Collections.emptyList());
+    final List<ImageDataDisk> a = ofNullable(disk).map(d -> d.stream().filter(f -> !f.isValid()).collect(toList()))
+        .orElse(emptyList());
     if (a.size() > 0)
 
       throw new PackerException("Bad disks " + a);
-    return Optional.ofNullable(disk);
+    return ofNullable(disk);
   }
 
   @Override
   public Optional<String> getEncryptionIdentifier() {
-    return Optional.ofNullable(encryptionIdentifier);
+    return ofNullable(encryptionIdentifier);
   }
 
   @Override
   public Optional<Map<String, String>> getForcedTags() {
-    return Optional.ofNullable(forcedTags);
+    return ofNullable(forcedTags);
   }
 
   @Override
@@ -166,12 +165,12 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public Optional<String> getInstanceType() {
-    return Optional.ofNullable(instanceType);
+    return ofNullable(instanceType);
   }
 
   @Override
   public Optional<String> getLaunchUser() {
-    return Optional.ofNullable(launchUser);
+    return ofNullable(launchUser);
   }
 
   @Override
@@ -181,73 +180,66 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public Optional<String> getNetworkId() {
-    return Optional.ofNullable(networkId);
+    return ofNullable(networkId);
   }
 
   @Override
   public Optional<String> getProvisioningUser() {
-    return Optional.empty();
+    return empty();
   }
 
   @Override
   public Optional<String> getRegion() {
-    return Optional.ofNullable(region);
+    return ofNullable(region);
   }
 
   @Override
   public Optional<Map<String, String>> getRegionalEncryptionIdentifiers() {
-
-    final Map<String, String> map = Optional.ofNullable(regionalEncryptionIdentifiers).orElse(new HashMap<>());
-    getCopyToRegions().ifPresent(r -> {
-      r.stream().forEach(reg -> {
-        if (!map.containsKey(reg)) {
-          map.put(reg, "");
-        }
-      });
-    });
-    return Optional.ofNullable(map.isEmpty() ? null : map);
+    final Map<String, String> map = ofNullable(regionalEncryptionIdentifiers).orElse(new HashMap<>());
+    getCopyToRegions().ifPresent(r -> r.stream().forEach(reg -> map.computeIfAbsent(reg, (k) -> "")));
+    return ofNullable(map.isEmpty() ? null : map);
   }
 
   @Override
   public Optional<Map<String, Object>> getSourceFilter() {
-    return Optional.ofNullable(sourceFilter).map(JSONObject::toMap);
+    return ofNullable(sourceFilter).map(JSONObject::toMap);
   }
 
   @Override
   public Optional<String> getSourceImage() {
-    return Optional.ofNullable(sourceImage);
+    return ofNullable(sourceImage);
   }
 
   @Override
   public Optional<String> getSSHUsername() {
-    return Optional.ofNullable(ssh_username);
+    return ofNullable(ssh_username);
   }
 
   @Override
   public Optional<String> getSubnetId() {
-    return Optional.ofNullable(subnetId);
+    return ofNullable(subnetId);
   }
 
   @Override
   public Map<String, String> getTags() {
     final Map<String, String> daTags = super.getTags();
-    getForcedTags().ifPresent(daTags::putAll);
+    getForcedTags().ifPresent(super.getTags()::putAll);
     return daTags;
   }
 
   @Override
   public Optional<Path> getTargetOutput() {
-    return Optional.ofNullable(targetOutput);
+    return ofNullable(targetOutput);
   }
 
   @Override
   public Optional<String> getUserData() {
-    return getUserDataFile().map(f -> IBException.cet.withReturningTranslation(() -> IBUtils.readFile(f)));
+    return getUserDataFile().map(f -> cet.withReturningTranslation(() -> readFile(f)));
   }
 
   @Override
   public Optional<Path> getUserDataFile() {
-    return Optional.ofNullable(userDataFile);
+    return ofNullable(userDataFile);
   }
 
   @Override
@@ -271,7 +263,7 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public void setAvailabilityZone(final String availabilityZone) {
-    this.availabilityZone = Objects.requireNonNull(availabilityZone);
+    this.availabilityZone = requireNonNull(availabilityZone);
   }
 
   public void setBuildExecutionName(final String buildExecutionName) {
@@ -280,7 +272,7 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public void setContent(final String content) {
-    this.content = Objects.requireNonNull(content);
+    this.content = requireNonNull(content);
   }
 
   @Override
@@ -290,34 +282,34 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public void setCopyToRegions(final List<String> copyToRegions) {
-    this.copyToRegions = Objects.requireNonNull(copyToRegions);
+    this.copyToRegions = requireNonNull(copyToRegions);
   }
 
   @Override
   public void setCredentialsProfile(final String credentialsProfile) {
-    this.credentialsProfile = Objects.requireNonNull(credentialsProfile);
+    this.credentialsProfile = requireNonNull(credentialsProfile);
   }
 
   @Override
   public void setDescription(final String description) {
-    this.description = Objects.requireNonNull(description);
+    this.description = requireNonNull(description);
   }
 
   @Override
   public void setDisk(final List<ImageDataDisk> disk) {
-    this.disk = Objects.requireNonNull(disk);
-    final List<ImageDataDisk> d1 = Optional.ofNullable(disk)
+    this.disk = requireNonNull(disk);
+    final List<ImageDataDisk> d1 = ofNullable(disk)
 
-        .map(d -> d.stream().filter(dd -> !getNamedTypes().contains(dd.getType())).collect(Collectors.toList()))
+        .map(d -> d.stream().filter(dd -> !getNamedTypes().contains(dd.getType())).collect(toList()))
         .orElse(new ArrayList<>());
     if (!d1.isEmpty())
       throw new PackerException("Disks do not have managed type for this builder :"
-          + new JSONArray(d1.stream().map(ImageDataDisk::asJSON).collect(Collectors.toList())));
+          + new JSONArray(d1.stream().map(ImageDataDisk::asJSON).collect(toList())));
   }
 
   @Override
   public void setEncryptionId(final String cryptoId) {
-    encryptionIdentifier = Objects.requireNonNull(cryptoId);
+    encryptionIdentifier = requireNonNull(cryptoId);
   }
 
   @Override
@@ -332,7 +324,7 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public void setForcedTags(final Map<String, String> forcedTags) {
-    Map<String, String> n = Objects.requireNonNull(forcedTags);
+    Map<String, String> n = requireNonNull(forcedTags);
     if (n.size() == 0) {
       n = null;
     }
@@ -341,58 +333,58 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
 
   @Override
   public void setInstanceType(final String instanceType) {
-    this.instanceType = Objects.requireNonNull(instanceType);
+    this.instanceType = requireNonNull(instanceType);
   }
 
   @Override
   public void setLaunchUser(final String launchUser) {
-    this.launchUser = Objects.requireNonNull(launchUser);
+    this.launchUser = requireNonNull(launchUser);
   }
 
   @Override
   public void setNetworkId(final String networkId) {
-    this.networkId = Objects.requireNonNull(networkId);
+    this.networkId = requireNonNull(networkId);
   }
 
   @Override
   public void setRegion(final String region) {
-    this.region = Objects.requireNonNull(region);
+    this.region = requireNonNull(region);
   }
 
   @Override
   public void setRegionalEncryptionIdentifiers(final Map<String, String> regionalEncryptionIdentifiers) {
-    this.regionalEncryptionIdentifiers = Objects.requireNonNull(regionalEncryptionIdentifiers);
+    this.regionalEncryptionIdentifiers = requireNonNull(regionalEncryptionIdentifiers);
   }
 
   @Override
   public void setSourceFilter(final Map<String, Object> sourceFilter) {
-    this.sourceFilter = new JSONObject(Objects.requireNonNull(sourceFilter));
+    this.sourceFilter = new JSONObject(requireNonNull(sourceFilter));
     sourceImage = null;
   }
 
   @Override
   public void setSourceImage(final String sourceImage) {
-    this.sourceImage = Objects.requireNonNull(sourceImage);
+    this.sourceImage = requireNonNull(sourceImage);
     sourceFilter = null;
   }
 
   public void setSSHUsername(final String ssh_username) {
-    this.ssh_username = Objects.requireNonNull(ssh_username);
+    this.ssh_username = requireNonNull(ssh_username);
   }
 
   @Override
   public void setSubnetId(final String subnetId) {
-    this.subnetId = Objects.requireNonNull(subnetId);
+    this.subnetId = requireNonNull(subnetId);
   }
 
   @Override
   public void setTargetOutput(final Path targetOutput) {
-    this.targetOutput = Objects.requireNonNull(targetOutput);
+    this.targetOutput = requireNonNull(targetOutput);
   }
 
   @Override
   public void setUserDataFile(final Path userDataFile) {
-    this.userDataFile = Objects.requireNonNull(userDataFile);
+    this.userDataFile = requireNonNull(userDataFile);
   }
 
   @Override
@@ -406,8 +398,7 @@ abstract public class AbstractPackerBuilder<T> extends AbstractPackerBaseObject 
   }
 
   protected Optional<JSONArray> getBlockDeviceMappings() {
-    return getDisk().map(dl -> dl.stream().map(d -> d.asJSON()).collect(Collectors.toList()))
-        .map(al -> new JSONArray(al));
+    return getDisk().map(dl -> dl.stream().map(d -> d.asJSON()).collect(toList())).map(al -> new JSONArray(al));
   }
 
   protected boolean isCopyToOtherRegions() {

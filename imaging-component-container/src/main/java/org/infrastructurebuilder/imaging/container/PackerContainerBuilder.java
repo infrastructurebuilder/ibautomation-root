@@ -15,10 +15,16 @@
  */
 package org.infrastructurebuilder.imaging.container;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.of;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.COMMIT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DEFAULT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DISCARD;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
+import static org.infrastructurebuilder.imaging.container.DockerCommitType.commit;
+import static org.infrastructurebuilder.imaging.container.DockerCommitType.export_path;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.AUTHOR;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.CHANGES;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.CONTAINER;
@@ -34,18 +40,17 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.AbstractPackerBuildResult;
 import org.infrastructurebuilder.imaging.AbstractPackerBuilder;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageData;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
@@ -55,7 +60,7 @@ import org.json.JSONObject;
 
 @Named(CONTAINER)
 @Typed(ImageData.class)
-public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
+public class PackerContainerBuilder extends AbstractPackerBuilder {
   public class PackerDockerBuildResult extends AbstractPackerBuildResult {
 
     public PackerDockerBuildResult(final JSONObject j) {
@@ -74,13 +79,13 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
 
   private String           author;
   private List<String>     changes;
-  private DockerCommitType commitType = DockerCommitType.commit;
+  private DockerCommitType commitType = commit;
   private boolean          privileged;
 
   private List<String> runCommands;
 
   @Override
-  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory<JSONObject> f) {
+  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory f) {
 
     setInstanceAuthentication(a);
 
@@ -113,7 +118,6 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
         jb.addBoolean(DISCARD, true);
         break;
       case export_path:
-
         jb.addPath(EXPORT_PATH, getTargetOutput());
         break;
     }
@@ -121,16 +125,16 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   public Optional<String> getAuthor() {
-    return Optional.ofNullable(author);
+    return ofNullable(author);
   }
 
   @Override
   public Optional<String> getAuthType() {
-    return Optional.of(CONTAINER);
+    return of(CONTAINER);
   }
 
   public Optional<List<String>> getChanges() {
-    return Optional.ofNullable(changes);
+    return ofNullable(changes);
   }
 
   public DockerCommitType getCommitType() {
@@ -139,7 +143,7 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
 
   @Override
   public Optional<String> getLookupHint() {
-    return Optional.of(CONTAINER);
+    return of(CONTAINER);
   }
 
   @Override
@@ -153,7 +157,7 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   public Optional<List<String>> getRunCommands() {
-    return Optional.ofNullable(runCommands);
+    return ofNullable(runCommands);
   }
 
   @Override
@@ -176,15 +180,14 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   public void setAuthor(final String author) {
-    this.author = Objects.requireNonNull(author);
+    this.author = requireNonNull(author);
   }
 
   public void setChanges(final List<String> changes) {
-    this.changes = Objects.requireNonNull(changes);
+    this.changes = requireNonNull(changes);
     getChanges().map(c -> {
-
       final List<String> y = c.stream().map(s -> s.toUpperCase().split(" ")[0]).filter(v -> !VALID_CHANGES.contains(v))
-          .collect(Collectors.toList());
+          .collect(toList());
       return y;
     }).ifPresent(x -> {
       if (x.size() > 0)
@@ -193,7 +196,7 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   public void setCommitType(final DockerCommitType commitType) {
-    this.commitType = Objects.requireNonNull(commitType);
+    this.commitType = requireNonNull(commitType);
   }
 
   public void setPrivileged(final boolean privileged) {
@@ -201,7 +204,7 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   public void setRunCommands(final List<String> runCommands) {
-    this.runCommands = Objects.requireNonNull(runCommands);
+    this.runCommands = requireNonNull(runCommands);
   }
 
   @Override
@@ -209,7 +212,7 @@ public class PackerContainerBuilder extends AbstractPackerBuilder<JSONObject> {
     switch (getCommitType()) {
       case export_path:
         if (!getTargetOutput().isPresent())
-          throw new PackerException("There is no output directory for " + DockerCommitType.export_path);
+          throw new PackerException("There is no output directory for " + export_path);
         break;
       default:
         break;

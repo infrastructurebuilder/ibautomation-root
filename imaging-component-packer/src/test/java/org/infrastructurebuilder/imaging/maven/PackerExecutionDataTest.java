@@ -29,12 +29,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.infrastructurebuilder.imaging.IBRDialectMapperTest;
 import org.infrastructurebuilder.util.artifacts.Checksum;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 
-public class PackerExecutionDataTest {
+public class PackerExecutionDataTest extends IBRDialectMapperTest {
 
   Checksum checksum;
   Map<String, String> env;
@@ -44,6 +45,7 @@ public class PackerExecutionDataTest {
 
   @Before
   public void setUp() throws Exception {
+    super.setUp();
     stdOut = Arrays.asList("1", "2", "3");
     checksum = new Checksum("abcd");
     now = Instant.now();

@@ -20,11 +20,11 @@ import java.util.Optional;
 
 import org.json.JSONObject;
 
-public interface PackerProvisioner<T> extends ImageBaseObject {
+public interface PackerProvisioner extends ImageBaseObject {
   Optional<JSONObject> getOverrides();
 
-  void setBuilders(List<ImageData<T>> builders);
+  void setBuilders(List<ImageData> builders);
 
-  PackerProvisioner<T> updateWithOverrides(List<ImageData<T>> builders);
+  PackerProvisioner updateWithOverrides(List<ImageData> builders);
 
 }

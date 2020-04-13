@@ -20,6 +20,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
 
+import org.infrastructurebuilder.automation.PackerException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

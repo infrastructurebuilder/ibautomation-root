@@ -15,6 +15,10 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.util.Optional.empty;
+import static org.infrastructurebuilder.automation.IBRAutomationException.et;
+import static org.infrastructurebuilder.util.IBUtils.readFile;
+
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -23,25 +27,29 @@ import java.util.Properties;
 import java.util.function.Supplier;
 
 import org.codehaus.plexus.PlexusContainer;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.ProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.artifacts.Checksum;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
-public interface PackerFactory<T> extends Supplier<Optional<Path>> {
+public interface PackerFactory extends Supplier<Path> {
 
-  PackerFactory<T> addBuilder(ImageData<T> b);
+  PackerFactory addBuilder(ImageData b);
 
-  PackerFactory<T> addPostProcessor(PackerPostProcessor p);
+  PackerFactory addPostProcessor(PackerPostProcessor p);
 
-  PackerFactory<T> addProvisioner(PackerProvisioner<T> p);
+  PackerFactory addProvisioner(PackerProvisioner p);
 
-  PackerFactory<T> addUniqueBuilder(java.util.Comparator<ImageData<T>> b, ImageData<T> b1);
+  PackerFactory addUniqueBuilder(java.util.Comparator<ImageData> b, ImageData b1);
 
-  PackerFactory<T> addUniquePostProcessor(java.util.Comparator<PackerPostProcessor> b, PackerPostProcessor p);
+  PackerFactory addUniquePostProcessor(java.util.Comparator<PackerPostProcessor> b, PackerPostProcessor p);
 
-  PackerFactory<T> addUniqueProvisioner(java.util.Comparator<PackerProvisioner<T>> b, PackerProvisioner<T> p);
+  PackerFactory addUniqueProvisioner(java.util.Comparator<PackerProvisioner> b, PackerProvisioner p);
 
-  PackerFactory<T> addVariable(String name, String value);
+  PackerFactory addVariable(String name, String value);
 
   JSONObject asFilteredJSON(Properties props);
 
@@ -49,7 +57,7 @@ public interface PackerFactory<T> extends Supplier<Optional<Path>> {
 
   PlexusContainer getContainer();
 
-  Optional<Map<String, Map<String, PackerHintMapDAO>>> getHintMap();
+  Map<String, Map<String,  IBRHintMap>> getHintMap();
 
   Logger getLog();
 
@@ -57,16 +65,23 @@ public interface PackerFactory<T> extends Supplier<Optional<Path>> {
 
   Path getManifestTargetPath();
 
-  Optional<Path> getMetaRoot();
+  default JSONObject getManifest() {
+    return et.withReturningTranslation(() -> new JSONObject(readFile(getManifestTargetPath())));
+  }
 
-  Optional<Checksum> getPackerChecksum();
+  Path getMetaRoot();
+
+  Checksum getPackerChecksum();
 
   Path getPackerExecutable();
 
-  T getBuilderOutputData();
+  JSONObject getBuilderOutputData();
 
   List<IBRInternalDependency> getRequirements();
 
   Path getRoot();
+
+  ProcessExecutionFactory getProcessExecutionFactory(String id);
+
 
 }

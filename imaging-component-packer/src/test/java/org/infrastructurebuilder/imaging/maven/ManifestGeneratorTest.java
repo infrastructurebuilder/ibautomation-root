@@ -15,16 +15,20 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.lang.System.out;
+import static java.time.Duration.ofMinutes;
+import static java.util.Optional.of;
+import static org.infrastructurebuilder.automation.PackerException.et;
+import static org.infrastructurebuilder.imaging.maven.PackerManifest.runAndGenerateManifest;
 import static org.junit.Assert.assertNotNull;
 
 import java.nio.file.Path;
-import java.time.Duration;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -33,20 +37,20 @@ import org.slf4j.LoggerFactory;
 
 public class ManifestGeneratorTest extends AbstractPackerFactoryTest {
 
-  private ManifestGenerator m;
+  private Supplier<PackerManifest> m;
 
-  private List<String> params;
+  private List<String>        params;
   private Map<String, String> runtime;
-  private Path tempDir;
-  Logger log = LoggerFactory.getLogger(ManifestGeneratorTest.class);
+  private Path                tempDir;
+  Logger                      log = LoggerFactory.getLogger(ManifestGeneratorTest.class);
 
   @Before
   public void setUp2() throws Exception {
     tempDir = target.resolve(UUID.randomUUID().toString());
     params = Arrays.asList("--color=false");
     runtime = new HashMap<>();
-    m = new ManifestGenerator(pf, tempDir, "name", "desc", gav, Optional.of(Duration.ofMinutes(30)),
-        Optional.of(System.out), params, runtime);
+    m = () -> et.withReturningTranslation(
+        () -> runAndGenerateManifest(pf, tempDir, "name", "desc", gav, of(ofMinutes(30)), of(out), params, runtime));
   }
 
   @Test

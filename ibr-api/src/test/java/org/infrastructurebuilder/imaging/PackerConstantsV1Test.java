@@ -34,7 +34,7 @@ public class PackerConstantsV1Test {
 
     };
     assertEquals(1, PackerConstantsV1.MR_PARAMS.size());
-    assertEquals(Duration.ofSeconds(20L), PackerConstantsV1.TWENTY_SECONDS.get());
+    assertEquals(Duration.ofSeconds(20L), PackerConstantsV1.TWENTY_SECONDS);
   }
 
 }

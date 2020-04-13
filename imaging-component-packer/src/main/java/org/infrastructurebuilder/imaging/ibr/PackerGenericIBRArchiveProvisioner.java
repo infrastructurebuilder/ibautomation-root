@@ -30,11 +30,11 @@ import org.json.JSONObject;
 @Named(PackerGenericIBRArchiveProvisioner.GENERIC_IBR)
 @Typed(PackerProvisioner.class)
 @Description("Generic Provisoner that uses an IBR as source")
-public class PackerGenericIBRArchiveProvisioner extends AbstractPackerIBRProvisioner<JSONObject> {
+public class PackerGenericIBRArchiveProvisioner extends AbstractPackerIBRProvisioner {
   public static final String GENERIC_IBR = "generic-ibr";
 
   @Inject
-  public PackerGenericIBRArchiveProvisioner(final Map<String, IBRType<JSONObject>> cmTypes) {
+  public PackerGenericIBRArchiveProvisioner(final Map<String, IBRType> cmTypes) {
     super(cmTypes);
   }
 

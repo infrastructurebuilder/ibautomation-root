@@ -15,11 +15,14 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.IBRAutomationException;
+import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 
 public class Type {
@@ -28,15 +31,15 @@ public class Type {
   private DefaultGAV parent;
 
   public Optional<Map<String, String>> getExtra() {
-    return Optional.ofNullable(extra);
+    return ofNullable(extra);
   }
 
   public String getHint() {
-    return Optional.ofNullable(hint).orElseThrow(() -> new PackerException("No hint available"));
+    return ofNullable(hint).orElseThrow(() -> new IBRAutomationException("No hint available"));
   }
 
-  public Optional<DefaultGAV> getParent() {
-    return Optional.ofNullable(parent);
+  public Optional<GAV> getParent() {
+    return ofNullable(parent);
   }
 
   public void setExtra(final Map<String, String> extra) {
@@ -44,7 +47,7 @@ public class Type {
   }
 
   public void setHint(final String hint) {
-    this.hint = Objects.requireNonNull(hint);
+    this.hint = requireNonNull(hint);
   }
 
   public void setParent(final DefaultGAV parent) {

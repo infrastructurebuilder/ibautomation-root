@@ -25,8 +25,8 @@ import java.util.Optional;
 
 import org.json.JSONObject;
 
-abstract public class AbstractPackerProvisioner<T> extends AbstractPackerBaseObject implements PackerProvisioner<T> {
-  private List<ImageData<T>> builders;
+abstract public class AbstractPackerProvisioner extends AbstractPackerBaseObject implements PackerProvisioner {
+  private List<ImageData>               builders;
   private final Map<String, JSONObject> overrides = new HashMap<>();
 
   public AbstractPackerProvisioner() {
@@ -45,24 +45,24 @@ abstract public class AbstractPackerProvisioner<T> extends AbstractPackerBaseObj
   }
 
   @Override
-  public void setBuilders(final List<ImageData<T>> builders) {
+  public void setBuilders(final List<ImageData> builders) {
     this.builders = Objects.requireNonNull(builders);
   }
 
   @Override
-  public PackerProvisioner<T> updateWithOverrides(final List<ImageData<T>> builders) {
+  public PackerProvisioner updateWithOverrides(final List<ImageData> builders) {
     Objects.requireNonNull(builders).stream().forEach(b -> {
       addOverrideForType(b).ifPresent(o -> overrides.put(b.getId(), o));
     });
     return this;
   }
 
-  protected Optional<JSONObject> addOverrideForType(final ImageData<T> b) {
+  protected Optional<JSONObject> addOverrideForType(final ImageData b) {
     getLog().debug("No override for builder " + b.getId() + " in " + getId());
     return Optional.empty();
   }
 
-  protected List<ImageData<T>> getBuilders() {
+  protected List<ImageData> getBuilders() {
     return builders;
   }
 

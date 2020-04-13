@@ -17,11 +17,11 @@ package org.infrastructurebuilder.configuration.management.ansible;
 
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.AMAZONEBS;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.PLAYBOOK_FILE;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.TYPE;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.AWS_PROVISIONING_USER;
+import static org.infrastructurebuilder.ibr.IBRConstants.AMAZONEBS;
+import static org.infrastructurebuilder.ibr.IBRConstants.PLAYBOOK_FILE;
+import static org.infrastructurebuilder.ibr.IBRConstants.TYPE;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -43,18 +43,18 @@ import org.json.JSONObject;
 
 @Named(ANSIBLE)
 @Typed(IBRType.class)
-public class AnsibleIBRType extends AbstractIBRType<JSONObject> {
+public class AnsibleIBRType extends AbstractIBRType {
 
   @Inject
   public AnsibleIBRType(@Named(AutomationUtils.DEFAULT_NAME) final AutomationUtils rps,
-      final List<IBRValidator<JSONObject>> validators) {
+      final List<IBRValidator> validators) {
     super(rps, validators);
     setName(ANSIBLE);
   }
 
   @Override
   public JSONObject transformToProvisionerEntry(final String typeName, final Path root, final Path targetFile,
-      final Optional<IBArchive> archive, final List<ImageData<JSONObject>> builders) {
+      final Optional<IBArchive> archive, final List<ImageData> builders) {
 
     final JSONObject j = JSONBuilder.newInstance(ofNullable(getRoot()))
 
@@ -67,10 +67,10 @@ public class AnsibleIBRType extends AbstractIBRType<JSONObject> {
     return j;
   }
 
-  private Optional<JSONObject> getOverridesFor(final List<ImageData<JSONObject>> builders) {
+  private Optional<JSONObject> getOverridesFor(final List<ImageData> builders) {
 
     final JSONObject j = new JSONObject();
-    for (final ImageData<JSONObject> b : requireNonNull(builders)) {
+    for (final ImageData b : requireNonNull(builders)) {
       switch (b.getPackerType()) {
         case AMAZONEBS:
           if (b.getProvisioningUser().isPresent()) {

@@ -16,10 +16,9 @@
 package org.infrastructurebuilder.automation;
 
 import static java.util.Objects.requireNonNull;
-import static java.util.Optional.ofNullable;
-import static org.infrastructurebuilder.automation.IBRExecutionData.EXECUTIONDATA;
 import static org.infrastructurebuilder.automation.IBRManifest.MODEL_VERSION;
 import static org.infrastructurebuilder.automation.IBRSpecificExecution.TYPE;
+import static org.infrastructurebuilder.automation.IBRTypedExecution.EXECUTIONDATA;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -30,23 +29,35 @@ import org.infrastructurebuilder.util.artifacts.IBVersion.IBVersionBoundedRange;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultIBVersion;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultIBVersion.DefaultIBVersionBoundedRange;
 
-abstract public class AbstractIBRExecutionDataReader<T extends IBRExecutionData>
-    implements IBRSpecificExecutionReader<T> {
+/**
+ * The {@code AbstractIBRExecutionDataReader} is the base for a reader for an {@link IBRTypedExecution}
+ *
+ * The {@code AbstractIBRExecutionDataReader} is point at which the various models start to disassociate from each other,
+ * while string retaining a line of connectivity.
+ *
+ * @author mykel.alvis
+ *
+ * @param <T>
+ */
+abstract public class AbstractIBRExecutionDataReader<T extends IBRTypedExecution>
+    implements IBRTypedExecutionReader<T> {
 
   private final String                hint;
   private final IBVersionBoundedRange boundedRange;
+  private final String workingType;
 
-  public AbstractIBRExecutionDataReader(String hint, String lower, String upper) {
-    this(hint, DefaultIBVersionBoundedRange.versionBoundedRangeFrom(lower, upper));
+  public AbstractIBRExecutionDataReader(String workingType, String hint, String lower, String upper) {
+    this(workingType, hint, DefaultIBVersionBoundedRange.versionBoundedRangeFrom(lower, upper));
   }
 
-  public AbstractIBRExecutionDataReader(String hint, IBVersionBoundedRange range) {
+  public AbstractIBRExecutionDataReader(String workingType, String hint, IBVersionBoundedRange range) {
+    this.workingType = requireNonNull(workingType);
     this.hint = requireNonNull(hint);
-    this.boundedRange = Objects.requireNonNull(range);
+    this.boundedRange = Objects.requireNonNull(range).apiRange();
   }
 
   @Override
-  public Optional<Supplier<T>> readExecutionData(Xpp3Dom ed) {
+  public Optional<Supplier<T>> readTypedExecution(Xpp3Dom ed, IBRDependentExecution parent) {
     return Optional.empty();
   }
 
@@ -56,22 +67,29 @@ abstract public class AbstractIBRExecutionDataReader<T extends IBRExecutionData>
   }
 
   @Override
+  public String getWorkingSpecificDataType() {
+    return this.workingType;
+  }
+
+  @Override
   public IBVersionBoundedRange getModelAPIVersionRange() {
     return this.boundedRange;
   }
 
   @Override
-  public boolean respondsTo(Xpp3Dom ed) {
-    // Subtypes should at least call this first
-    return EXECUTIONDATA.equals(ed.getName())
-        // Type should match hint
-        && getComponentHint().equals(ed.getAttribute(TYPE))
+  public boolean respondsTo(Xpp3Dom s) {
+    return Optional.ofNullable(s).map(ed -> {
+      return Optional.ofNullable(ed.getChild(IBRTypedExecution.SPECIFICDATA)).map(spd -> {
+        // Subtypes should at least call this first
+        return EXECUTIONDATA.equals(ed.getName())
+            // Type should match hint
+            && getWorkingSpecificDataType().equals(spd.getAttribute(TYPE))
         // Check model version
-        && getModelAPIVersionRange().isSatisfiedBy(new DefaultIBVersion(ed.getAttribute(MODEL_VERSION)).apiVersion());
+            && getModelAPIVersionRange()
+                .isSatisfiedBy(new DefaultIBVersion(spd.getAttribute(MODEL_VERSION)).apiVersion());
+      }).orElse(false);
+    }).orElse(false);
 
   }
 
-  protected Optional<Xpp3Dom> getExecutionData(Xpp3Dom d) {
-    return ofNullable(requireNonNull(d).getChild(EXECUTION_DATA));
-  }
 }

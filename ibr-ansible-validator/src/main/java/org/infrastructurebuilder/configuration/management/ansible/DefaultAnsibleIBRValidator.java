@@ -15,7 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management.ansible;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.ANSIBLE;
+import static org.infrastructurebuilder.ibr.IBRConstants.ANSIBLE;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

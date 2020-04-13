@@ -20,7 +20,7 @@ import static org.apache.maven.plugins.annotations.InstantiationStrategy.PER_LOO
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
 import static org.infrastructurebuilder.configuration.management.IBArchiveException.et;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.IBR_METADATA_FILENAME;
+import static org.infrastructurebuilder.ibr.IBRConstants.IBR_METADATA_FILENAME;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -38,24 +38,26 @@ import org.infrastructurebuilder.util.IBUtils;
 import org.json.JSONObject;
 
 @Mojo(name = "package", requiresProject = true, threadSafe = true, instantiationStrategy = PER_LOOKUP, defaultPhase = PACKAGE, requiresDependencyResolution = RUNTIME)
-public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
+public final class IBRPackageMojo extends AbstractIBRMojo {
+
+  private static final String NO_TYPES_HAVE_BEEN_SET = "No IBR Types have been set.";
 
   @SuppressWarnings("unchecked")
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (getMyTypes().isEmpty()) {
-      getLog().error("No AutomationTypes set for configuration-management-maven-plugin.");
-      throw new MojoExecutionException("No AutomationTypes set for configuration-management-maven-plugin.");
+      getLog().error(NO_TYPES_HAVE_BEEN_SET);
+      throw new MojoExecutionException(NO_TYPES_HAVE_BEEN_SET);
     }
 
     getLog().info("Getting compile order for package run");
-    final List<String> order = (List<String>) ofNullable(getPluginContext().get(COMPILE_ORDER))
+    final List<String> order = getCompileOrder()
         .orElseThrow(() -> new MojoExecutionException("No compilation data order available"));
     getLog().info("Getting compile items for package run");
-    final Map<String, IBRDataObject<JSONObject>> map = (Map<String, IBRDataObject<JSONObject>>) ofNullable(getPluginContext().get(COMPILE_ITEMS))
+    final Map<String, IBRDataObject<JSONObject>> map = getCompileItems()
         .orElseThrow(() -> new MojoExecutionException("No compilation map data available"));
 
-    getLog().info("configuration-management-maven-plugin is executing!");
+    getLog().info("Executing...");
 
     getLog().info("Working in " + getWorkDirectory());
 
@@ -74,7 +76,7 @@ public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
 
       total += v.getCount();
     }
-    getLog().info("Checking for resources to package (src/main/resources)");
+    getLog().info("Checking for resources to package ");
 
     getLog().info(String.format("Total files collected to archive: %d", total));
     if (total == 0)
@@ -88,12 +90,11 @@ public final class IBRPackageMojo extends AbstractIBRMojo<JSONObject> {
       getLog().info(String.format("Created archive: %s", a.toString()));
       et.withTranslation(() -> {
         if (getClassifier() != null) {
-          getLog().info(String.format("Classifier was set: %s", getClassifier()));
+          getLog().info(String.format("Classifier set: %s", getClassifier()));
           getMavenProjectHelper().attachArtifact(getProject(), "ibr", getClassifier(), a);
         } else {
           if (getProject().getArtifact().getFile() != null && getProject().getArtifact().getFile().isFile())
-            throw new IBArchiveException("You have to use a classifier "
-                + "to attach supplemental artifacts to the project instead of replacing them.");
+            throw new IBArchiveException("Classifier requiredto attach supplemental artifacts.");
           getProject().getArtifact().setFile(a);
         }
       });

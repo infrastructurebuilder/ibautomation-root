@@ -35,14 +35,12 @@
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ibr-api</artifactId>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>ibr-api</artifactId>
       <scope>test</scope>
       <type>test-jar</type>
-      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.json</groupId>

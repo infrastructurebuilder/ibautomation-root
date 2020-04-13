@@ -22,7 +22,7 @@ import org.json.JSONArray;
 
 public interface PackerPostProcessor extends ImageBaseObject {
 
-  void addRequiredItemsToFactory(Optional<IBAuthentication> a, PackerFactory<?> f);
+  void addRequiredItemsToFactory(Optional<IBAuthentication> a, PackerFactory f);
 
   JSONArray asJSONArray();
 

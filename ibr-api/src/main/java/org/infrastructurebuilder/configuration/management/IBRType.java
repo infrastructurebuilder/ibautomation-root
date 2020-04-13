@@ -27,7 +27,7 @@ import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.json.JSONObject;
 
-public interface IBRType<T> {
+public interface IBRType {
   AutomationUtils getAutomationUtils();
 
   SortedSet<IBRValidationOutput> collectValidatedOutput();
@@ -42,10 +42,10 @@ public interface IBRType<T> {
 
   String getName();
 
-  Set<IBRValidator<T>> getRelevantValidators();
+  Set<IBRValidator> getRelevantValidators();
 
   void setConfigSupplier(IBConfigSupplier acs);
 
   JSONObject transformToProvisionerEntry(String typeName, Path root, Path targetFile, Optional<IBArchive> archive,
-      List<ImageData<T>> builders);
+      List<ImageData> builders);
 }

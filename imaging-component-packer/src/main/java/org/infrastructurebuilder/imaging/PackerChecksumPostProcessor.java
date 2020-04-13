@@ -35,6 +35,7 @@ import javax.inject.Named;
 
 import org.eclipse.sisu.Description;
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.json.JSONObject;
 

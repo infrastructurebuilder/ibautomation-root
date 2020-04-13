@@ -15,7 +15,9 @@
  */
 package org.infrastructurebuilder.imaging;
 
-import java.util.Objects;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+
 import java.util.Optional;
 
 abstract public class AbstractPackerBuilderDisk extends AbstractPackerBaseObject implements ImageDataDisk {
@@ -33,12 +35,12 @@ abstract public class AbstractPackerBuilderDisk extends AbstractPackerBaseObject
 
   @Override
   public Optional<String> getDeviceName() {
-    return Optional.ofNullable(deviceName);
+    return ofNullable(deviceName);
   }
 
   @Override
   public Optional<ImageDataEncryptionIdentifier> getEncryptionIdentifier() {
-    return Optional.ofNullable(encryptionIdentifier);
+    return ofNullable(encryptionIdentifier);
   }
 
   @Override
@@ -58,37 +60,37 @@ abstract public class AbstractPackerBuilderDisk extends AbstractPackerBaseObject
 
   @Override
   public Optional<String> getSnapshotId() {
-    return Optional.ofNullable(snapshotId);
+    return ofNullable(snapshotId);
   }
 
   @Override
   public Optional<String> getVirtualName() {
-    return Optional.ofNullable(virtualName);
+    return ofNullable(virtualName);
   }
 
   @Override
   public Optional<Long> getVolumeSize() {
-    return Optional.ofNullable(volumeSize);
+    return ofNullable(volumeSize);
   }
 
   @Override
   public Optional<String> getVolumeType() {
-    return Optional.ofNullable(volumeType);
+    return ofNullable(volumeType);
   }
 
   @Override
   public Optional<Boolean> isDeleteOnTermination() {
-    return Optional.ofNullable(deleteOnTermination);
+    return ofNullable(deleteOnTermination);
   }
 
   @Override
   public Optional<Boolean> isEncrypted() {
-    return Optional.ofNullable(encrypted);
+    return ofNullable(encrypted);
   }
 
   @Override
   public Optional<Boolean> isNoDevice() {
-    return Optional.ofNullable(noDevice);
+    return ofNullable(noDevice);
   }
 
   public void setDeleteOnTermination(final boolean deleteOnTermination) {
@@ -104,7 +106,7 @@ abstract public class AbstractPackerBuilderDisk extends AbstractPackerBaseObject
   }
 
   public void setEncryptionIdentifier(final ImageDataEncryptionIdentifier encryptionIdentifier) {
-    this.encryptionIdentifier = Objects.requireNonNull(encryptionIdentifier);
+    this.encryptionIdentifier = requireNonNull(encryptionIdentifier);
   }
 
   public void setIndex(final int i) {
@@ -124,10 +126,10 @@ abstract public class AbstractPackerBuilderDisk extends AbstractPackerBaseObject
   }
 
   public void setVolumeSize(final Long volumeSize) {
-    this.volumeSize = Objects.requireNonNull(volumeSize);
+    this.volumeSize = requireNonNull(volumeSize);
   }
 
   public void setVolumeType(final String volumeType) {
-    this.volumeType = Objects.requireNonNull(volumeType);
+    this.volumeType = requireNonNull(volumeType);
   }
 }

@@ -15,6 +15,9 @@
  */
 package org.infrastructurebuilder.imaging.file;
 
+import static java.lang.Boolean.TRUE;
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DESTINATION;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DIRECTION;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.GENERATED;
@@ -22,7 +25,6 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 import javax.inject.Inject;
@@ -38,7 +40,7 @@ import org.json.JSONObject;
 @Named(PackerFileBuilder.FILETYPE)
 @Typed(PackerProvisioner.class)
 @Description("Send a file to remote machine")
-public class PackerFileProvisioner extends AbstractPackerProvisioner<JSONObject> {
+public class PackerFileProvisioner extends AbstractPackerProvisioner {
   private String destination;
   private PackerFileProvisionerDirection direction = PackerFileProvisionerDirection.upload;
   private boolean generated = false;
@@ -67,11 +69,11 @@ public class PackerFileProvisioner extends AbstractPackerProvisioner<JSONObject>
   }
 
   public Optional<String> getDestination() {
-    return Optional.ofNullable(destination);
+    return ofNullable(destination);
   }
 
   public Optional<PackerFileProvisionerDirection> getDirection() {
-    return Optional.ofNullable(direction == PackerFileProvisionerDirection.download ? direction : null);
+    return ofNullable(direction == PackerFileProvisionerDirection.download ? direction : null);
   }
 
   @Override
@@ -90,11 +92,11 @@ public class PackerFileProvisioner extends AbstractPackerProvisioner<JSONObject>
   }
 
   public Optional<String> getSource() {
-    return Optional.ofNullable(source);
+    return ofNullable(source);
   }
 
   public Optional<Boolean> isGenerated() {
-    return Optional.ofNullable(generated ? Boolean.TRUE : null);
+    return ofNullable(generated ? TRUE : null);
   }
 
   public void setDestination(final String destination) {
@@ -102,7 +104,7 @@ public class PackerFileProvisioner extends AbstractPackerProvisioner<JSONObject>
   }
 
   public void setDirection(final PackerFileProvisionerDirection direction) {
-    this.direction = Objects.requireNonNull(direction);
+    this.direction = requireNonNull(direction);
   }
 
   public void setGenerated(final boolean generated) {

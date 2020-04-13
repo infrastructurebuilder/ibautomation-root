@@ -15,60 +15,67 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.time.Duration.ofMillis;
+import static java.time.Duration.ofMinutes;
+import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.ProcessExecution;
 import org.infrastructurebuilder.util.ProcessExecutionResult;
 import org.infrastructurebuilder.util.ProcessExecutionResultBag;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.execution.model.v1_0_0.DefaultProcessExecutionResult;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
 public class PackerTestingSetup {
+  private final static TestingPathSupplier   wps  = new TestingPathSupplier();
+  protected VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
 
-  public static final String AMAZON_EBS = "amazon-ebs";
-  public static final String SPECIFIC_FIXTURES = "specific-fixtures";
-  public static final String ID = "default";
-  public static final Optional<Duration> MILLIS_1 = Optional.of(Duration.ofMillis(1));
-  public static final Optional<Duration> MINUTES_30 = Optional.of(Duration.ofMinutes(30L));
-  public static Path packerExecutable;
-  public static final String STDERR = "stdErr";
-  public static final List<String> STDERR_LINES = Arrays.asList("GHI", "JKL");
-  public static final String STDOUT = "stdOut";
-  public static final List<String> STDOUT_LINES = Arrays.asList("ABC", "DEF");
-  public static Path TARGET;
-  protected static Path targetPath;
+  public static final String             AMAZON_EBS        = "amazon-ebs";
+  public static final String             SPECIFIC_FIXTURES = "specific-fixtures";
+  public static final String             ID                = "default";
+  public static final Optional<Duration> MILLIS_1          = of(ofMillis(1));
+  public static final Optional<Duration> MINUTES_30        = of(ofMinutes(30L));
+  public static Path                     packerExecutable;
+  public static final String             STDERR            = "stdErr";
+  public static final List<String>       STDERR_LINES      = asList("GHI", "JKL");
+  public static final String             STDOUT            = "stdOut";
+  public static final List<String>       STDOUT_LINES      = asList("ABC", "DEF");
+  public static Path                     TARGET;
+  protected final static Path            targetPath        = wps.getRoot();
 
   public static Path TEMP;
 
-  public static final String TEST_JSON_JSON = "testJSON.json";
-  public static final String TEST_MR_DATA_TXT = "testMRData.txt";
-  public static final Optional<Duration> ZERO_DURATION = Optional.of(Duration.ofMinutes(0));
+  public static final String             TEST_JSON_JSON   = "testJSON.json";
+  public static final String             TEST_MR_DATA_TXT = "testMRData.txt";
+  public static final Optional<Duration> ZERO_DURATION    = of(ofMinutes(0));
 
   @BeforeClass
   public static final void beforeClass() throws IOException {
-    String target = Optional.ofNullable(System.getProperty("target_dir")).orElse("./target");
-    targetPath = Paths.get(target).toRealPath().toAbsolutePath();
     TARGET = Files.createDirectories(targetPath);
     packerExecutable = TARGET.resolve("packer");
   }
 
-  public Path deliver8rFixtures;
-  public Path fixtures;
-  public Path packerFixtures;
-  public ProcessExecution pe;
+  public Path                      deliver8rFixtures;
+  public Path                      fixtures;
+  public Path                      packerFixtures;
+  public ProcessExecution          pe;
   public ProcessExecutionResultBag prr;
-  public ProcessExecutionResult res;
-  public Path stdErr;
+  public ProcessExecutionResult    res;
+  public Path                      stdErr;
 
   public Path stdOut;
   public Path manifestPath;
@@ -89,11 +96,9 @@ public class PackerTestingSetup {
     deliver8rFixtures = fixtures.resolve("specific-fixtures");
     packerFixtures = fixtures.resolve("fixtures");
 
-    pe = new ProcessExecution(ID, "java", Arrays.asList("-version"), Optional.of(Duration.ofDays(1)), stdOut, stdErr,
-        Optional.empty(), Optional.empty(), false, Optional.of(new HashMap<>()), Optional.of(targetPath),
-        Optional.empty(), Optional.empty(), false);
-    res = new ProcessExecutionResult(pe, Optional.of(0), Optional.empty(), Instant.ofEpochMilli(100),
-        Duration.ofMillis(100));
+    pe = vpef.getDefaultFactory(targetPath, ID, "java").withArguments("-version").withDuration(ofMinutes(1L)).get();
+
+    res = new DefaultProcessExecutionResult(pe, of(0), Optional.empty(), Instant.ofEpochMilli(100), ofMillis(100));
   }
 
 }

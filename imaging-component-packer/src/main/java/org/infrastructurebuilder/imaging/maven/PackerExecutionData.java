@@ -15,6 +15,10 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.CHECKSUM;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.ENVIRONMENT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.EXECUTABLE;
@@ -33,9 +37,7 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.infrastructurebuilder.util.artifacts.Checksum;
 import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
@@ -49,32 +51,31 @@ import org.slf4j.LoggerFactory;
 public class PackerExecutionData implements JSONAndChecksumEnabled {
   private final static Logger log = LoggerFactory.getLogger(PackerExecutionData.class);
 
-  private final Checksum checksum;
-  private final Duration duration;
-  private final List<String> mrLogs;
-
-  private final Optional<JSONObject> originalSource;
-  private final Path packerExecutable;
-  private final Checksum packerExecutableChecksum;
+  private final Checksum                      checksum;
+  private final Duration                      duration;
+  private final List<String>                  mrLogs;
+  private final Optional<JSONObject>          originalSource;
+  private final Path                          packerExecutable;
+  private final Checksum                      packerExecutableChecksum;
   private final Optional<Map<String, String>> packerExecutionEnvironment;
-  private final Optional<String> packerVersion;
-  private final Instant startTime;
-  private final boolean timedOut;
+  private final Optional<String>              packerVersion;
+  private final Instant                       startTime;
+  private final boolean                       timedOut;
 
   public PackerExecutionData(final JSONObject packerJson) {
-    final JSONObject pJson = Objects.requireNonNull(packerJson);
+    final JSONObject pJson = requireNonNull(packerJson);
     startTime = Instant.parse(pJson.getString(START_TIME));
     timedOut = packerJson.getBoolean(TIMED_OUT);
     duration = Duration.parse(pJson.getString(EXECUTION_DURATION));
     packerExecutable = Paths.get(pJson.getString(EXECUTABLE)).toAbsolutePath();
-    packerVersion = Optional.ofNullable(pJson.optString(VERSION, null));
+    packerVersion = ofNullable(pJson.optString(VERSION, null));
     packerExecutableChecksum = new Checksum(pJson.getString(PACKER_EXECUTABLE_CHECKSUM));
-    packerExecutionEnvironment = Optional.ofNullable(pJson.optJSONObject(ENVIRONMENT)).map(
-        o -> o.toMap().entrySet().stream().collect(Collectors.toMap(k -> k.getKey(), v -> v.getValue().toString())));
-    mrLogs = asStringStream(pJson.getJSONArray(LOG_LINES)).collect(Collectors.toList());
-    originalSource = Optional.ofNullable(pJson.optJSONObject(ORIGINALSOURCE));
+    packerExecutionEnvironment = ofNullable(pJson.optJSONObject(ENVIRONMENT))
+        .map(o -> o.toMap().entrySet().stream().collect(toMap(k -> k.getKey(), v -> v.getValue().toString())));
+    mrLogs = asStringStream(pJson.getJSONArray(LOG_LINES)).collect(toList());
+    originalSource = ofNullable(pJson.optJSONObject(ORIGINALSOURCE));
     checksum = _getChecksum();
-    final Optional<Checksum> c = Optional.ofNullable(pJson.optString(CHECKSUM, null)).map(Checksum::new);
+    final Optional<Checksum> c = ofNullable(pJson.optString(CHECKSUM, null)).map(Checksum::new);
     c.ifPresent(possible -> {
       if (!possible.equals(checksum)) {
         log.warn("Checksum failure" + checksum + " vs " + possible);
@@ -87,16 +88,16 @@ public class PackerExecutionData implements JSONAndChecksumEnabled {
       final boolean timedOut, final String packerExecutable, final Checksum packerExecutableChecksum,
       final Optional<Map<String, String>> packerExecutionEnvironment, final List<String> mrLogs,
       final Optional<JSONObject> originalSource) {
-    this.startTime = Objects.requireNonNull(startTime);
+    this.startTime = requireNonNull(startTime);
     this.timedOut = timedOut;
-    duration = Objects.requireNonNull(runTime);
-    this.packerExecutable = Paths.get(Objects.requireNonNull(packerExecutable)).toAbsolutePath();
+    this.duration = requireNonNull(runTime);
+    this.packerExecutable = Paths.get(requireNonNull(packerExecutable)).toAbsolutePath();
     this.packerVersion = Optional.of(packerVersion);
-    this.packerExecutableChecksum = Objects.requireNonNull(packerExecutableChecksum);
-    this.packerExecutionEnvironment = Objects.requireNonNull(packerExecutionEnvironment);
-    this.mrLogs = Objects.requireNonNull(mrLogs);
-    this.originalSource = Objects.requireNonNull(originalSource);
-    checksum = _getChecksum();
+    this.packerExecutableChecksum = requireNonNull(packerExecutableChecksum);
+    this.packerExecutionEnvironment = requireNonNull(packerExecutionEnvironment);
+    this.mrLogs = requireNonNull(mrLogs);
+    this.originalSource = requireNonNull(originalSource);
+    this.checksum = _getChecksum();
   }
 
   @Override
@@ -115,7 +116,12 @@ public class PackerExecutionData implements JSONAndChecksumEnabled {
 
         .addInstant(START_TIME, startTime)
 
-        .addDuration(EXECUTION_DURATION, duration).addBoolean(TIMED_OUT, timedOut).addString(VERSION, packerVersion)
+        .addDuration(EXECUTION_DURATION, duration)
+
+        .addBoolean(TIMED_OUT, timedOut)
+
+        .addString(VERSION, packerVersion)
+
         .addMapStringString(ENVIRONMENT, packerExecutionEnvironment)
 
         .addJSONArray(LOG_LINES, new JSONArray(mrLogs))
@@ -168,8 +174,24 @@ public class PackerExecutionData implements JSONAndChecksumEnabled {
   }
 
   private Checksum _getChecksum() {
-    return ChecksumBuilder.newInstance().addPath(packerExecutable).addChecksum(packerExecutableChecksum)
-        .addInstant(startTime).addDuration(duration).addString(packerVersion)
-        .addMapStringString(packerExecutionEnvironment).addListString(mrLogs).addBoolean(timedOut).asChecksum();
+    return ChecksumBuilder.newInstance()
+
+        .addPath(packerExecutable)
+
+        .addChecksum(packerExecutableChecksum)
+
+        .addInstant(startTime)
+
+        .addDuration(duration)
+
+        .addString(packerVersion)
+
+        .addMapStringString(packerExecutionEnvironment)
+
+        .addListString(mrLogs)
+
+        .addBoolean(timedOut)
+
+        .asChecksum();
   }
 }

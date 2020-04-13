@@ -15,7 +15,7 @@
  */
 package org.infrastructurebuilder.imaging.shell;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.AMAZONEBS;
+import static org.infrastructurebuilder.ibr.IBRConstants.AMAZONEBS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -27,8 +27,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerConstantsV1;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

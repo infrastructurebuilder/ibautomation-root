@@ -16,12 +16,14 @@
 package org.infrastructurebuilder.imaging;
 
 import static org.infrastructurebuilder.imaging.FakeIBRDialectSupplier.TEST;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
+import org.infrastructurebuilder.automation.IBRAutomationException;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
@@ -47,12 +49,12 @@ public class IBRDialectMapperTest {
   public static void tearDownAfterClass() throws Exception {
   }
 
-  private List<IBRDialectSupplier> ts;
-  private IBRDialectSupplier       t1, t2, t3;
-  private IBRDialectMapper         m;
-  private ConfigMapSupplier        cms1, cms2;
-  private List<IBRInstanceType>    l1, l2;
-  private IBRInstanceType          type1, type2, type3, type4, type5;
+  protected List<IBRDialectSupplier> ts;
+  protected IBRDialectSupplier       t1, t2, t3;
+  protected IBRDialectMapper         m;
+  protected ConfigMapSupplier        cms1, cms2;
+  protected List<IBRInstanceType>    l1, l2;
+  protected IBRInstanceType          type1, type2, type3, type4, type5;
 
   @Before
   public void setUp() throws Exception {
@@ -68,13 +70,14 @@ public class IBRDialectMapperTest {
     t1 = new FakeIBRDialectSupplier(ibr, cms1, 0, l1);
     t2 = new FakeIBRDialectSupplier(ibr, cms2, 2, l2);
     ts = Arrays.asList(t1, t2);
+    m = new IBRDialectMapper(ibr, ts);
   }
 
   @After
   public void tearDown() throws Exception {
   }
 
-  @Test(expected = PackerException.class)
+  @Test(expected = IBRAutomationException.class)
   public void testUnConfigured() {
     t3 = new FakeIBRDialectSupplier(ibr);
     t3.get();
@@ -83,7 +86,6 @@ public class IBRDialectMapperTest {
 
   @Test
   public void test() {
-    this.m = new IBRDialectMapper(ibr, ts);
     String type = "test";
     Optional<ConfigMapSupplier> cms = Optional.empty();
     Optional<IBRDialect> t = m.getDialectFor(type, cms);

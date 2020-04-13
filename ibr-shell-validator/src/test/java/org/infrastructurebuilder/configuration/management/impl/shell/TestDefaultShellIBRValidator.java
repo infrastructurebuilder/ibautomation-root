@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.configuration.management.impl.shell;
 
+import static java.util.Optional.empty;
+import static java.util.stream.Collectors.toMap;
 import static org.infrastructurebuilder.configuration.management.shell.ShellConstants.SHELL;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -29,7 +31,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.apache.commons.io.FileUtils;
 import org.codehaus.plexus.PlexusContainerException;
@@ -38,9 +39,10 @@ import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.infrastructurebuilder.configuration.management.shell.DefaultShellIBRValidator;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
-import org.json.JSONObject;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -48,19 +50,21 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TestDefaultShellIBRValidator {
-  public final static Logger log = LoggerFactory.getLogger(TestDefaultShellIBRValidator.class);
-  private final WorkingPathSupplier ps = new WorkingPathSupplier();
-  private Path target;
-  private IBRValidator<JSONObject> test;
-  Path fileA;
-  Path fileB;
-  Path fileC;
-  Path fileD;
-  Path fileE;
-  Path fileF;
-  Path fileG;
-  Path fileH;
-  Path targetEmptyDirectory;
+  public final static Logger               log  = LoggerFactory.getLogger(TestDefaultShellIBRValidator.class);
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+
+  private Path         target;
+  private IBRValidator test;
+  Path                 fileA;
+  Path                 fileB;
+  Path                 fileC;
+  Path                 fileD;
+  Path                 fileE;
+  Path                 fileF;
+  Path                 fileG;
+  Path                 fileH;
+  Path                 targetEmptyDirectory;
 
   Path targetEmptySubfolder;
   Path targetPath;
@@ -77,8 +81,8 @@ public class TestDefaultShellIBRValidator {
 
   @Before
   public void beforeClass() throws IOException, PlexusContainerException, ComponentLookupException {
-    target = ps.getRoot();
-    targetPath = ps.get();
+    target = wps.getRoot();
+    targetPath = vpef.getScratchDir();
     targetEmptyDirectory = target.resolve(UUID.randomUUID().toString());
     targetEmptySubfolder = target.resolve(UUID.randomUUID().toString());
     targetSneakyNotDirectory = target.resolve(UUID.randomUUID().toString());
@@ -105,15 +109,18 @@ public class TestDefaultShellIBRValidator {
     }
     Files.write(fileSneakyMasquerader, "".getBytes());
     fileH.toFile().setReadable(false);
-    test = new DefaultShellIBRValidator();
+    test = new DefaultShellIBRValidator(vpef);
   }
 
   @Test
   public void testDirectoryValidatorAlternate() {
 
     final Map<Path, Optional<IBArchiveException>> result = Arrays
-        .asList(fileA, fileB, fileC, fileD, fileE, fileF, fileG, fileH).stream().flatMap(t -> test.validate(t).stream())
-        .collect(Collectors.toMap(k -> k.getPath(), v -> v.getException()));
+        .asList(fileA, fileB, fileC, fileD, fileE, fileF, fileG, fileH).stream()
+        // Map to validation results
+        .flatMap(t -> test.validate(t).stream())
+        // Fetch result map
+        .collect(toMap(IBRValidationOutput::getPath, IBRValidationOutput::getException));
 
     assertEquals("Map size should be 8", 8, result.size());
     if (result.get(fileA).isPresent()) {

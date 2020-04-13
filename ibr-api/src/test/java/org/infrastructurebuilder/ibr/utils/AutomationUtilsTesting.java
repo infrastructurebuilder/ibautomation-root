@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.ibr.utils;
 
+import static java.util.Collections.emptyList;
+
 import org.infrastructurebuilder.ibr.utils.AbstractAutomationUtils;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.util.CredentialsFactory;
@@ -37,7 +39,7 @@ public class AutomationUtilsTesting extends AbstractAutomationUtils {
 
   public AutomationUtilsTesting(PathSupplier wps, Logger ls, GAV gs, CredentialsFactory cf,
       IBArtifactVersionMapper avm) {
-    super(wps, () -> ls, new FakeGAVSupplier(gs), cf, avm, new FakeTypeToExtensionMapper());
+    super(wps, () -> ls, new FakeGAVSupplier(gs), cf, avm, new FakeTypeToExtensionMapper(), () -> emptyList());
   }
 
   public AutomationUtilsTesting(PathSupplier wps, Logger log) {

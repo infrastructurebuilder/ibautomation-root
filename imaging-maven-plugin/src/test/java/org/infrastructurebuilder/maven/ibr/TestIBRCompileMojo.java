@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
+import static java.util.Optional.empty;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -39,6 +40,8 @@ import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsible
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
 import org.json.JSONObject;
@@ -50,16 +53,18 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TestIBRCompileMojo {
-  public final static Logger log = LoggerFactory.getLogger(TestIBRCompileMojo.class);
+  public final static Logger                   log      = LoggerFactory.getLogger(TestIBRCompileMojo.class);
   @Rule
   public ExpectedException                     expected = ExpectedException.none();
   private List<DefaultIBRBuilderConfigElement> builders;
   private IBRCompileMojo                       m;
   private final TestingPathSupplier            ps       = new TestingPathSupplier();
-  private Path                target;
-  private IBRType<JSONObject> testAnsibleCMType;
+  private Path                                 target;
+  private IBRType                              testAnsibleCMType;
 
-  private HashMap<String, IBRType<JSONObject>> typeMap;
+  private HashMap<String, IBRType> typeMap;
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
 
   @Before
   public void setup() throws Exception {
@@ -76,7 +81,7 @@ public class TestIBRCompileMojo {
     final AutomationUtilsTesting rps = new AutomationUtilsTesting(() -> m.getWorkDirectory(), log);
     final IBConfigSupplier cms = new DefaultIBConfigSupplier().setConfig(new HashMap<>());
     testAnsibleCMType = new AnsibleIBRType(rps,
-        Arrays.asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator())));
+        Arrays.asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator(vpef))));
     testAnsibleCMType.setConfigSupplier(cms);
     typeMap = new HashMap<>();
     typeMap.put(org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE, testAnsibleCMType);

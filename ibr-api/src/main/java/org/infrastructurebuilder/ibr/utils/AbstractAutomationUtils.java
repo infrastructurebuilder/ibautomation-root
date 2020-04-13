@@ -15,23 +15,38 @@
  */
 package org.infrastructurebuilder.ibr.utils;
 
+import java.util.List;
+import java.util.Objects;
+
 import org.infrastructurebuilder.util.CredentialsFactory;
 import org.infrastructurebuilder.util.LoggerSupplier;
+import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.IBArtifactVersionMapper;
 import org.infrastructurebuilder.util.config.AbstractIBRuntimeUtils;
+import org.infrastructurebuilder.util.config.DependenciesSupplier;
 import org.infrastructurebuilder.util.config.GAVSupplier;
 import org.infrastructurebuilder.util.config.PathSupplier;
 import org.infrastructurebuilder.util.files.TypeToExtensionMapper;
 
 abstract public class AbstractAutomationUtils extends AbstractIBRuntimeUtils implements AutomationUtils {
 
+  private final DependenciesSupplier ds;
+
   protected AbstractAutomationUtils(PathSupplier wps, LoggerSupplier ls, GAVSupplier gs, CredentialsFactory cf,
-      IBArtifactVersionMapper avm, TypeToExtensionMapper t2em) {
+      IBArtifactVersionMapper avm, TypeToExtensionMapper t2em, DependenciesSupplier ds) {
     super(wps, ls, gs, cf, avm, t2em);
+    this.ds = Objects.requireNonNull(ds);
   }
 
   protected AbstractAutomationUtils(AbstractAutomationUtils ibr) {
     super(ibr);
+    this.ds = ibr.ds;
   }
+
+  @Override
+  public List<GAV> getDependencies() {
+    return ds.get();
+  }
+
 
 }

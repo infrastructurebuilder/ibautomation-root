@@ -15,7 +15,7 @@
  */
 package org.infrastructurebuilder.imaging.container.sizes;
 
-import static org.infrastructurebuilder.imaging.container.IBRContainerDialecSupplier.TYPE;
+import static org.infrastructurebuilder.imaging.container.IBRContainerDialectSupplier.TYPE;
 
 import org.infrastructurebuilder.imaging.AbstractStringBackedIBRInstanceType;
 

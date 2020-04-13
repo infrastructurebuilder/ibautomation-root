@@ -30,7 +30,7 @@ import org.junit.Test;
 
 public class AbstractIBRTypeTest {
 
-  AbstractIBRType<JSONObject> t;
+  AbstractIBRType t;
   final TestingPathSupplier wps = new TestingPathSupplier();
   final Path target = wps.getRoot();
 

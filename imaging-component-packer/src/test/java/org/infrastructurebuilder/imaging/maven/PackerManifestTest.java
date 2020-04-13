@@ -15,17 +15,17 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyMap;
+import static java.util.Optional.empty;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 
@@ -33,11 +33,14 @@ import org.codehaus.plexus.DefaultPlexusContainer;
 import org.infrastructurebuilder.imaging.ImageBuilder;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerHintMapDAO;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.joor.Reflect;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -47,15 +50,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PackerManifestTest extends PackerExecutionDataTest {
-  static final Logger log = LoggerFactory.getLogger(PackerManifestTest.class);
+  static final Logger                        log  = LoggerFactory.getLogger(PackerManifestTest.class);
+  static final TestingPathSupplier           wps  = new TestingPathSupplier();
+  protected VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
 
-  protected List<PackerManifest> artifactData;
+  protected List<PackerManifest>            artifactData;
   protected IBAuthenticationProducerFactory authFactory;
-  protected Path authTestPath;
-  protected DefaultPlexusContainer c;
-  protected GAV coords;
+  protected Path                            authTestPath;
+  protected DefaultPlexusContainer          c;
+  protected GAV                             coords;
 
-  protected PackerFactory<JSONObject> factory;
+  protected PackerFactory factory;
 
   protected JSONObject j;
 
@@ -71,9 +76,8 @@ public class PackerManifestTest extends PackerExecutionDataTest {
 
   @Before
   public void setUp2() throws Exception {
-    final String target = Optional.ofNullable(System.getProperty("target")).orElse("./target");
-    targetPath = Paths.get(target).toRealPath().toAbsolutePath();
-    temp = targetPath.resolve(UUID.randomUUID().toString());
+    targetPath = wps.getRoot();
+    temp = wps.get();
     Files.createDirectories(temp);
     authTestPath = targetPath.resolve("test-auth");
     authFactory = new DummyNOPAuthenticationProducerFactory(() -> authTestPath);
@@ -81,11 +85,10 @@ public class PackerManifestTest extends PackerExecutionDataTest {
     j = new JSONObject();
     c = new DefaultPlexusContainer();
     packerImageBuilder = new PackerImageBuilder();
-    artifactData = Collections.emptyList();
-    factory = new DefaultPackerFactory(c, log, targetPath, temp, Paths.get(UUID.randomUUID().toString()), artifactData,
-        packerImageBuilder, authFactory, targetPath.resolve("packer"), new Properties(), coords,
-        Collections.emptyList(), true);
-    final Map<String, Map<String, PackerHintMapDAO>> hintMap = Collections.emptyMap();
+    artifactData = emptyList();
+    factory = new DefaultPackerFactory(vpef, c, log, targetPath, temp, artifactData, packerImageBuilder, authFactory,
+        targetPath.resolve("packer"), new Properties(), coords, emptyList(), true);
+    final Map<String, Map<String, PackerHintMapDAO>> hintMap = emptyMap();
 
     Reflect.on(factory).set("hintMap", hintMap);
     j.put(BUILDS, new JSONArray());

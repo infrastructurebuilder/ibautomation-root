@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management.impl.shell;
 
+import static java.util.Optional.empty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -30,18 +31,24 @@ import org.infrastructurebuilder.configuration.management.shell.DefaultShellIBRV
 import org.infrastructurebuilder.configuration.management.shell.ShellIBRType;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.ImageData;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
 import org.junit.Test;
 
 public class TestAbstractShellIBRValidator {
-  private class TestIBRType extends AbstractIBRType<JSONObject> {
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+
+  private class TestIBRType extends AbstractIBRType {
     public TestIBRType() {
-      super(new AutomationUtilsTesting(), Arrays.asList(new DefaultShellIBRValidator()));
+      super(new AutomationUtilsTesting(), Arrays.asList(new DefaultShellIBRValidator(vpef)));
     }
 
     @Override
     public JSONObject transformToProvisionerEntry(final String typeName, final Path root, final Path targetFile,
-        final Optional<IBArchive> archive, final List<ImageData<JSONObject>> builders) {
+        final Optional<IBArchive> archive, final List<ImageData> builders) {
       return new JSONObject().put("name", "test");
     }
 
@@ -49,9 +56,9 @@ public class TestAbstractShellIBRValidator {
 
   @Test
   public void testTypes() {
-    final AbstractShellIBRValidator validator = new DefaultShellIBRValidator();
-    assertTrue(validator.respondsTo(
-        new ShellIBRType(new AutomationUtilsTesting(), Arrays.asList(new DefaultShellIBRValidator()))));
+    final AbstractShellIBRValidator validator = new DefaultShellIBRValidator(vpef);
+    assertTrue(validator
+        .respondsTo(new ShellIBRType(new AutomationUtilsTesting(), Arrays.asList(new DefaultShellIBRValidator(vpef)))));
     assertFalse(validator.respondsTo(new TestIBRType()));
   }
 }

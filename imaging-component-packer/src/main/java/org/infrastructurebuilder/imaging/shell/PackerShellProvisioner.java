@@ -32,7 +32,7 @@ import org.json.JSONObject;
 
 @Named(PackerShellProvisioner.SHELL_PROVISIONER)
 @Typed(PackerProvisioner.class)
-public class PackerShellProvisioner extends PackerShellPostProcessor implements PackerProvisioner<JSONObject> {
+public class PackerShellProvisioner extends PackerShellPostProcessor implements PackerProvisioner {
   public static final String SHELL_PROVISIONER = "shell";
 
   static final List<String> namedTypes = new ArrayList<String>() {
@@ -50,7 +50,7 @@ public class PackerShellProvisioner extends PackerShellPostProcessor implements 
     }
   };
 
-  private List<ImageData<JSONObject>> builders = Collections.emptyList();
+  private List<ImageData> builders = Collections.emptyList();
 
   @Override
   public Optional<String> getLookupHint() {
@@ -74,17 +74,17 @@ public class PackerShellProvisioner extends PackerShellPostProcessor implements 
   }
 
   @Override
-  public void setBuilders(final List<ImageData<JSONObject>> builders) {
+  public void setBuilders(final List<ImageData> builders) {
     this.builders = Objects.requireNonNull(builders);
   }
 
   @Override
-  public PackerProvisioner<JSONObject> updateWithOverrides(final List<ImageData<JSONObject>> builders) {
+  public PackerProvisioner updateWithOverrides(final List<ImageData> builders) {
 
     return this;
   }
 
-  protected List<ImageData<JSONObject>> getBuilders() {
+  protected List<ImageData> getBuilders() {
     return builders;
   }
 

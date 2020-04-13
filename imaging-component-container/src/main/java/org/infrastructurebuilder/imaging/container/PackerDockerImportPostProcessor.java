@@ -24,7 +24,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
 import org.infrastructurebuilder.util.config.PathSupplier;
 import org.json.JSONObject;

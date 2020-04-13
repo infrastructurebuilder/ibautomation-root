@@ -117,19 +117,19 @@
           <description>Description from the bulding project pom </description>
           <type>String</type>
         </field>
-        <field>
+        <field java.getter="false">
           <name>start</name>
           <version>1.0.0+</version>
           <required>true</required>
-          <description>Creation date of this manifest, required</description>
-          <type>Date</type>
+          <description>ISO 8601 formatted string Creation date of this manifest, required</description>
+          <type>String</type>
         </field>
-        <field>
+        <field java.getter="false">
           <name>end</name>
           <version>1.0.0+</version>
           <required>true</required>
-          <description>End date of this manifest, required</description>
-          <type>Date</type>
+          <description>ISO 8601 formatted string End date of this manifest, required</description>
+          <type>String</type>
         </field>
         <field java.getter="false">
           <name>duration</name>
@@ -162,13 +162,23 @@
 
       </fields>
       <codeSegments>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            ]]>
+          </code>
+        </codeSegment>
+
+
         <codeSegment>
           <version>1.0.0+</version>
           <code>
             <![CDATA[
             // Default constructor
   public Manifest() {
-    this.setStart(new java.util.Date());
+    this.setStart(org.infrastructurebuilder.automation.IBRManifest.dtf.format(java.time.Instant.now()));
   }
             ]]>
           </code>
@@ -180,8 +190,8 @@
             <![CDATA[
             // "Copy constructor"
   public Manifest(Manifest ds) {
-    this.setStart(ds.getStart());
-    this.setEnd(ds.getEnd());
+    this.setStart(ds.start);
+    this.setEnd(ds.end);
     this.setDescription(ds.getDescription().orElse(null));
     this.setName(ds.getName().orElse(null));
     this.setSha512(ds.getSha512());
@@ -197,12 +207,45 @@
             ]]>
           </code>
         </codeSegment>
+
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+  public java.time.Instant getStart() {
+    return java.time.Instant.from(org.infrastructurebuilder.automation.IBRManifest.dtf.parse(this.start));
+  }
+  public void setStart(java.time.Instant start) {
+    this.start = org.infrastructurebuilder.automation.IBRManifest.dtf.format(java.util.Objects.requireNonNull(start));
+  }
+            ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+            // Default constructor
+  public java.util.Optional<java.time.Instant> getEnd() {
+    return java.util.Optional.ofNullable(this.end).map(end -> java.time.Instant.from(org.infrastructurebuilder.automation.IBRManifest.dtf.parse(end)));
+  }
+  public void setEnd(java.time.Instant end) {
+    this.end = org.infrastructurebuilder.automation.IBRManifest.dtf.format(java.util.Objects.requireNonNull(end));
+  }
+            ]]>
+          </code>
+        </codeSegment>
+
+
+
         <codeSegment>
           <version>1.0.0+</version>
           <code>
             <![CDATA[
             // "Copy constructor"
   public java.util.List<org.infrastructurebuilder.automation.IBRDependentExecution> getDependentExecutions() {
+    if (this.exec == null)
+      this.exec = new java.util.ArrayList<>();
     return java.util.Collections.unmodifiableList(this.exec);
   }
 
@@ -222,7 +265,7 @@
 
   private void mutatingManifestCloneHook(Manifest s) {
     if (s.getEnd() == null)
-      s.setEnd(new java.util.Date());
+      s.setEnd(java.time.Instant.now());
     s.setDuration(s.getDuration().toString());
     org.infrastructurebuilder.util.artifacts.Checksum c = asChecksum();
     s.setSha512(c.toString());
@@ -431,7 +474,8 @@
       <name>Dependency</name>
       <version>1.0.0+</version>
       <interfaces>
-      <interface>org.infrastructurebuilder.util.artifacts.GAV</interface></interfaces>
+        <interface>org.infrastructurebuilder.util.artifacts.GAV</interface>
+      </interfaces>
       <fields>
         <field xml.attribute="true">
           <name>groupId</name>
@@ -447,7 +491,10 @@
           <description>ArtifactId ID</description>
           <type>String</type>
         </field>
-        <field java.getter="false" xml.attribute="true">
+        <field
+          java.getter="false"
+          xml.attribute="true"
+        >
           <name>version</name>
           <version>1.0.0+</version>
           <required>true</required>
@@ -461,7 +508,10 @@
           <description>extension (not type-mapped)</description>
           <type>String</type>
         </field>
-        <field java.getter="false" xml.attribute="true">
+        <field
+          java.getter="false"
+          xml.attribute="true"
+        >
           <name>classifier</name>
           <version>1.0.0+</version>
           <required>false</required>
@@ -534,6 +584,8 @@
     <class
       xml.tagName="execution"
       java.clone="deep"
+      java.clone.hook="mutatingCloneHook"
+
     >
       <name>DependentExecution</name>
       <version>1.0.0+</version>
@@ -584,7 +636,8 @@
           <version>1.0.0+</version>
           <code>
             <![CDATA[
-    public DependentExecution() {
+    public void mutatingCloneHook(DependentExecution d) {
+      d.executionData = getTypedExecutionData().orElseThrow(() -> new org.infrastructurebuilder.automation.IBRAutomationException("No typed data")).get().asXpp3Dom();
     }
 
     ]]>
@@ -594,7 +647,15 @@
           <version>1.0.0+</version>
           <code>
             <![CDATA[
-
+    public DependentExecution() {
+    }
+    ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
     public DependentExecution(DependentExecution o) {
       this();
       this.parent = o.parent;
@@ -604,7 +665,6 @@
       this.executionData = o.getTypedExecutionData().map(x -> x.get().copy()).orElseThrow(
           () -> new org.infrastructurebuilder.automation.IBRAutomationException("Could not duplicate execution data"));
     }
-
     ]]>
           </code>
         </codeSegment>
@@ -613,14 +673,10 @@
           <version>1.0.0+</version>
           <code>
             <![CDATA[
-
   @Override
   public java.util.Optional<org.codehaus.plexus.util.xml.Xpp3Dom> getExecutionData() {
     return java.util.Optional.ofNullable((org.codehaus.plexus.util.xml.Xpp3Dom) this.executionData);
   }
-
-
-
     ]]>
           </code>
         </codeSegment>
@@ -628,7 +684,6 @@
           <version>1.0.0+</version>
           <code>
             <![CDATA[
-
     ]]>
           </code>
         </codeSegment>
@@ -641,9 +696,18 @@
       return java.util.Objects.hash(
         executionData
         , gav
+        , logLines
+        , parent
         );
     }
 
+    ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
     @Override
     public boolean equals(Object obj) {
       if (this == obj)
@@ -653,9 +717,18 @@
       DependentExecution other = (DependentExecution) obj;
       return
              java.util.Objects.equals(executionData, other.executionData)
-          && java.util.Objects.equals(gav, other.gav);
+          && java.util.Objects.equals(gav, other.gav)
+          && java.util.Objects.equals(logLines, other.logLines)
+          && java.util.Objects.equals(parent, other.parent)
+          ;
     }
-
+    ]]>
+          </code>
+        </codeSegment>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
     @Override
     public String toString() {
       StringBuilder builder = new StringBuilder();
@@ -663,18 +736,14 @@
         .append("DependentExecution [")
         .append("gav=").append(gav)
         .append(", executionData=").append(executionData)
+        // Parent and loglines might be too much
         .append("]");
       return builder.toString();
     }
-
     ]]>
           </code>
         </codeSegment>
-
       </codeSegments>
     </class>
-
-
-
   </classes>
 </model>

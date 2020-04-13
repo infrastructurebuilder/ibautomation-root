@@ -16,53 +16,52 @@
 package org.infrastructurebuilder.automation;
 
 import static java.util.Objects.requireNonNull;
+import static org.infrastructurebuilder.automation.IBRManifest.dtf;
+import static org.infrastructurebuilder.ibr.IBRConstants.BLNK;
+import static org.infrastructurebuilder.ibr.IBRConstants.CDATA_END;
+import static org.infrastructurebuilder.ibr.IBRConstants.CDATA_START;
 
+import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.StringJoiner;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.util.artifacts.Checksum;
 
-abstract public class AbstractIBRExecutionData implements IBRExecutionData {
-  private static final String BLNK = "";
+abstract public class AbstractIBRExecutionData<T> implements IBRTypedExecution {
 
   protected final static List<String> previousKeys = Arrays.asList(START, END, CHECKSUM, ORIGINAL_SOURCE);
 
-  private static final String CDATA_START = null;
-  private static final String CDATA_END   = null;
-
-  private final String   executable;
-  private final Date     start, end;
-  private final Checksum checksum;
-  private final String   src;
-  private final Xpp3Dom  original;
-  private final Xpp3Dom  specificData;
+  private final String                executable;
+  private final Instant               start, end;
+  private final Checksum              checksum;
+  private final String                src;
+  private final Xpp3Dom               original;
+  private final Xpp3Dom               specificData;
+  private final IBRDependentExecution parent;
 
   protected static Optional<String> opt(Xpp3Dom d, String key) {
-    return Optional.ofNullable(Objects.requireNonNull(d).getChild(EXECUTABLE)).map(n -> n.getValue());
+    return Optional.ofNullable(Objects.requireNonNull(d).getChild(key)).map(n -> n.getValue());
   }
 
   protected static String str(Xpp3Dom d, String key) {
-    return opt(d, key).orElseThrow(() -> new PackerException("Key " + key + " has no value in dom " + d));
+    return opt(d, key).orElseThrow(() -> new IBRAutomationException("Key " + key + " has no value in dom " + d));
   }
 
-  protected static Date date(Xpp3Dom d, String key) {
-    return new Date(Date.parse(str(d, key)));
+  protected static Instant date(Xpp3Dom d, String key) {
+    return Instant.parse(str(d, key));
   }
 
-  public AbstractIBRExecutionData(Xpp3Dom d) {
+  public AbstractIBRExecutionData(Xpp3Dom d, IBRDependentExecution parent) {
     this(str(d, EXECUTABLE), date(d, START), date(d, END), new Checksum(str(d, CHECKSUM)), str(d, ORIGINAL_SOURCE),
-        requireNonNull(d.getChild(SPECIFICDATA)));
+        requireNonNull(d.getChild(SPECIFICDATA)), parent);
   }
 
-  public AbstractIBRExecutionData(String executable, Date start, Date end, Checksum check, String originalSource,
-      Xpp3Dom specific) {
+  public AbstractIBRExecutionData(String executable, Instant start, Instant end, Checksum check, String originalSource,
+      Xpp3Dom specific, IBRDependentExecution parent) {
     Xpp3Dom d = constructExecutionData(executable, start, end, check, originalSource, specific);
     this.original = d;
     this.executable = str(d, EXECUTABLE);
@@ -71,10 +70,11 @@ abstract public class AbstractIBRExecutionData implements IBRExecutionData {
     this.checksum = new Checksum(str(d, CHECKSUM));
     this.src = str(d, ORIGINAL_SOURCE);
     this.specificData = requireNonNull(d.getChild(SPECIFICDATA));
+    this.parent = requireNonNull(parent);
   }
 
   private final static String cData(String src, boolean cData) {
-    return new StringJoiner(cData ? CDATA_START : BLNK, BLNK, cData ? CDATA_END : BLNK).add(src).toString();
+    return new StringJoiner(BLNK, cData ? CDATA_START : BLNK, cData ? CDATA_END : BLNK).add(src).toString();
 
   }
 
@@ -82,29 +82,36 @@ abstract public class AbstractIBRExecutionData implements IBRExecutionData {
     Xpp3Dom c = new Xpp3Dom(key);
     if (requireNonNull(value) instanceof Xpp3Dom)
       cData = true;
+    cData = false;
     c.setValue(cData(value.toString(), cData));
     return c;
   }
 
-  public final static Xpp3Dom constructExecutionData(String executable, Date start, Date end, Checksum checksum,
+  public final static Xpp3Dom constructExecutionData(String executable, Instant start, Instant end, Checksum checksum,
       String src, Xpp3Dom executionData) {
     Xpp3Dom ret = new Xpp3Dom(EXECUTIONDATA);
     ret.addChild(child(EXECUTABLE, requireNonNull(executable), false));
-    ret.addChild(child(START, requireNonNull(start), false));
-    ret.addChild(child(END, requireNonNull(end), false));
+    ret.addChild(child(START, dtf.format(requireNonNull(start)), false));
+    ret.addChild(child(END, dtf.format(requireNonNull(end)), false));
     ret.addChild(child(CHECKSUM, requireNonNull(checksum), false));
-    ret.addChild(child(SPECIFICDATA, requireNonNull(executionData), true));
+    ret.addChild(child(ORIGINAL_SOURCE, requireNonNull(src), false));
+    ret.addChild(requireNonNull(executionData));
     return ret;
 
   }
 
   @Override
-  public Date getStart() {
+  public IBRDependentExecution getParent() {
+    return this.parent;
+  }
+
+  @Override
+  public Instant getStart() {
     return start;
   }
 
   @Override
-  public Date getEnd() {
+  public Instant getEnd() {
     return end;
   }
 

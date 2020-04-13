@@ -15,10 +15,10 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.CONFIG;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.ID;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.TEST;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.TYPE;
+import static org.infrastructurebuilder.ibr.IBRConstants.CONFIG;
+import static org.infrastructurebuilder.ibr.IBRConstants.ID;
+import static org.infrastructurebuilder.ibr.IBRConstants.TEST;
+import static org.infrastructurebuilder.ibr.IBRConstants.TYPE;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -32,28 +32,27 @@ import javax.inject.Named;
 
 import org.eclipse.sisu.Description;
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.imaging.AbstractPackerProvisioner;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.json.JSONObject;
 
-public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProvisioner<T>
-    implements PackerIBRProvisioner<T> {
+public abstract class AbstractPackerIBRProvisioner extends AbstractPackerProvisioner implements PackerIBRProvisioner {
 
   @Named(GenericProvisioner.GENERIC_IBR_PROVISIONER)
   @Typed(PackerProvisioner.class)
   @Description("Generic IBR Provisioner add-on")
-  public static class GenericProvisioner<T> extends AbstractPackerProvisioner<T> {
+  public static class GenericProvisioner extends AbstractPackerProvisioner {
     public static final String        GENERIC_IBR_PROVISIONER = "generic-ibr-provisioner";
     private final Optional<IBArchive> archive;
-    private final IBRType<T>          iBRType;
+    private final IBRType             iBRType;
     private final String              lType;
     private final Path                path;
 
-    public GenericProvisioner(final IBRType<T> thisType, final String ltype, final Path p,
+    public GenericProvisioner(final IBRType thisType, final String ltype, final Path p,
         final Optional<IBArchive> arch) {
       super();
       iBRType = requireNonNull(thisType);
@@ -89,18 +88,18 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
   }
 
   private IBArchive                     archive;
-  private final Map<String, IBRType<T>> cmTypes;
+  private final Map<String, IBRType> cmTypes;
 
   @Inject
-  public AbstractPackerIBRProvisioner(final Map<String, IBRType<T>> cmTypes) {
+  public AbstractPackerIBRProvisioner(final Map<String, IBRType> cmTypes) {
     super();
     this.cmTypes = requireNonNull(cmTypes);
   }
 
   @Override
-  public List<PackerProvisioner<T>> applyArchive(final IBArchive archive) {
+  public List<PackerProvisioner> applyArchive(final IBArchive archive) {
     this.archive = requireNonNull(archive);
-    final List<PackerProvisioner<T>> list = new ArrayList<>();
+    final List<PackerProvisioner> list = new ArrayList<>();
     getArchive().ifPresent(a -> {
       final List<String> notfound = a.getPathKeys();
       notfound.removeAll(cmTypes.keySet());
@@ -110,8 +109,8 @@ public abstract class AbstractPackerIBRProvisioner<T> extends AbstractPackerProv
 
       a.getPathList().forEach(pl -> {
         final Path p = getWorkingRootDirectory().resolve(pl.getPath());
-        final IBRType<T> type = cmTypes.get(pl.getKey());
-        final GenericProvisioner<T> gp = new GenericProvisioner<T>(type, pl.getKey(), p, getArchive());
+        final IBRType type = cmTypes.get(pl.getKey());
+        final GenericProvisioner gp = new GenericProvisioner(type, pl.getKey(), p, getArchive());
         gp.setBuilders(getBuilders());
         gp.setLog(getLog());
         list.add(gp);

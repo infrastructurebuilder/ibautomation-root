@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management.shell;
 
+import static java.util.Optional.empty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
@@ -27,10 +28,13 @@ import java.util.HashMap;
 
 import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
 import org.infrastructurebuilder.configuration.management.IBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.IBRConstants;
+import org.infrastructurebuilder.ibr.IBRConstants;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -39,15 +43,18 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 public class TestShellIBRType {
 
-  private IBConfigSupplier acs;
+  private IBConfigSupplier                 acs;
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+
   private AutomationUtils rps;
-  private ShellIBRType t;
+  private ShellIBRType    t;
 
   @Before
   public void setUp() throws Exception {
     rps = new AutomationUtilsTesting();
     acs = new DefaultIBConfigSupplier().setConfig(new HashMap<>());
-    t = new ShellIBRType(rps, Arrays.asList(new DefaultShellIBRValidator()));
+    t = new ShellIBRType(rps, Arrays.asList(new DefaultShellIBRValidator(vpef)));
     t.setConfigSupplier(acs);
 
     assertNotNull(t);
@@ -62,8 +69,7 @@ public class TestShellIBRType {
   public void testTransformToProvisionerEntry() throws JSONException, IOException {
     final Path p = Paths.get("abc.xml");
     final JSONObject j = new JSONObject(IBUtils.readToString(getClass().getResourceAsStream("/testCMType.json")));
-    final JSONObject g = t.transformToProvisionerEntry(IBRConstants.SHELL, null, p, null,
-        Collections.emptyList());
+    final JSONObject g = t.transformToProvisionerEntry(IBRConstants.SHELL, null, p, null, Collections.emptyList());
     JSONAssert.assertEquals(j, g, true);
   }
 }

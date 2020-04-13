@@ -15,9 +15,11 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Collections.emptyList;
+import static java.util.Optional.empty;
+
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
 
@@ -32,27 +34,33 @@ import org.eclipse.sisu.wire.WireModule;
 import org.infrastructurebuilder.imaging.AbstractPackerTestRoot;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.slf4j.Logger;
 
 abstract public class AbstractPackerFactoryTest extends AbstractPackerTestRoot {
 
-  protected static final String TESTING = "TESTING";
-  private Type type;
+  protected final static TestingPathSupplier wps  = new TestingPathSupplier();
+  protected VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+
+  protected static final String             TESTING = "TESTING";
+  private Type                              type;
   protected IBAuthenticationProducerFactory apf;
-  protected DefaultPlexusContainer container;
-  protected ContainerConfiguration dpcreq;
-  protected PackerFileBuilder fb;
-  protected JSONObject fbj;
-  protected DefaultGAV gav;
-  protected PackerImageBuilder imageBuilder;
-  protected ClassWorld kw;
-  protected ArrayList<PackerManifest> l;
-  protected PackerFactory<JSONObject> pf;
-  protected Properties props;
+  protected DefaultPlexusContainer          container;
+  protected ContainerConfiguration          dpcreq;
+  protected PackerFileBuilder               fb;
+  protected JSONObject                      fbj;
+  protected DefaultGAV                      gav;
+  protected PackerImageBuilder              imageBuilder;
+  protected ClassWorld                      kw;
+  protected ArrayList<PackerManifest>       l;
+  protected PackerFactory                   pf;
+  protected Properties                      props;
 
   public AbstractPackerFactoryTest() {
     super();
@@ -75,13 +83,13 @@ abstract public class AbstractPackerFactoryTest extends AbstractPackerTestRoot {
     container = new DefaultPlexusContainer(dpcreq,
         new WireModule(new SpaceModule(new URLClassSpace(kw.getClassRealm(TESTING)))));
     apf = container.lookup(IBAuthenticationProducerFactory.class, "default");
-    apf.setAuthentications(Collections.emptyList());
+    apf.setAuthentications(emptyList());
     l = new ArrayList<>();
     gav = new DefaultGAV("X:Y:10.0.0:jar");
     props = new Properties();
 
-    pf = new DefaultPackerFactory(container, getLog(), target, getRoot(), Paths.get("ABCdir"), l, imageBuilder, apf,
-        target.resolve("packer"), props, gav, Collections.emptyList(), true);
+    pf = new DefaultPackerFactory(vpef, container, getLog(), target, getRoot(), l, imageBuilder, apf,
+        target.resolve("packer"), props, gav, emptyList(), true);
     fb = new PackerFileBuilder();
     fb.setOutputFileName("ABCFILE");
     fb.setContent("ABC");

@@ -48,10 +48,6 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>ibr-aws-dialect</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.infrastructurebuilder.util.auth</groupId>
       <artifactId>ibauth-api</artifactId>
       <type>test-jar</type>
@@ -176,7 +172,8 @@
         <groupId>com.googlecode.maven-download-plugin</groupId>
         <artifactId>download-maven-plugin</artifactId>
         <configuration>
-        <skip>true</skip></configuration>
+          <skip>false</skip>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.jacoco</groupId>
@@ -194,28 +191,87 @@
           </execution>
         </executions>
       </plugin>
-            <plugin>
+      <plugin>
         <groupId>org.codehaus.modello</groupId>
         <artifactId>modello-maven-plugin</artifactId>
+        <inherited>true</inherited>
         <configuration>
           <version>${ibr.model.version}</version>
-          <domAsXpp3>true</domAsXpp3>
-          <packageWithVersion>true</packageWithVersion>
           <models>
           </models>
         </configuration>
+        <executions>
+          <execution>
+            <id>java</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorId>java</generatorId>
+            </configuration>
+          </execution>
+          <execution>
+            <id>xpp3-reader</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorId>xpp3-reader</generatorId>
+            </configuration>
+          </execution>
+          <execution>
+            <id>xpp3-writer-reflect</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <generatorId>xpp3-writer-reflect</generatorId>
+            </configuration>
+          </execution>
+          <execution>
+            <id>make-site-doc</id>
+            <phase>pre-site</phase>
+            <goals>
+              <goal>xdoc</goal>
+            </goals>
+          </execution>
+        </executions>
       </plugin>
       <plugin>
-        <groupId>org.infrastructurebuilder.modello</groupId>
-        <artifactId>modello-maven-plugin-usurped</artifactId>
-        <version>1.11.0.1-SNAPSHOT</version>
-        <configuration>
-          <version>${ibr.model.version}</version>
-          <domAsXpp3>true</domAsXpp3>
-          <packageWithVersion>true</packageWithVersion>
-          <models>
-          </models>
-        </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <inherited>true</inherited>
+        <executions>
+        <!--
+          <execution>
+            <id>formatVersion</id>
+            <phase>validate</phase>
+            <goals>
+              <goal>parse-version</goal>
+              <goal>hostname</goal>
+              <goal>cpu-count</goal>
+              <goal>local-ip</goal>
+              <goal>released-version</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+            </configuration>
+          </execution>
+         -->
+          <execution>
+            <id>add-sources</id>
+            <phase>generate-sources</phase>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <inherited>false</inherited>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/modello</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
 
     </plugins>

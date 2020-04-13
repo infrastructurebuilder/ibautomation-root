@@ -17,11 +17,12 @@ package org.infrastructurebuilder.maven.imaging;
 
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.isDirectory;
+import static java.util.Objects.requireNonNull;
 import static java.util.UUID.randomUUID;
+import static org.infrastructurebuilder.automation.PackerException.et;
 import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.IBR_METADATA_FILENAME;
+import static org.infrastructurebuilder.ibr.IBRConstants.IBR_METADATA_FILENAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER;
-import static org.infrastructurebuilder.imaging.PackerException.et;
 import static org.infrastructurebuilder.util.IBUtils.copy;
 import static org.infrastructurebuilder.util.IBUtils.readJsonObject;
 
@@ -33,7 +34,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -48,9 +48,10 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.UnArchiver;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.infrastructurebuilder.IBException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.configuration.management.IBArchive;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.maven.PackerBean;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
@@ -73,10 +74,11 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
   private List<IBArchive> ibrArtifactData;
 
-  private String ibrHandler;
+  private String                                      ibrHandler;
   private final Map<IBArchive, IBRInternalDependency> ibrMapping = new HashMap<>();
 
   private final ArchiverManager archiverManager;
+  private final AutomationUtils automationUtils;
 
   private List<DefaultIBAuthentication> baseAuthentications = new ArrayList<>();
 
@@ -149,9 +151,13 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
   protected IBAuthConfigBean authConfig = new IBAuthConfigBean();
 
   @Inject
-  public DefaultImageBuildMojoExecutor(final ArchiverManager archiverManager) {
-    this.archiverManager = Objects.requireNonNull(archiverManager);
+  public DefaultImageBuildMojoExecutor(final AutomationUtils utils, final ArchiverManager archiverManager) {
+    this.archiverManager = requireNonNull(archiverManager);
+    this.automationUtils = requireNonNull(utils);
+  }
 
+  public AutomationUtils getAutomationUtils() {
+    return automationUtils;
   }
 
   public void _validatePackerExecutable() {
@@ -169,7 +175,7 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
   public Optional<Map<String, Path>> execute(final String executionId, final Set<Artifact> artifacts) {
 
     if (executionId.contains(EXECUTION_ID))
-      throw new IBException("Execution Id cannot contain the string '"+EXECUTION_ID+"'");
+      throw new IBException("Execution Id cannot contain the string '" + EXECUTION_ID + "'");
     getLog().info("ExecutionId : " + executionId);
     try {
       if (isSkip()) {
@@ -210,9 +216,7 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
       Path awd = getWorkingDirectory().toAbsolutePath();
       for (final Artifact art : list1) {
-        final Path instanceWorkingDir = IBR.equals(art.getType())
-            ? awd.resolve(randomUUID().toString())
-            : awd;
+        final Path instanceWorkingDir = IBR.equals(art.getType()) ? awd.resolve(randomUUID().toString()) : awd;
         getLog().info("Writing " + art + " to " + instanceWorkingDir);
         if (a.isUnpack().orElse(false)) {
           final UnArchiver aa = et.withReturningTranslation(() -> getArchiverManager().getUnArchiver(art.getFile()));
@@ -525,7 +529,7 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
   @Override
   public ImageBuildMojoExecutor setEncoding(final String encoding) {
-    this.encoding = Objects.requireNonNull(encoding);
+    this.encoding = requireNonNull(encoding);
     return this;
   }
 
@@ -543,7 +547,7 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
   @Override
   public ImageBuildMojoExecutor setImage(final PackerImageBuilder image) {
-    this.image = Objects.requireNonNull(image);
+    this.image = requireNonNull(image);
     return this;
   }
 
@@ -585,7 +589,7 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
   @Override
   public ImageBuildMojoExecutor setPackerExecutable(final File packerExecutable) {
-    this.packerExecutable = Objects.requireNonNull(packerExecutable);
+    this.packerExecutable = requireNonNull(packerExecutable);
     _validatePackerExecutable();
     return this;
 
@@ -617,13 +621,13 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
   @Override
   public ImageBuildMojoExecutor setRequirements(final List<IBRInternalDependency> requirements) {
-    this.requirements = Objects.requireNonNull(requirements);
+    this.requirements = requireNonNull(requirements);
     return this;
   }
 
   @Override
   public ImageBuildMojoExecutor setSettings(final Settings settings) {
-    this.settings = Objects.requireNonNull(settings);
+    this.settings = requireNonNull(settings);
     final JSONObject retval = new JSONObject();
     for (final Server s : this.settings.getServers()) {
       retval.put(s.getId(), new JSONObject(s));
@@ -670,13 +674,13 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
   @Override
   public ImageBuildMojoExecutor setVarFile(final File varFile) {
-    this.varFile = Objects.requireNonNull(varFile);
+    this.varFile = requireNonNull(varFile);
     return this;
   }
 
   @Override
   public ImageBuildMojoExecutor setVars(final Map<String, String> vars) {
-    this.vars = Objects.requireNonNull(vars);
+    this.vars = requireNonNull(vars);
     return this;
   }
 

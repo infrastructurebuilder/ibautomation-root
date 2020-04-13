@@ -27,7 +27,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducer;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;

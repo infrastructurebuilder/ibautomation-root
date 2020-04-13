@@ -15,7 +15,7 @@
  */
 package org.infrastructurebuilder.imaging;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.AMAZONEBS;
+import static org.infrastructurebuilder.ibr.IBRConstants.AMAZONEBS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDER_TYPE;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILD_TIME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.NAME;
@@ -37,9 +37,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.infrastructurebuilder.imaging.aws.FakeIBRAWSMapper;
-import org.infrastructurebuilder.imaging.aws.PackerAWSBuilder;
-import org.infrastructurebuilder.imaging.aws.PackerAWSBuilderDisk;
+import org.infrastructurebuilder.automation.PackerException;
+import org.infrastructurebuilder.imaging.aws.ami.builders.PackerAWSBuilder;
+import org.infrastructurebuilder.imaging.aws.ami.builders.PackerAWSBuilderDisk;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
@@ -50,8 +50,8 @@ import org.skyscreamer.jsonassert.JSONAssert;
 
 public class AbstractPackerBuilderTest extends AbstractPackerTestRoot {
 
-  private JSONObject servers;
-  PackerAWSBuilder pb;
+  private JSONObject    servers;
+  AbstractPackerBuilder pb;
 
   @Test(expected = PackerException.class)
   public void testAWSSetFail1() {
@@ -107,7 +107,7 @@ public class AbstractPackerBuilderTest extends AbstractPackerTestRoot {
   public void testGetBlockDeviceMappings() {
     assertFalse(pb.getBlockDeviceMappings().isPresent());
     assertFalse(pb.getDisk().isPresent());
-    final PackerAWSBuilderDisk d = new PackerAWSBuilderDisk();
+    final FakePackerBuilderDisk d = new FakePackerBuilderDisk();
     d.setDeviceName("sdx1");
     d.setSnapshotId("snapshotId");
     d.setVirtualName("ephemeral1");
@@ -123,7 +123,7 @@ public class AbstractPackerBuilderTest extends AbstractPackerTestRoot {
     final PackerFileBuilder fpb = new PackerFileBuilder();
     assertFalse(fpb.getBlockDeviceMappings().isPresent());
     assertFalse(fpb.getDisk().isPresent());
-    final PackerAWSBuilderDisk d = new PackerAWSBuilderDisk();
+    final FakePackerBuilderDisk d = new FakePackerBuilderDisk();
     d.setDeleteOnTermination(true);
     d.setDeviceName("sdx1");
     d.setEncrypted(true);
@@ -364,7 +364,7 @@ public class AbstractPackerBuilderTest extends AbstractPackerTestRoot {
 
   @Before
   public void thisBefore() throws Exception {
-    pb = new PackerAWSBuilder(new FakeIBRAWSMapper());
+    pb = new FakeAbstractPackerBuilder();
     pb.setWorkingRootDirectory(getRoot());
     pb.setTargetDirectory(getTargetDir());
     servers = new JSONObject().put("A", "B");

@@ -18,6 +18,7 @@ package org.infrastructurebuilder.imaging;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 
+import org.infrastructurebuilder.automation.IBRAutomationException;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 
@@ -50,7 +51,7 @@ abstract public class AbstractIBRDialectSupplier implements IBRDialectSupplier {
 
   @Override
   public ConfigMapSupplier getConfig() {
-    return ofNullable(this.config).orElseThrow(() -> new PackerException("Unconfigured supplier"));
+    return ofNullable(this.config).orElseThrow(() -> new IBRAutomationException("Unconfigured supplier"));
   }
 
   @Override

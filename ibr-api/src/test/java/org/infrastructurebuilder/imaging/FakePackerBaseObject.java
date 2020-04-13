@@ -52,8 +52,7 @@ public class FakePackerBaseObject implements ImageBaseObject {
   }
 
   @Override
-  public PackerHintMapDAO getHintMapForType() {
-
+  public IBRHintMap getHintMapForType() {
     return null;
   }
 

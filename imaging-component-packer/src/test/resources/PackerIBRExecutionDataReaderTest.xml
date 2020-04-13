@@ -1,0 +1,13 @@
+<executionData>
+  <executable>/packer</executable>
+  <start>2020-03-17T11:05:23.526Z</start>
+  <end>2020-03-17T11:05:25.000Z</end>
+  <checksum>abcdef</checksum>
+  <originalSource>Something</originalSource>
+  <specificData type = "packer" modelVersion = "1.0.0">
+    <gav
+      groupId="G"
+      artifactId="A"
+      version="1.0.0" />
+  </specificData>
+</executionData>

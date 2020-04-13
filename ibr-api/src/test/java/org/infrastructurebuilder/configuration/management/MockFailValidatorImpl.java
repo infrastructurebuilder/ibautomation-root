@@ -21,11 +21,11 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-public class MockFailValidatorImpl<T> implements IBRValidator<T> {
+public class MockFailValidatorImpl<T> implements IBRValidator {
   Set<IBRValidationOutput> outputs = new HashSet<IBRValidationOutput>();
 
   @Override
-  public boolean respondsTo(final IBRType<T> type) {
+  public boolean respondsTo(final IBRType type) {
     return true;
   }
 

@@ -18,6 +18,7 @@ package org.infrastructurebuilder.configuration.management.ansible;
 import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.createFile;
 import static java.nio.file.Files.delete;
+import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static java.util.Optional.ofNullable;
@@ -34,6 +35,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.regex.Matcher;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
@@ -41,8 +43,10 @@ import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRStaticAnalyzer;
 import org.infrastructurebuilder.util.DefaultProcessRunner;
 import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.ProcessExecutionFactory;
 import org.infrastructurebuilder.util.ProcessExecutionResult;
 import org.infrastructurebuilder.util.ProcessRunner;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,9 +54,15 @@ import org.slf4j.LoggerFactory;
 @Named("ansible-ibr-validator")
 @Typed(DefaultAnsibleValidator.class)
 public class DefaultAnsibleValidator {
-  private static final Logger       log        = LoggerFactory.getLogger(DefaultAnsibleValidator.class);
-  private Path                      targetPath = null;
-  private final TestingPathSupplier wps        = new TestingPathSupplier();
+  private static final Logger                    log        = LoggerFactory.getLogger(DefaultAnsibleValidator.class);
+  private Path                                   targetPath = null;
+  private final TestingPathSupplier              wps        = new TestingPathSupplier();
+  private final VersionedProcessExecutionFactory vpef;
+
+  @Inject
+  public DefaultAnsibleValidator(VersionedProcessExecutionFactory v) {
+    this.vpef = requireNonNull(v);
+  }
 
   public boolean checkFile(final Path path) throws IBArchiveException {
     return et.withReturningTranslation(() -> {
@@ -121,16 +131,14 @@ public class DefaultAnsibleValidator {
 
   private Map<String, ProcessExecutionResult> executeAgainst(final String playbookFileName,
       final String inventoryFileName) throws Exception {
-    final List<String> args = Arrays.asList(playbookFileName, "--syntax-check", "-i", inventoryFileName);
+    final String[] args = {playbookFileName, "--syntax-check", "-i", inventoryFileName};
     final Path scratchDirectory = Paths.get(getTargetPath().toString(), randomUUID().toString());
     createDirectories(scratchDirectory.getParent());
     try (ProcessRunner pr = new DefaultProcessRunner(scratchDirectory, empty(), of(log), empty())) {
-      return et
-          .withReturningTranslation(
-              () -> pr
-                  .addExecution(randomUUID().toString(), "ansible-playbook", args, empty(), empty(),
-                      of(getTargetPath()), empty(), false, empty(), empty(), empty(), false)
-                  .lock().get().get().getResults());
+      ProcessExecutionFactory pef = vpef.getDefaultFactory(getTargetPath(), randomUUID().toString(), "ansible-playbook").withArguments(args);
+      return et.withReturningTranslation(
+          () -> pr.add(pef).lock()
+              .get().get().getResults());
     }
   }
 

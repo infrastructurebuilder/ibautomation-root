@@ -34,7 +34,7 @@ import org.json.JSONObject;
 public class SpecificStandardDockerBuilder extends PackerContainerBuilder {
 
   @Override
-  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory<JSONObject> f) {
+  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory f) {
 
     super.addRequiredItemsToFactory(a, f);
   }

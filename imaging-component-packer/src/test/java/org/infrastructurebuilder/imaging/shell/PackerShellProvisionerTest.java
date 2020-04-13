@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.util.Arrays;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

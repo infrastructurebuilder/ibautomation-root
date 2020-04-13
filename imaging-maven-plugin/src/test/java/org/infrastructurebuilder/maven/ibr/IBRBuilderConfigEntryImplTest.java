@@ -15,8 +15,8 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.ID;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.TYPE;
+import static org.infrastructurebuilder.ibr.IBRConstants.ID;
+import static org.infrastructurebuilder.ibr.IBRConstants.TYPE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

@@ -15,36 +15,36 @@
  */
 package org.infrastructurebuilder.imaging.container;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+
 import java.util.List;
 
 public interface DockerV1Constants {
-  String AUTHOR = "author";
-  String CHANGES = "changes";
-  String CONTAINER_PATH = "container_path";
-  String CONTAINER = "docker";
-  String DOCKER_IMPORT = "docker-import";
-  String DOCKER_POST_PROCESSOR_IMPORT = "packer.post-processor.docker-import";
-  String DOCKER_PUSH = "docker-push";
-  String DOCKER_PUSH_PROCESSOR = "packer.post-processor.docker-push";
-  String DOCKER_SAVE = "docker-save";
-  String DOCKER_SAVE_PROCESSOR = "packer.post-processor.docker-save";
-  String DOCKER_TAG = "docker-tag";
-  String DOCKER_TAG_PROCESSOR = "packer.post-processor.docker-tag";
-  String EXPORT_PATH = "export_path";
-  String HOST_PATH = "host_path";
-  String IMAGE = "image";
-
-  String LOGIN = "login";
-  String LOGIN_PASSWORD = "login_password";
-  String LOGIN_SERVER = "login_server";
-  String LOGIN_USERNAME = "login_username";
-  String MESSAGE = "message";
-  String PRIVILEGED = "privileged";
-  String PULL = "pull";
-  String REGION = "region";
-  String RUN_COMMAND = "run_command";
-  List<String> VALID_CHANGES = Arrays.asList("CMD", "ENTRYPOINT", "ENV", "EXPOSE", "LABEL", "ONBUILD", "USER", "VOLUME",
-      "WORKDIR");
+  String       AUTHOR                       = "author";
+  String       CHANGES                      = "changes";
+  String       CONTAINER_PATH               = "container_path";
+  String       CONTAINER                    = "docker";
+  String       DOCKER_IMPORT                = "docker-import";
+  String       DOCKER_POST_PROCESSOR_IMPORT = "packer.post-processor.docker-import";
+  String       DOCKER_PUSH                  = "docker-push";
+  String       DOCKER_PUSH_PROCESSOR        = "packer.post-processor.docker-push";
+  String       DOCKER_SAVE                  = "docker-save";
+  String       DOCKER_SAVE_PROCESSOR        = "packer.post-processor.docker-save";
+  String       DOCKER_TAG                   = "docker-tag";
+  String       DOCKER_TAG_PROCESSOR         = "packer.post-processor.docker-tag";
+  String       EXPORT_PATH                  = "export_path";
+  String       HOST_PATH                    = "host_path";
+  String       IMAGE                        = "image";
+  String       LOGIN                        = "login";
+  String       LOGIN_PASSWORD               = "login_password";
+  String       LOGIN_SERVER                 = "login_server";
+  String       LOGIN_USERNAME               = "login_username";
+  String       MESSAGE                      = "message";
+  String       PRIVILEGED                   = "privileged";
+  String       PULL                         = "pull";
+  String       REGION                       = "region";
+  String       RUN_COMMAND                  = "run_command";
+  List<String> VALID_CHANGES                = asList("CMD", "ENTRYPOINT", "ENV", "EXPOSE", "LABEL", "ONBUILD", "USER",
+      "VOLUME", "WORKDIR");
 
 }

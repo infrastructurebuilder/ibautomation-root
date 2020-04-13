@@ -24,7 +24,7 @@ import static org.junit.Assert.assertNotNull;
 import java.util.Arrays;
 import java.util.Optional;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
 import org.infrastructurebuilder.imaging.container.PackerDockerTagPostProcessor;
@@ -55,7 +55,7 @@ public class PackerDockerTagPostProcessorTest {
   @Ignore
   @Test
   public void testAddRequiredItemsToFactory() {
-    final PackerFactory<JSONObject> f = null;
+    final PackerFactory f = null;
     p.addRequiredItemsToFactory(Optional.empty(), f);
   }
 

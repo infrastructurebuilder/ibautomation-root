@@ -47,8 +47,8 @@ import org.codehaus.plexus.DefaultContainerConfiguration;
 import org.codehaus.plexus.PlexusConstants;
 import org.codehaus.plexus.classworlds.ClassWorld;
 import org.codehaus.plexus.component.repository.exception.ComponentLookupException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.FakePackerExecutionConfig;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
@@ -204,18 +204,6 @@ public class PackerBeanTest {
   }
 
   @Test
-  public void testGens() {
-    assertFalse(med.getGenerator().isPresent());
-    med.setGenerator(null);
-    assertFalse(med.getGenerator().isPresent());
-    med.setGenerator(() -> {
-      return null;
-    });
-    assertTrue(med.getGenerator().isPresent());
-    assertNull(med.getGenerator().get().get());
-  }
-
-  @Test
   public void testGetAM() {
     assertNotNull(med.getArchiverManager());
   }
@@ -243,8 +231,8 @@ public class PackerBeanTest {
 
   @Test
   public void testGetPackerFActoryTwice() throws PackerException, ComponentLookupException {
-    final PackerFactory<JSONObject> a = med.getPackerFactory();
-    final PackerFactory<JSONObject> b = med.getPackerFactory();
+    final PackerFactory a = med.getPackerFactory();
+    final PackerFactory b = med.getPackerFactory();
     assertTrue(a == b);
   }
 

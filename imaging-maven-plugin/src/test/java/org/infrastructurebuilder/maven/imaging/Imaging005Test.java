@@ -17,7 +17,7 @@ package org.infrastructurebuilder.maven.imaging;
 
 import java.io.File;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.junit.Test;
 
 public class Imaging005Test extends AbstractBuildComponentSetup {

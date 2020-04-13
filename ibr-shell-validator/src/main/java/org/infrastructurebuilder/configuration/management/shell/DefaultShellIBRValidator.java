@@ -15,7 +15,10 @@
  */
 package org.infrastructurebuilder.configuration.management.shell;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.SHELL;
+import static java.lang.String.format;
+import static java.util.Optional.of;
+import static org.infrastructurebuilder.ibr.IBRConstants.SHELL;
+import static org.slf4j.LoggerFactory.getLogger;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -30,17 +33,18 @@ import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Named(SHELL)
 @Typed(IBRValidator.class)
 public class DefaultShellIBRValidator extends AbstractShellIBRValidator {
-  private static final Logger log = LoggerFactory.getLogger(DefaultShellIBRValidator.class);
-  private final ShellIBRFileValidator fileValidator = new ShellIBRFileValidator();
+  private static final Logger         log = getLogger(DefaultShellIBRValidator.class);
+  private final ShellIBRFileValidator fileValidator;
 
   @Inject
-  public DefaultShellIBRValidator() {
+  public DefaultShellIBRValidator(VersionedProcessExecutionFactory vpef) {
+    fileValidator = new ShellIBRFileValidator(vpef);
   }
 
   @Override
@@ -50,7 +54,7 @@ public class DefaultShellIBRValidator extends AbstractShellIBRValidator {
     if (!Files.exists(path)) {
 
       result.add(new IBRValidationOutput(path, "failed validation",
-          Optional.of(new IBArchiveException(String.format("The file doesn't exist : %s", path)))));
+          of(new IBArchiveException(format("The file doesn't exist : %s", path)))));
       return result;
     }
 
@@ -58,14 +62,14 @@ public class DefaultShellIBRValidator extends AbstractShellIBRValidator {
       if (fileValidator.checkFile(path)) {
         result.add(new IBRValidationOutput(path, "validated", Optional.empty()));
       } else {
-        result.add(new IBRValidationOutput(path, "validation failed", Optional
-            .of(new IBArchiveException(String.format("%s: DefaultShellIBRValidator File failed validation", path)))));
-        log.error(String.format("%s: File failed validation", path));
+        result.add(new IBRValidationOutput(path, "validation failed",
+            of(new IBArchiveException(format("%s: DefaultShellIBRValidator File failed validation", path)))));
+        log.error(format("%s: File failed validation", path));
       }
     } catch (final Exception e) {
       result.add(new IBRValidationOutput(path, "validation failed",
-          Optional.of(new IBArchiveException(String.format("%s: File failed validation externally", path)))));
-      log.error(String.format("%s: File failed validation externally", path));
+          of(new IBArchiveException(format("%s: File failed validation externally", path)))));
+      log.error(format("%s: File failed validation externally", path));
     }
 
     return result;

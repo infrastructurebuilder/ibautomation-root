@@ -25,7 +25,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.util.UUID;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder.PackerFileBuildResult;
 import org.json.JSONObject;
 import org.junit.Before;

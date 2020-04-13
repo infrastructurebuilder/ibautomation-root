@@ -25,8 +25,8 @@ import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONObject;
 
-public interface ImageData<T> extends ImageBaseObject {
-  void addRequiredItemsToFactory(IBAuthentication a, PackerFactory<T> f);
+public interface ImageData extends ImageBaseObject {
+  void addRequiredItemsToFactory(IBAuthentication a, PackerFactory f);
 
   Optional<List<String>> getAccessGroups();
 

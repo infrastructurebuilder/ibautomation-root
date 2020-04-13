@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.deployment.tf;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Objects.requireNonNull;
 import static java.util.Optional.of;
 
@@ -35,7 +36,7 @@ abstract public class TFObject<T extends ChecksumEnabled> implements ChecksumEna
     return requireNonNull(s) + "_" + c.asUUID().toString().replace("-", "_");
   };
   public final static Function<String, String> nameGen = (str) -> {
-    return UUID.nameUUIDFromBytes(requireNonNull(str).getBytes(IBUtils.UTF_8)).toString();
+    return UUID.nameUUIDFromBytes(requireNonNull(str).getBytes(UTF_8)).toString();
   };
   private final TFGenerator type;
   private final String name;

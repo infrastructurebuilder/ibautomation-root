@@ -22,12 +22,14 @@ public class IBRAutomationException extends RuntimeException {
   /**
    *
    */
-  private static final long serialVersionUID = -2262435310679542313L;
-  public static ExceptionTranslator et = ET.newConfiguration().translate(Exception.class).to(IBRAutomationException.class)
-      .done();
+  private static final long         serialVersionUID = -2262435310679542313L;
+  public static ExceptionTranslator et               = ET.newConfiguration().translate(Exception.class)
+      .to(IBRAutomationException.class).done();
+
   public IBRAutomationException() {
     super();
   }
+
 //  public IBRAutomationException(String message, Throwable cause, boolean enableSuppression,
 //      boolean writableStackTrace) {
 //    super(message, cause, enableSuppression, writableStackTrace);
@@ -35,11 +37,13 @@ public class IBRAutomationException extends RuntimeException {
   public IBRAutomationException(String message, Throwable cause) {
     super(message, cause);
   }
+
   public IBRAutomationException(String message) {
     super(message);
   }
-//  public IBRAutomationException(Throwable cause) {
-//    super(cause);
-//  }
+
+  public IBRAutomationException(Throwable cause) {
+    super(cause);
+  }
 
 }

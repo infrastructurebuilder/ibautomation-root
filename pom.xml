@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>30-SNAPSHOT</version>
+    <version>31</version>
   </parent>
   <groupId>org.infrastructurebuilder.automation</groupId>
   <artifactId>ibautomation-root</artifactId>
@@ -59,9 +59,9 @@
     </site>
   </distributionManagement>
   <properties>
-    <ibauth.version>0.9.2-SNAPSHOT</ibauth.version>
+    <ibauth.version>0.9.2</ibauth.version>
     <iblog.version>0.10.0</iblog.version>
-    <ibcore.bom.version>0.17.0.0-SNAPSHOT</ibcore.bom.version>
+    <ibcore.bom.version>0.17.0.0</ibcore.bom.version>
     <maven.bom.version>${maven.version}.1</maven.bom.version>
   </properties>
   <dependencyManagement>
@@ -245,35 +245,29 @@
         <plugin>
           <groupId>org.codehaus.modello</groupId>
           <artifactId>modello-maven-plugin</artifactId>
+          <dependencies>
+            <dependency>
+              <groupId>org.infrastructurebuilder.modello</groupId>
+              <artifactId>modello-plugin-xpp3-reflect</artifactId>
+              <version>1.11.0.1-SNAPSHOT</version>
+            </dependency>
+          </dependencies>
           <configuration>
+            <outputDirectory>${project.build.directory}/generated-sources/modello</outputDirectory>
+            <domAsXpp3>true</domAsXpp3>
             <useJava5>true</useJava5>
+            <packageWithVersion>true</packageWithVersion>
             <models>
               <model>target/classes/${project.artifactId}.mdo</model>
             </models>
           </configuration>
-          <executions>
-            <execution>
-              <id>make-java-sources</id>
-              <phase>generate-sources</phase>
-              <goals>
-                <goal>java</goal>
-                <goal>xpp3-reader</goal>
-              </goals>
-            </execution>
-            <execution>
-              <id>make-site-doc</id>
-              <phase>pre-site</phase>
-              <goals>
-                <goal>xdoc</goal>
-              </goals>
-            </execution>
-          </executions>
         </plugin>
         <plugin>
           <groupId>org.infrastructurebuilder.modello</groupId>
           <artifactId>modello-maven-plugin-usurped</artifactId>
           <version>1.11.0.0</version>
           <configuration>
+            <domAsXpp3>true</domAsXpp3>
             <useJava5>true</useJava5>
             <models>
               <model>target/classes/${project.artifactId}.mdo</model>
@@ -393,6 +387,19 @@
                   </pluginExecutionFilter>
                   <action>
                     <ignore />
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.modello</groupId>
+                    <artifactId>modello-maven-plugin</artifactId>
+                    <versionRange>[1.11,)</versionRange>
+                    <goals>
+                      <goal>generate</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore></ignore>
                   </action>
                 </pluginExecution>
               </pluginExecutions>

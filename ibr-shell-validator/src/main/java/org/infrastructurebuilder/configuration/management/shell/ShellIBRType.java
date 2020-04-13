@@ -15,9 +15,9 @@
  */
 package org.infrastructurebuilder.configuration.management.shell;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.SHELL_FILE;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.TYPE;
 import static org.infrastructurebuilder.configuration.management.shell.ShellConstants.SHELL;
+import static org.infrastructurebuilder.ibr.IBRConstants.SHELL_FILE;
+import static org.infrastructurebuilder.ibr.IBRConstants.TYPE;
 
 import java.nio.file.Path;
 import java.util.List;
@@ -39,17 +39,17 @@ import org.json.JSONObject;
 
 @Named(SHELL)
 @Typed(IBRType.class)
-public class ShellIBRType extends AbstractIBRType<JSONObject> {
+public class ShellIBRType extends AbstractIBRType {
 
   @Inject
-  public ShellIBRType(final AutomationUtils rps, final List<IBRValidator<JSONObject>> validators) {
+  public ShellIBRType(final AutomationUtils rps, final List<IBRValidator> validators) {
     super(rps, validators);
     setName(SHELL);
   }
 
   @Override
   public JSONObject transformToProvisionerEntry(final String typeName, final Path root, final Path targetFile,
-      final Optional<IBArchive> archive, final List<ImageData<JSONObject>> builders) {
+      final Optional<IBArchive> archive, final List<ImageData> builders) {
 
     final JSONObject j = JSONBuilder.newInstance(Optional.ofNullable(getRoot())).addString(TYPE, getName())
         .addPath(SHELL_FILE, Objects.requireNonNull(targetFile)).asJSON();

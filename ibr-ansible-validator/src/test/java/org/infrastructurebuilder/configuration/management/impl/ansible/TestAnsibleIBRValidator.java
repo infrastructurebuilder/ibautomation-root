@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management.impl.ansible;
 
+import static java.util.Optional.empty;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -32,21 +33,26 @@ import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsible
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.ImageData;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
 import org.junit.Test;
 
 public class TestAnsibleIBRValidator {
-  private AutomationUtils ibr = new AutomationUtilsTesting();
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+  private AutomationUtils                  ibr  = new AutomationUtilsTesting();
 
-  private class TestIBRType extends AbstractIBRType<JSONObject> {
+  private class TestIBRType extends AbstractIBRType {
 
     public TestIBRType() {
-      super(ibr, Arrays.asList(new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator())));
+      super(ibr, Arrays.asList(new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator(vpef))));
     }
 
     @Override
     public JSONObject transformToProvisionerEntry(final String typeName, final Path root, final Path targetFile,
-        final Optional<IBArchive> archive, final List<ImageData<JSONObject>> builders) {
+        final Optional<IBArchive> archive, final List<ImageData> builders) {
       return new JSONObject().put("name", "test");
     }
 
@@ -54,9 +60,9 @@ public class TestAnsibleIBRValidator {
 
   @Test
   public void testTypes() {
-    final AbstractAnsibleIBRValidator validator = new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator());
+    final AbstractAnsibleIBRValidator validator = new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator(vpef));
     assertTrue(validator.respondsTo(new AnsibleIBRType(new AutomationUtilsTesting(),
-        Arrays.asList(new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator())))));
+        Arrays.asList(new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator(vpef))))));
     assertFalse(validator.respondsTo(new TestIBRType()));
   }
 }

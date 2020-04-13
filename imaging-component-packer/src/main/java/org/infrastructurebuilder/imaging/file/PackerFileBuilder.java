@@ -15,6 +15,9 @@
  */
 package org.infrastructurebuilder.imaging.file;
 
+import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.CONTENT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.NAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE;
@@ -22,7 +25,6 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.TARGET;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,11 +32,11 @@ import javax.inject.Named;
 
 import org.eclipse.sisu.Description;
 import org.eclipse.sisu.Typed;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.AbstractPackerBuildResult;
 import org.infrastructurebuilder.imaging.AbstractPackerBuilder;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageData;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.json.JSONObject;
@@ -42,7 +44,7 @@ import org.json.JSONObject;
 @Typed(ImageData.class)
 @Named(PackerFileBuilder.FILETYPE)
 @Description("Generic EBS-backed AWS instance")
-public class PackerFileBuilder extends AbstractPackerBuilder<JSONObject> {
+public class PackerFileBuilder extends AbstractPackerBuilder {
   public class PackerFileBuildResult extends AbstractPackerBuildResult {
     public PackerFileBuildResult(final JSONObject j) {
       super(j);
@@ -50,6 +52,7 @@ public class PackerFileBuilder extends AbstractPackerBuilder<JSONObject> {
   }
 
   public static final String FILETYPE = "file";
+
   static final List<String> namedTypes = new ArrayList<String>() {
     private static final long serialVersionUID = -5931265214102237440L;
     {
@@ -59,20 +62,28 @@ public class PackerFileBuilder extends AbstractPackerBuilder<JSONObject> {
 
   @Override
   public JSONObject asJSON() {
-    final JSONObject j = JSONBuilder.newInstance().addString(TYPE, getPackerType())
-        .addString(NAME, getBuildExecutionName()).addPath(TARGET, getOutputPath()).addPath(SOURCE, getUserDataFile())
+    final JSONObject j = JSONBuilder.newInstance()
+
+        .addString(TYPE, getPackerType())
+
+        .addString(NAME, getBuildExecutionName())
+
+        .addPath(TARGET, getOutputPath())
+
+        .addPath(SOURCE, getUserDataFile())
+
         .addString(CONTENT, getContent()).asJSON();
     return j;
   }
 
   @Override
   public Optional<String> getAuthType() {
-    return Optional.empty();
+    return empty();
   }
 
   @Override
   public Optional<String> getLookupHint() {
-    return Optional.of(FILETYPE);
+    return of(FILETYPE);
   }
 
   @Override
@@ -87,7 +98,7 @@ public class PackerFileBuilder extends AbstractPackerBuilder<JSONObject> {
 
   @Override
   public List<String> getSizes() {
-    return Arrays.asList(PackerSizing2.small.name());
+    return asList(PackerSizing2.small.name());
   }
 
   @Override

@@ -15,23 +15,30 @@
  */
 package org.infrastructurebuilder.automation;
 
+import static java.time.ZoneOffset.UTC;
+import static java.time.format.DateTimeFormatter.ISO_DATE_TIME;
 import static java.util.stream.Collectors.toList;
 
 import java.time.Duration;
-import java.util.Date;
+import java.time.Instant;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.UUID;
 
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.artifacts.Checksum;
 import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
 import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;
 
 public interface IBRManifest extends ChecksumEnabled, Comparable<IBRManifest> {
-  public final static Xpp3DomBuilder domBuilder    = new Xpp3DomBuilder();
-  public static final String         MODEL_VERSION = "modelVersion";
+  public final static Xpp3DomBuilder domBuilder     = new Xpp3DomBuilder();
+  public static final String         MODEL_VERSION  = "modelVersion";
+  public static final String         MODEL_ENCODING = "modelEncoding";
+
+  public static final DateTimeFormatter dtf = ISO_DATE_TIME.withZone(UTC);
 
   UUID getId();
 
@@ -39,9 +46,20 @@ public interface IBRManifest extends ChecksumEnabled, Comparable<IBRManifest> {
 
   Optional<String> getDescription();
 
-  Date getStart();
+  Instant getStart();
 
-  Date getEnd();
+  /**
+   * Returns the end time, or empty() if not completed.
+   *
+   * Note that the end value is still required for persistence.
+   *
+   * @return
+   */
+  Optional<Instant> getEnd();
+
+  default Optional<Duration> getDuration() {
+    return getEnd().map(end -> Duration.between(getStart(), end));
+  }
 
   String getBuilderId();
 
@@ -57,7 +75,7 @@ public interface IBRManifest extends ChecksumEnabled, Comparable<IBRManifest> {
   default int compareTo(IBRManifest o) {
     int retVal = getStart().compareTo(o.getStart());
     if (retVal == 0) {
-      retVal = getEnd().compareTo(o.getEnd());
+      retVal = IBUtils.nullSafeInstantComparator.compare(getEnd().orElse(null), o.getEnd().orElse(null));
       if (retVal == 0) {
         retVal = getId().compareTo(o.getId());
       }
@@ -68,12 +86,8 @@ public interface IBRManifest extends ChecksumEnabled, Comparable<IBRManifest> {
   @Override
   default Checksum asChecksum() {
     return ChecksumBuilder.newInstance().addString(getId().toString()).addString(getName()).addString(getDescription())
-        .addDate(getStart()).addDate(getEnd())
+        .addInstant(getStart()).addInstant(getEnd())
         .addListChecksumEnabled(getDependentExecutions().stream().collect(toList())).asChecksum();
-  }
-
-  default Duration getDuration() {
-    return Duration.between(getStart().toInstant(), getEnd().toInstant());
   }
 
 }

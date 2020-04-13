@@ -56,6 +56,11 @@ public interface IBRSpecificExecution extends ChecksumEnabled, Xpp3OutputEnabled
     Xpp3Dom d = new Xpp3Dom(IBRManifest.MODEL_VERSION);
     d.setValue(getModelVersion());
     root.addChild(d);
+    root.addChild(DefaultIBRManifestUtils.xpp3DomFromDocument(getGav().asDom()));
+    Xpp3Dom type = new Xpp3Dom(TYPE);
+    type.setValue(getType());
+    Xpp3Dom executionData = new Xpp3Dom(IBRTypedExecution.EXECUTIONDATA);
+    executionData.addChild(getSpecificExecutionAsDom());
     return root;
   }
 

@@ -33,7 +33,7 @@
       java.clone.hook="mutatingCloneHook"
       java.clone="deep"
     >
-      <name>PackerSpecificData</name>
+      <name>PackerSpecificExecution</name>
       <version>1.0.0+</version>
       <interfaces>
         <interface>
@@ -72,6 +72,16 @@
             <type>Dependency</type>
             <multiplicity>1</multiplicity>
           </association>
+        </field>
+        <field>
+          <name>images</name>
+          <version>1.0.0+</version>
+          <description>associated images</description>
+          <association>
+            <type>PackerImage</type>
+            <multiplicity>*</multiplicity>
+          </association>
+
         </field>
       </fields>
       <codeSegments>
@@ -112,7 +122,7 @@
             <![CDATA[
             // Clone hooks
 
-  private void mutatingCloneHook(PackerSpecificData s) {
+  private void mutatingCloneHook(PackerSpecificExecution s) {
     s.setType("packer");
   }
 
@@ -140,9 +150,9 @@
   public boolean equals(Object obj) {
     if (this == obj)
       return true;
-    if (!(obj instanceof PackerSpecificData))
+    if (!(obj instanceof PackerSpecificExecution))
       return false;
-    PackerSpecificData other = (PackerSpecificData) obj;
+    PackerSpecificExecution other = (PackerSpecificExecution) obj;
     return
            java.util.Objects.equals(modelVersion, other.modelVersion)
         && java.util.Objects.equals(type, other.type)
@@ -172,7 +182,7 @@
           <name>parent</name>
           <version>1.0.0+</version>
           <association>
-            <type>PackerSpecificData</type>
+            <type>PackerSpecificExecution</type>
             <multiplicity>1</multiplicity>
           </association>
         </field>
@@ -468,6 +478,78 @@
 
       </codeSegments>
     </class>
+    <class
+      xml.tagName="imageMap"
+      java.clone="deep"
+    >
+      <name>PackerImage</name>
+      <version>1.0.0+</version>
+      <interfaces>
+        <interface>org.infrastructurebuilder.automation.IBRImage</interface>
+      </interfaces>
+      <fields>
+        <field>
+          <name>identifier</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Identifier</description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>mappedRegion</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Mapped region for type</description>
+          <type>String</type>
+        </field>
+        <field>
+          <name>dialect</name>
+          <version>1.0.0+</version>
+          <required>true</required>
+          <description>Dialect (ie Cloud provider)</description>
+          <type>String</type>
+        </field>
+      </fields>
+      <codeSegments>
+        <codeSegment>
+          <version>1.0.0+</version>
+          <code>
+            <![CDATA[
+    public PackerImage() {
+    }
+
+    public PackerImage(org.infrastructurebuilder.automation.IBRImage g) {
+      this.identifier = g.getIdentifier();
+      this.mappedRegion = g.getMappedRegion();
+      this.dialect = g.getDialect();
+    }
+
+    @Override
+    public int hashCode() {
+      return java.util.Objects.hash(identifier, mappedRegion, dialect);
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+      if (this == obj)
+        return true;
+      if (obj == null)
+        return false;
+      if (getClass() != obj.getClass())
+        return false;
+      PackerImage other = (PackerImage) obj;
+      return java.util.Objects.equals(identifier, other.identifier)
+          && java.util.Objects.equals(mappedRegion, other.mappedRegion)
+          && java.util.Objects.equals(dialect, other.dialect);
+    }
+
+    ]]>
+          </code>
+        </codeSegment>
+
+      </codeSegments>
+    </class>
+
 
 
   </classes>

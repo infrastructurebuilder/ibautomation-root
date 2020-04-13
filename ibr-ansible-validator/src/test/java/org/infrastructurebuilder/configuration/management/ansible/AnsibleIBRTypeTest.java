@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management.ansible;
 
+import static java.util.Optional.empty;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -30,10 +31,13 @@ import java.util.Optional;
 
 import org.infrastructurebuilder.configuration.management.DefaultIBConfigSupplier;
 import org.infrastructurebuilder.configuration.management.IBConfigSupplier;
-import org.infrastructurebuilder.configuration.management.IBRConstants;
+import org.infrastructurebuilder.ibr.IBRConstants;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.DefaultFakeImageData;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.Before;
@@ -41,17 +45,18 @@ import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 
 public class AnsibleIBRTypeTest {
-
-  private IBConfigSupplier acs;
-  private Map<String, String> params;
-  private AutomationUtilsTesting rps;
-  private AnsibleIBRType t;
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+  private IBConfigSupplier                 acs;
+  private Map<String, String>              params;
+  private AutomationUtilsTesting           rps;
+  private AnsibleIBRType                   t;
 
   @Before
   public void setUp() throws Exception {
     rps = new AutomationUtilsTesting();
     acs = new DefaultIBConfigSupplier().setConfig(new HashMap<>());
-    t = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator())));
+    t = new AnsibleIBRType(rps, Arrays.asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator(vpef))));
     t.setConfigSupplier(acs);
     assertNotNull(t);
   }

@@ -18,9 +18,9 @@ package org.infrastructurebuilder.configuration.management;
 import java.nio.file.Path;
 import java.util.Set;
 
-public interface IBRValidator<T> {
+public interface IBRValidator {
 
-  boolean respondsTo(IBRType<T> type);
+  boolean respondsTo(IBRType type);
 
   Set<IBRValidationOutput> validate(Path file);
 }

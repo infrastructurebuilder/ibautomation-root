@@ -15,21 +15,21 @@
  */
 package org.infrastructurebuilder.imaging.container;
 
+import static java.util.Arrays.asList;
+import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.DOCKER_PUSH;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.LOGIN;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.LOGIN_PASSWORD;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.LOGIN_SERVER;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.LOGIN_USERNAME;
 
-import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONArray;
@@ -52,10 +52,12 @@ public class PackerDockerPushPostProcessor extends AbstractDockerPostProcessor {
 
   @Override
   public JSONArray asJSONArray() {
-    return new JSONArray(Arrays
-        .asList(
-            getInstanceAuthentication().orElseThrow(() -> new PackerException("No auth provided for " + DOCKER_PUSH)))
-        .stream().filter(a -> respondsTo(a.getType())).map(this::getPostProcessorForAuth).collect(Collectors.toList()));
+    return new JSONArray(
+        //
+        asList(getInstanceAuthentication().orElseThrow(() -> new PackerException("No auth for " + DOCKER_PUSH)))
+            .stream().filter(a -> respondsTo(a.getType())).map(this::getPostProcessorForAuth).collect(toList())
+    //
+    );
   }
 
   @Override
@@ -73,6 +75,7 @@ public class PackerDockerPushPostProcessor extends AbstractDockerPostProcessor {
       throw new PackerException("No login server is present");
   }
 
+  // FIXME You can't just add the authetication here for everyone to see
   private JSONObject getPostProcessorForAuth(final IBAuthentication a) {
     return super.asJSONBuilder().addBoolean(LOGIN, true)
 

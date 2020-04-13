@@ -33,16 +33,16 @@ import java.util.UUID;
 
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 
-public abstract class AbstractIBRType<T> implements IBRType<T> {
+public abstract class AbstractIBRType implements IBRType {
   private Optional<IBConfigSupplier> config;
 
   private String                id = UUID.randomUUID().toString();
   private String                name;
   private final AutomationUtils rcs;
 
-  private final List<IBRValidator<T>> validators;
+  private final List<IBRValidator> validators;
 
-  public AbstractIBRType(final AutomationUtils rps, final List<IBRValidator<T>> validators) {
+  public AbstractIBRType(final AutomationUtils rps, final List<IBRValidator> validators) {
     rcs = requireNonNull(rps);
     this.validators = requireNonNull(validators);
   }
@@ -52,7 +52,7 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
     final SortedSet<IBRValidationOutput> o = new TreeSet<>();
     final String subPath = (String) requireNonNull(getConfig().get().get("file"));
 
-    for (final IBRValidator<?> v : getRelevantValidators()) {
+    for (final IBRValidator v : getRelevantValidators()) {
       o.addAll(v.validate(getRoot().resolve(Paths.get(subPath))));
     }
     return o;
@@ -79,7 +79,7 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
   }
 
   @Override
-  public Set<IBRValidator<T>> getRelevantValidators() {
+  public Set<IBRValidator> getRelevantValidators() {
     return getValidators().stream().filter(v -> v.respondsTo(this)).collect(toSet());
   }
 
@@ -91,7 +91,7 @@ public abstract class AbstractIBRType<T> implements IBRType<T> {
     return root;
   }
 
-  public final List<IBRValidator<T>> getValidators() {
+  public final List<IBRValidator> getValidators() {
     return validators;
   }
 

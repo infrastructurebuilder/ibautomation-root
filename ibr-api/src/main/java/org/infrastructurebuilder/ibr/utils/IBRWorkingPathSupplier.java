@@ -15,7 +15,7 @@
  */
 package org.infrastructurebuilder.ibr.utils;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.IBR_WORKING_PATH_SUPPLIER;
+import static org.infrastructurebuilder.ibr.IBRConstants.IBR_WORKING_PATH_SUPPLIER;
 
 import java.nio.file.Path;
 

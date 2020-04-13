@@ -35,9 +35,9 @@ import org.codehaus.plexus.classworlds.ClassWorld;
 import org.eclipse.sisu.space.SpaceModule;
 import org.eclipse.sisu.space.URLClassSpace;
 import org.eclipse.sisu.wire.WireModule;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.configuration.management.FakeTestCMType;
 import org.infrastructurebuilder.configuration.management.IBArchive;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.maven.PackerBeanTest;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
@@ -55,10 +55,10 @@ public class PackerGenericIBRArchiveProvisionerTest {
   private IBArchive a;
   private DefaultPlexusContainer c;
   private PackerGenericIBRArchiveProvisioner d;
-  private List<PackerProvisioner<JSONObject>> dList;
+  private List<PackerProvisioner> dList;
   private ContainerConfiguration dpcreq;
-  private AbstractPackerIBRProvisioner<JSONObject> g;
-  private List<PackerProvisioner<JSONObject>> gList;
+  private AbstractPackerIBRProvisioner g;
+  private List<PackerProvisioner> gList;
   private ClassWorld kw;
   private IBArchive l;
   private Path root;
@@ -78,7 +78,7 @@ public class PackerGenericIBRArchiveProvisionerTest {
     c = new DefaultPlexusContainer(dpcreq,
         new WireModule(new SpaceModule(new URLClassSpace(kw.getClassRealm(TESTING)))));
 
-    g = (AbstractPackerIBRProvisioner<JSONObject>) c.lookup(PackerProvisioner.class,
+    g = (AbstractPackerIBRProvisioner) c.lookup(PackerProvisioner.class,
         PackerGenericIBRArchiveProvisioner.GENERIC_IBR);
     g.setBuilders(new ArrayList<>());
     g.setLog(log);

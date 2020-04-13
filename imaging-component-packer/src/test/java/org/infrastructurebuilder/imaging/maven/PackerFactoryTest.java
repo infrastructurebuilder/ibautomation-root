@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Collections.emptyList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -23,13 +24,11 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
 import org.infrastructurebuilder.imaging.shell.PackerShellLocalProvisioner;
 import org.infrastructurebuilder.imaging.shell.PackerShellPostProcessor;
@@ -119,14 +118,14 @@ public class PackerFactoryTest extends AbstractPackerFactoryTest {
 
   @Test(expected = PackerException.class)
   public void testFailAbsolute() {
-    new DefaultPackerFactory(container, log, target, getRoot(), target.resolve("packer"), l, imageBuilder, apf,
-        target.resolve("packer"), props, gav, Collections.emptyList(), true);
+    new DefaultPackerFactory(vpef, container, log, target, getRoot(), l, imageBuilder, apf, target.resolve("packer"), props,
+        gav, emptyList(), true);
   }
 
   @Test(expected = PackerException.class)
   public void testFailNonDir() {
-    new DefaultPackerFactory(container, log, target, target.resolve("packer"), Paths.get("ABCdir"), l, imageBuilder, apf,
-        target.resolve("packer"), props, gav, Collections.emptyList(), true);
+    new DefaultPackerFactory(vpef, container, log, target, target.resolve("packer"), l, imageBuilder, apf,
+        target.resolve("packer"), props, gav, emptyList(), true);
   }
 
   @Test
@@ -136,9 +135,8 @@ public class PackerFactoryTest extends AbstractPackerFactoryTest {
     fb.setContent("ABC");
     pf.addBuilder(fb);
 
-    final Optional<Path> g = pf.get();
-    assertTrue(g.isPresent());
-    final JSONObject j = new JSONObject(String.join("\n", Files.readAllLines(g.get())));
+    final Path g = pf.get();
+    final JSONObject j = new JSONObject(String.join("\n", Files.readAllLines(g)));
     JSONAssert.assertEquals(pf.getBuilderOutputData(), j, true);
   }
 

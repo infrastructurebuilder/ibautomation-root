@@ -21,7 +21,7 @@ import static org.junit.Assert.assertFalse;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.IBRAutomationException;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,7 +37,7 @@ public class TypeTest {
     p = new DefaultGAV("A", "B", "C", "1.0", "test");
   }
 
-  @Test(expected = PackerException.class)
+  @Test(expected = IBRAutomationException.class)
   public void testGetBadHint() {
     t.getHint();
   }

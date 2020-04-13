@@ -20,9 +20,9 @@ import java.util.List;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 
-public interface PackerIBRProvisioner<T> extends PackerProvisioner<T> {
+public interface PackerIBRProvisioner extends PackerProvisioner {
   String IBR = "ibr";
 
-  List<PackerProvisioner<T>> applyArchive(IBArchive archive);
+  List<PackerProvisioner> applyArchive(IBArchive archive);
 
 }

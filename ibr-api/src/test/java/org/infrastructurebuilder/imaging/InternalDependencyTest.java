@@ -26,6 +26,7 @@ import java.nio.file.Paths;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.infrastructurebuilder.automation.IBRAutomationException;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.artifacts.GAV;
@@ -117,7 +118,7 @@ public class InternalDependencyTest {
     assertFalse(dep.isSendToRemote());
   }
 
-  @Test(expected = PackerException.class)
+  @Test(expected = IBRAutomationException.class)
   public void testSetTdir() {
     dep.set_tdir(Paths.get("."));
   }

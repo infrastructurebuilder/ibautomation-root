@@ -15,18 +15,20 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.ImageBuilder;
 import org.infrastructurebuilder.imaging.ImageStorage;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerSizing2;
 
 public class PackerImageBuilder implements ImageBuilder {
@@ -67,25 +69,25 @@ public class PackerImageBuilder implements ImageBuilder {
 
   @Override
   public Optional<Type> getTypeFor(final String hint) {
-    return types.stream().filter(t -> Objects.requireNonNull(hint).equals(t.getHint())).findFirst();
+    return types.stream().filter(t -> requireNonNull(hint).equals(t.getHint())).findFirst();
   }
 
   @Override
   public List<String> getTypeHints() {
-    return types.stream().map(Type::getHint).collect(Collectors.toList());
+    return types.stream().map(Type::getHint).collect(toList());
   }
 
   @Override
   public List<Type> getTypes() {
-    return types.stream().collect(Collectors.toList());
+    return types.stream().collect(toList());
   }
 
   public void setDisks(final List<ImageStorage> disks) {
-    Objects.requireNonNull(disks).forEach(this::addDisk);
+    requireNonNull(disks).forEach(this::addDisk);
   }
 
   public void setPostProcessors(final List<String> postProcs) {
-    Objects.requireNonNull(postProcs).forEach(this::addPostProcessingHint);
+    requireNonNull(postProcs).forEach(this::addPostProcessingHint);
   }
 
   public void setSize(final String size) {
@@ -97,7 +99,7 @@ public class PackerImageBuilder implements ImageBuilder {
   }
 
   public void setTypes(final List<Type> typeMap) {
-    Objects.requireNonNull(typeMap).forEach(t -> {
+    requireNonNull(typeMap).forEach(t -> {
       final String h = t.getHint();
       if (__thisTypes().containsKey(h))
         throw new PackerException("Duplicate hint " + h);
@@ -106,11 +108,11 @@ public class PackerImageBuilder implements ImageBuilder {
   }
 
   private Map<String, Type> __thisTypes() {
-    return types.stream().collect(Collectors.toMap(k -> k.getHint(), Function.identity()));
+    return types.stream().collect(toMap(k -> k.getHint(), identity()));
   }
 
   ImageBuilder addDisk(final ImageStorage disk) {
-    disks.add(Objects.requireNonNull(disk));
+    disks.add(requireNonNull(disk));
     return this;
   }
 
@@ -118,7 +120,7 @@ public class PackerImageBuilder implements ImageBuilder {
 
     if (postProcessingHints.contains(hint))
       throw new PackerException("Duplicate post processors are not allowed ' " + hint + "'");
-    postProcessingHints.add(Objects.requireNonNull(hint));
+    postProcessingHints.add(requireNonNull(hint));
     return this;
   }
 }

@@ -23,14 +23,14 @@ import java.util.Optional;
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
-import org.infrastructurebuilder.configuration.management.IBRConstants;
+import org.infrastructurebuilder.ibr.IBRConstants;
 import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONObject;
 
 @Named("fake")
 @Typed(ImageData.class)
-public class DefaultFakeImageData extends FakePackerBaseObject implements ImageData<JSONObject> {
+public class DefaultFakeImageData extends FakePackerBaseObject implements ImageData {
 
   private Optional<String> provUser = Optional.empty();
 
@@ -40,7 +40,7 @@ public class DefaultFakeImageData extends FakePackerBaseObject implements ImageD
   }
 
   @Override
-  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory<JSONObject> f) {
+  public void addRequiredItemsToFactory(final IBAuthentication a, final PackerFactory f) {
 
   }
 

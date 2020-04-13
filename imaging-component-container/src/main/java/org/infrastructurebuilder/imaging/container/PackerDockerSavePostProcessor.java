@@ -21,7 +21,7 @@ import static org.infrastructurebuilder.imaging.container.DockerV1Constants.DOCK
 import javax.inject.Named;
 
 import org.eclipse.sisu.Typed;
-import org.infrastructurebuilder.imaging.PackerException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
 import org.json.JSONObject;
 

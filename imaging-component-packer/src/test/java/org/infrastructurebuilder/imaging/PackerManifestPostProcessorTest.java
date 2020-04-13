@@ -20,6 +20,7 @@ import static org.junit.Assert.assertFalse;
 
 import java.util.Arrays;
 
+import org.infrastructurebuilder.automation.PackerException;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;

@@ -38,9 +38,9 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 @Singleton
 public final class IBRExecutionDataReaderMapper {
 
-  public static Comparator<? super IBRSpecificExecutionReader<?>> weightedHint = new Comparator<IBRSpecificExecutionReader<?>>() {
+  public static Comparator<? super IBRTypedExecutionReader<?>> weightedHint = new Comparator<IBRTypedExecutionReader<?>>() {
     @Override
-    public int compare(IBRSpecificExecutionReader<?> o1, IBRSpecificExecutionReader<?> o2) {
+    public int compare(IBRTypedExecutionReader<?> o1, IBRTypedExecutionReader<?> o2) {
       int retVal = weighted.compare(o1, o2);
       if (retVal == 0)
         retVal = o1.getComponentHint().compareTo(o2.getComponentHint());
@@ -48,23 +48,24 @@ public final class IBRExecutionDataReaderMapper {
     }
   };
 
-  private final List<IBRSpecificExecutionReader<?>> readers;
+  private final List<IBRTypedExecutionReader<?>> readers;
 
   @Inject
-  public IBRExecutionDataReaderMapper(Map<String, IBRSpecificExecutionReader<?>> readers) {
+  public IBRExecutionDataReaderMapper(Map<String, IBRTypedExecutionReader<?>> readers) {
     this.readers = requireNonNull(readers).values().stream().sorted(weightedHint).collect(toList());
   }
 
-  public Optional<Supplier<? extends IBRExecutionData>> readIBRData(Object d) {
+  public Optional<Supplier<? extends IBRTypedExecution>> readIBRData(Object d, IBRDependentExecution de) {
+    requireNonNull(de);
     Xpp3Dom e;
     try {
-      e = (Xpp3Dom) d;
+      e = (Xpp3Dom) requireNonNull(d);
     } catch (Throwable t) {
       return empty();
     }
-    Optional<IBRSpecificExecutionReader<?>> q = this.readers.stream().filter(f -> f.respondsTo(e)).findFirst();
-    // Type juggling sucks
-    return ofNullable(!q.isPresent() ? null : q.get().readExecutionData(e).orElse(null));
+    Optional<IBRTypedExecutionReader<?>> q = this.readers.stream().filter(f -> f.respondsTo(e)).findFirst();
+    // Type juggling kinda sucks
+    return ofNullable(!q.isPresent() ? null : q.get().readTypedExecution(e, de).orElse(null));
   }
 
 }

@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
+import static java.lang.String.format;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
@@ -47,20 +48,22 @@ import org.codehaus.plexus.archiver.zip.ZipArchiver;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.Initializable;
 import org.codehaus.plexus.personality.plexus.lifecycle.phase.InitializationException;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
-import org.infrastructurebuilder.configuration.management.IBRConstants;
+import org.infrastructurebuilder.configuration.management.IBRDataObject;
 import org.infrastructurebuilder.configuration.management.IBRType;
+import org.infrastructurebuilder.ibr.IBRConstants;
 import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
 import org.infrastructurebuilder.util.IBUtils;
+import org.json.JSONObject;
 
-abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initializable {
-  public static final String COMPILE_ITEMS = "_compile_MAP_Items";
-  public static final String COMPILE_ORDER = "_compile_MAP_Order";
+abstract public class AbstractIBRMojo extends AbstractMojo implements Initializable {
+  static final String COMPILE_ITEMS = "_compile_MAP_Items";
+  static final String COMPILE_ORDER = "_compile_MAP_Order";
 
   protected static final String[] DEFAULT_EXCLUDES = new String[] { "**/package.html" };
 
-  protected static final String[] DEFAULT_INCLUDES = new String[] { "**/**" };
+  protected static final String[]   DEFAULT_INCLUDES = new String[] { "**/**" };
   @Parameter(readonly = true)
-  private MavenArchiveConfiguration archive = new MavenArchiveConfiguration();
+  private MavenArchiveConfiguration archive          = new MavenArchiveConfiguration();
 
   @Component(hint = IBR)
   private ZipArchiver archiver;
@@ -77,7 +80,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
   @Parameter(required = true)
   private List<DefaultIBRBuilderConfigElement> builders = new ArrayList<>();
   @Parameter(defaultValue = "${project.build.outputDirectory}", required = true)
-  private File classesDirectory;
+  private File                                 classesDirectory;
 
   @Parameter(property = "classifier")
   private String classifier;
@@ -104,7 +107,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
   private MojoExecution mojo;
 
   @Component(role = IBRType.class)
-  private Map<String, IBRType<T>> myTypes = new HashMap<>();
+  private Map<String, IBRType> myTypes = new HashMap<>();
 
   @Parameter(defaultValue = "${project.build.directory}", readonly = true)
   private File outputDirectory;
@@ -184,7 +187,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
     return mojo;
   }
 
-  public Map<String, IBRType<T>> getMyTypes() {
+  public Map<String, IBRType> getMyTypes() {
     rootPathSupplier.setT(getWorkDirectory());
     return myTypes;
   }
@@ -277,7 +280,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
     this.mojo = mojo;
   }
 
-  public void setMyTypes(final Map<String, IBRType<T>> myTypes) {
+  public void setMyTypes(final Map<String, IBRType> myTypes) {
     this.myTypes = myTypes;
   }
 
@@ -319,7 +322,7 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
         () -> Files.walk(contentDirectory).filter(Files::isRegularFile).collect(toList()).size());
   }
 
-  protected Optional<Path> copyCMTypeSourcesAndResourcesToTarget(final IBRType<?> type) {
+  protected Optional<Path> copyCMTypeSourcesAndResourcesToTarget(final IBRType type) {
     final Path src = getSources().resolve(type.getArchiveSubPath());
     final Path dest = getWorkDirectory().resolve(type.getName());
     final Path resourceDestination = getWorkDirectory();
@@ -337,8 +340,8 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
     }).count();
 
     if (Files.exists(resources)) {
-      final List<Path> resourcePaths = IBArchiveException.et.withReturningTranslation(() -> Files.walk(resources)
-          .filter(Files::isRegularFile).map(resources::relativize).collect(toList()));
+      final List<Path> resourcePaths = IBArchiveException.et.withReturningTranslation(
+          () -> Files.walk(resources).filter(Files::isRegularFile).map(resources::relativize).collect(toList()));
       getLog().info(String.format("resourcePaths are %s, size is %d", resourcePaths, resourcePaths.size()));
       count += resourcePaths.stream().map(file -> {
         getLog().info(file.toString());
@@ -406,6 +409,27 @@ abstract public class AbstractIBRMojo<T> extends AbstractMojo implements Initial
   @Override
   public void initialize() throws InitializationException {
     this.rootPathSupplier.setT(getWorkDirectory());
+  }
 
+  @SuppressWarnings("unchecked")
+  protected Optional<List<String>> getCompileOrder() {
+    return ofNullable((List<String>) getPluginContext().get(COMPILE_ORDER));
+  }
+
+  @SuppressWarnings("unchecked")
+  protected void setCompileOrder(List<String> order) {
+    getLog().info(format("Final compile order: %s", order));
+    getPluginContext().put(COMPILE_ORDER, order);
+  }
+
+  @SuppressWarnings("unchecked")
+  protected Optional<Map<String, IBRDataObject<JSONObject>>> getCompileItems() {
+    return ofNullable((Map<String, IBRDataObject<JSONObject>>) getPluginContext().get(COMPILE_ITEMS));
+  }
+
+  @SuppressWarnings("unchecked")
+  protected void setCompileItems(Map<String, IBRDataObject<JSONObject>> map) {
+    getLog().info(format("Final compile items: %s", map));
+    getPluginContext().put(COMPILE_ITEMS, map);
   }
 }

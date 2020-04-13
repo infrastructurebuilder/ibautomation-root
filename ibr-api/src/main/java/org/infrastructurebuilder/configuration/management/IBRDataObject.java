@@ -32,7 +32,7 @@ public class IBRDataObject<T> {
   private final SortedSet<IBRValidationOutput> output;
   private final Path targetPath;
 
-  public IBRDataObject(final IBRType<T> type, final Path targetPath,
+  public IBRDataObject(final IBRType type, final Path targetPath,
       final IBRBuilderConfigElement builderJson) {
     name = requireNonNull(type).getName();
 

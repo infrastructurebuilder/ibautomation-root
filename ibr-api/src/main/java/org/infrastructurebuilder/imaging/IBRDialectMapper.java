@@ -28,13 +28,13 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
-import org.infrastructurebuilder.util.artifacts.WeightedComparator;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 import org.infrastructurebuilder.util.config.DefaultConfigMapSupplier;
 
-@Named
+@Named(IBRDialectMapper.IBR_DIALECT_MAPPER)
 @Singleton
 public class IBRDialectMapper {
+  public static final String             IBR_DIALECT_MAPPER = "ibr-dialect-mapper";
   private final List<IBRDialectSupplier> tSupplierList;
   private final AutomationUtils          ibr;
 
@@ -46,8 +46,11 @@ public class IBRDialectMapper {
 
   public Optional<IBRDialect> getDialectFor(String type, Optional<ConfigMapSupplier> cms) {
     // Precompute so that we don't do it for every instance in tSupplierList
-    final ConfigMapSupplier c = requireNonNull(cms).orElse(new DefaultConfigMapSupplier());
-    return tSupplierList.stream().filter(t -> t.respondsTo(type)).map(t -> t.configure(c)).map(IBRDialectSupplier::get)
-        .findFirst(); // Returns highest weighted matching instance
+    return tSupplierList.stream().filter(t -> t.respondsTo(type))
+        .map(t -> t.configure(requireNonNull(cms).orElse(new DefaultConfigMapSupplier())))
+        // Fetch
+        .map(IBRDialectSupplier::get)
+        // Return highest weighted matching instance
+        .findFirst();
   }
 }

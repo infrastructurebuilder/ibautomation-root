@@ -16,6 +16,7 @@
 package org.infrastructurebuilder.maven.ibr;
 
 import static java.util.Arrays.asList;
+import static java.util.Optional.empty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -55,7 +56,9 @@ import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
 import org.infrastructurebuilder.maven.imaging.FakeArchiverManager;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.json.JSONObject;
 import org.junit.After;
@@ -65,6 +68,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 public class TestIBRPackageMojo {
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+
   @Rule
   public ExpectedException               expected = ExpectedException.none();
   private DefaultIBRBuilderConfigElement builderEntry;
@@ -76,12 +82,12 @@ public class TestIBRPackageMojo {
   private AutomationUtils           rps;
   private File                      sneakyFile;
 
-  private Path                target;
-  private Path                test;
-  private IBRType<JSONObject> testFakeCMType;
-  private IBRType<JSONObject> testFakeNoFileCMType;
+  private Path    target;
+  private Path    test;
+  private IBRType testFakeCMType;
+  private IBRType testFakeNoFileCMType;
 
-  private HashMap<String, IBRType<JSONObject>> typeMap;
+  private HashMap<String, IBRType> typeMap;
 
   @After
   public void cleanup() {
@@ -143,10 +149,10 @@ public class TestIBRPackageMojo {
     IBRWorkingPathSupplier i = new IBRWorkingPathSupplier();
     i.setT(rps.getWorkingPath());
     m.setRootPathSupplier(i);
-    final IBRType<JSONObject> a = new AnsibleIBRType(rps,
-        asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator())));
+    final IBRType a = new AnsibleIBRType(rps,
+        asList(new DefaultAnsibleIBRValidator(rps, new DefaultAnsibleValidator(vpef))));
     a.setConfigSupplier(new DefaultIBConfigSupplier().setConfig(new HashMap<>()));
-    final Map<String, IBRType<JSONObject>> myTypes = asList(a).stream()
+    final Map<String, IBRType> myTypes = asList(a).stream()
         .collect(Collectors.toMap(k -> a.getName(), Function.identity()));
     m.setMyTypes(myTypes);
 

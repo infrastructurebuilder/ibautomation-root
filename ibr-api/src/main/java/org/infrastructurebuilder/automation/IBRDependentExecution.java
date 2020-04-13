@@ -28,10 +28,10 @@ import org.infrastructurebuilder.util.artifacts.GAV;
 public interface IBRDependentExecution extends ChecksumEnabled {
   GAV getGav();
 
-  default Optional<Supplier<? extends IBRExecutionData>> getTypedExecutionData() {
+  default Optional<Supplier<? extends IBRTypedExecution>> getTypedExecutionData() {
     return java.util.Optional.ofNullable(getParent()).flatMap(IBRManifest::getMapper)
         // If we have a mapper
-        .flatMap(mapper -> mapper.readIBRData(getExecutionData()));
+        .flatMap(mapper -> mapper.readIBRData(getExecutionData(), this));
   }
 
   Optional<Xpp3Dom> getExecutionData();

@@ -15,9 +15,9 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import static org.infrastructurebuilder.configuration.management.IBRConstants.ANSIBLE;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.PLAYBOOK_FILE;
-import static org.infrastructurebuilder.configuration.management.IBRConstants.TYPE;
+import static org.infrastructurebuilder.ibr.IBRConstants.ANSIBLE;
+import static org.infrastructurebuilder.ibr.IBRConstants.PLAYBOOK_FILE;
+import static org.infrastructurebuilder.ibr.IBRConstants.TYPE;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -33,7 +33,7 @@ import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.json.JSONObject;
 
-public class DummyIBRType extends AbstractIBRType<JSONObject> {
+public class DummyIBRType extends AbstractIBRType {
   private static Map<String, String> params = new HashMap<>();
   private final static AutomationUtilsTesting rps = new AutomationUtilsTesting();
   static {
@@ -48,14 +48,14 @@ public class DummyIBRType extends AbstractIBRType<JSONObject> {
     this(Collections.emptySortedSet(), Collections.emptySet());
   }
 
-  public DummyIBRType(final SortedSet<IBRValidationOutput> oSet, final Set<IBRValidator<JSONObject>> vset) {
+  public DummyIBRType(final SortedSet<IBRValidationOutput> oSet, final Set<IBRValidator> vset) {
     super(rps, new ArrayList<>(vset));
     setName("fake");
   }
 
   @Override
   public JSONObject transformToProvisionerEntry(final String typeName, final Path root, final Path targetFile,
-      final Optional<IBArchive> archive, final List<ImageData<JSONObject>> builders) {
+      final Optional<IBArchive> archive, final List<ImageData> builders) {
     return new JSONObject().put(TYPE, ANSIBLE).put(PLAYBOOK_FILE, "./path/to/file");
   }
 

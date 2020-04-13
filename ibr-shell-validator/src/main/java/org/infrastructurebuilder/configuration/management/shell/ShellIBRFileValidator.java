@@ -15,33 +15,49 @@
  */
 package org.infrastructurebuilder.configuration.management.shell;
 
+import static java.util.Optional.empty;
+import static java.util.Optional.of;
+import static java.util.UUID.randomUUID;
+import static org.infrastructurebuilder.configuration.management.IBArchiveException.et;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
-import java.util.UUID;
+import java.util.function.Supplier;
 
+import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRStaticAnalyzer;
 import org.infrastructurebuilder.util.DefaultProcessRunner;
 import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.ProcessExecution;
+import org.infrastructurebuilder.util.ProcessExecutionFactory;
 import org.infrastructurebuilder.util.ProcessExecutionResult;
 import org.infrastructurebuilder.util.ProcessRunner;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Named("shell-ibr-validator")
 public class ShellIBRFileValidator {
-  private static final Logger log = LoggerFactory.getLogger(ShellIBRFileValidator.class);
-  private Path targetPath = null;
+  private static final Logger                    log        = LoggerFactory.getLogger(ShellIBRFileValidator.class);
+  private Path                                   targetPath = null;
+  private final VersionedProcessExecutionFactory vpef;
+
+  @Inject
+  public ShellIBRFileValidator(VersionedProcessExecutionFactory vpef) {
+    this.vpef = Objects.requireNonNull(vpef);
+  }
 
   public boolean checkFile(final Path path) throws IBArchiveException {
-    return IBArchiveException.et.withReturningTranslation(() -> {
+    return et.withReturningTranslation(() -> {
       return check(IBUtils.readFile(path));
     });
   }
@@ -59,9 +75,9 @@ public class ShellIBRFileValidator {
       return false;
     }
 
-    return IBArchiveException.et.withReturningTranslation(() -> {
+    return et.withReturningTranslation(() -> {
 
-      final Path tempDirectory = Paths.get(getTargetPath().toString(), UUID.randomUUID().toString());
+      final Path tempDirectory = Paths.get(getTargetPath().toString(), randomUUID().toString());
 
       final Path tempShellFile = Paths.get(tempDirectory.toString(), "shell.sh");
 
@@ -93,20 +109,25 @@ public class ShellIBRFileValidator {
   }
 
   private Map<String, ProcessExecutionResult> executeAgainst(final String shellFileName) throws Exception {
-    final List<String> args = Arrays.asList("-n", shellFileName);
-    final Path scratchDirectory = Paths.get(getTargetPath().toString(), UUID.randomUUID().toString());
+    final String[] args = { "-n", shellFileName };
+    final Path scratchDirectory = getTargetPath().resolve(randomUUID().toString());
     Files.createDirectories(scratchDirectory.getParent());
-    try (ProcessRunner pr = new DefaultProcessRunner(scratchDirectory, Optional.empty(), Optional.of(log),
-        Optional.empty())) {
-      return IBArchiveException.et.withReturningTranslation(() -> pr.addExecution(UUID.randomUUID().toString(), "bash",
-          args, Optional.empty(), Optional.empty(), Optional.of(getTargetPath()), Optional.empty(), false,
-          Optional.empty(), Optional.empty(), Optional.empty(), false).lock().get().get().getResults());
+    try (ProcessRunner pr = new DefaultProcessRunner(scratchDirectory, empty(), of(log), empty())) {
+      ProcessExecutionFactory pef = vpef.getDefaultFactory(getTargetPath(), randomUUID().toString(), "bash")
+          .withArguments(args);
+      return et.withReturningTranslation(() -> pr.add(pef)
+          // Execute
+          .lock()
+          // Fetch ResultsBag from optional supplier
+          .get().get()
+          // Fetch results
+          .getResults());
     }
   }
 
   private Path getTargetPath() throws IBArchiveException {
     if (targetPath == null) {
-      IBArchiveException.et.withTranslation(() -> {
+      et.withTranslation(() -> {
         targetPath = Paths.get(Optional.ofNullable(System.getProperty("target_directory")).orElse("./target"));
       });
     }

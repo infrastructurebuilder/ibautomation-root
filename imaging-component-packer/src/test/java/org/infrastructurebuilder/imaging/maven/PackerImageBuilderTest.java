@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.ImageStorage;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.junit.Before;

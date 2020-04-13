@@ -32,7 +32,7 @@ public interface ImageBaseObject extends JSONOutputEnabled, LoggerEnabled {
 
   Optional<Map<String, Path>> getForcedOutput();
 
-  PackerHintMapDAO getHintMapForType();
+  IBRHintMap getHintMapForType();
 
   String getId();
 

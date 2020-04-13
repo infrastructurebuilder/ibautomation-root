@@ -19,17 +19,21 @@ import static java.nio.file.Files.createDirectories;
 import static java.nio.file.Files.exists;
 import static java.nio.file.Files.isDirectory;
 import static java.nio.file.Files.isWritable;
+import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
+import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static org.infrastructurebuilder.automation.PackerException.et;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDER;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DEFAULT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.POST_PROCESSOR;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PROVISIONER;
-import static org.infrastructurebuilder.imaging.PackerException.et;
 import static org.infrastructurebuilder.util.IBUtils.writeString;
 
 import java.io.IOException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -43,25 +47,26 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import java.util.UUID;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.interpolation.EnvarBasedValueSource;
 import org.codehaus.plexus.interpolation.PropertiesBasedValueSource;
 import org.codehaus.plexus.interpolation.RegexBasedInterpolator;
+import org.infrastructurebuilder.automation.PackerException;
+import org.infrastructurebuilder.imaging.IBRHintMap;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.ImageBaseObject;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageBuilder;
 import org.infrastructurebuilder.imaging.ImageData;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
-import org.infrastructurebuilder.imaging.PackerHintMapDAO;
 import org.infrastructurebuilder.imaging.PackerManifestPostProcessor;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.PackerTypeMapperProcessingSection;
+import org.infrastructurebuilder.util.ProcessExecutionFactory;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.artifacts.Checksum;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
@@ -70,7 +75,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 
-public class DefaultPackerFactory implements PackerFactory<JSONObject> {
+public class DefaultPackerFactory implements PackerFactory {
   public final static String naiveFilter(final String d, final String k, final String val) {
     String b = d;
     b = b.replace("@" + k + "@", val);
@@ -91,29 +96,30 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
     return a.equals(b);
   }
 
-  private final GAV                                  artifact;
-  private final IBAuthenticationProducerFactory      authProdFactory;
-  private List<ImageData<JSONObject>>                builders       = new LinkedList<>();
-  private final PlexusContainer                      container;
-  private Map<String, Map<String, PackerHintMapDAO>> hintMap;
-  private final Logger                               log;
-  private final PackerManifestPostProcessor          manifestPP;
-  private final List<PackerManifest>                 manifests;
-  private final Path                                 metaRoot;
-  private final Checksum                             packerChecksum;
-  private final Path                                 packerExecutable;
-  private Optional<Path>                             packerFile     = null;
-  private List<PackerPostProcessor>                  postProcessors = new LinkedList<>();
-  private final Properties                           props;
-  private List<PackerProvisioner<JSONObject>>        provisioners   = new LinkedList<>();
-  private final List<IBRInternalDependency>          requirements;
-  private final Path                                 root;
+  private final VersionedProcessExecutionFactory vpef;
+  private final GAV                              artifact;
+  private final IBAuthenticationProducerFactory  authProdFactory;
+  private List<ImageData>                        builders       = new LinkedList<>();
+  private final PlexusContainer                  container;
+  private Map<String, Map<String, IBRHintMap>>   hintMap;
+  private final Logger                           log;
+  private final PackerManifestPostProcessor      manifestPP;
+  private final List<PackerManifest>             manifests;
+  private final Path                             metaRoot;
+  private final Checksum                         packerChecksum;
+  private final Path                             packerExecutable;
+  private Path                                   packerFile;
+  private List<PackerPostProcessor>              postProcessors = new LinkedList<>();
+  private final Properties                       props;
+  private List<PackerProvisioner>                provisioners   = new LinkedList<>();
+  private final List<IBRInternalDependency>      requirements;
+  private final Path                             root;
 
   private final Path target;
 
   private Map<String, String> variables = new HashMap<>();
 
-  public DefaultPackerFactory(
+  public DefaultPackerFactory(final VersionedProcessExecutionFactory vpef,
 
       final PlexusContainer container,
 
@@ -122,8 +128,6 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
       final Path metaRoot,
 
       final Path root,
-
-      final Path targetRelativePath,
 
       final List<PackerManifest> artifactData,
 
@@ -140,6 +144,7 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
       final List<IBRInternalDependency> requirements,
 
       final boolean copyToOtherRegions) {
+    this.vpef = requireNonNull(vpef);
     this.requirements = requireNonNull(requirements);
     this.container = requireNonNull(container);
     authProdFactory = requireNonNull(authFactory);
@@ -150,7 +155,7 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
     props = requireNonNull(p);
     artifact = requireNonNull(coords);
     this.root = et.withReturningTranslation(() -> requireNonNull(root).toAbsolutePath());
-    target = requireNonNull(targetRelativePath);
+    target = requireNonNull(Paths.get(UUID.randomUUID().toString()));
     if (target.isAbsolute())
       throw new PackerException("Target [" + target.toString() + "] must be relative (will be applied to root ["
           + this.root.toString() + "]");
@@ -164,12 +169,11 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
     manifests = requireNonNull(artifactData);
     update(requireNonNull(manifestPP));
     et.withTranslation(() -> {
-      final Map<ImageData<JSONObject>, Type> builders = new HashMap<>();
+      final Map<ImageData, Type> builders = new HashMap<>();
 
       for (final String hint : packerImageBuilder.getTypeHints()) {
         log.info("Builder -> " + hint);
-        @SuppressWarnings("unchecked")
-        final ImageData<JSONObject> c = this.container.lookup(ImageData.class, hint);
+        final ImageData c = this.container.lookup(ImageData.class, hint);
 //        log.debug("  " + hint + " found");
         c.setLog(this.log);
         c.setCopyToOtherRegions(copyToOtherRegions);
@@ -178,7 +182,7 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
       }
 //      if (builders.size() == 0)
 //        log.debug(" -> 0 builders");
-      for (final ImageData<JSONObject> imageData : builders.keySet()) {
+      for (final ImageData imageData : builders.keySet()) {
         final Type type = builders.get(imageData);
         final Optional<GAV> parent = Optional.ofNullable(type.getParent().orElse(null));
         final String targetType = imageData.getLookupHint().get();
@@ -187,8 +191,7 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
         final Set<IBAuthentication> auth = imageData.getAuthType()
             .map(authType -> authProdFactory.getAuthenticationsForType(authType)).orElse(new HashSet<>());
         for (final IBAuthentication a : auth) {
-          @SuppressWarnings("unchecked")
-          final ImageData<JSONObject> b1 = this.container.lookup(ImageData.class, targetType);
+          final ImageData b1 = this.container.lookup(ImageData.class, targetType);
           b1.setCopyToOtherRegions(copyToOtherRegions);
           b1.setLog(getLog());
           b1.setInstanceAuthentication(a);
@@ -264,7 +267,7 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   }
 
   @Override
-  public DefaultPackerFactory addBuilder(final ImageData<JSONObject> b) {
+  public DefaultPackerFactory addBuilder(final ImageData b) {
     update(requireNonNull(b));
     builders.add(b);
     return this;
@@ -281,33 +284,32 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   }
 
   @Override
-  public DefaultPackerFactory addProvisioner(final PackerProvisioner<JSONObject> p) {
+  public DefaultPackerFactory addProvisioner(final PackerProvisioner p) {
     update(requireNonNull(p));
     provisioners.add(requireNonNull(p));
     return this;
   }
 
   @Override
-  public PackerFactory<JSONObject> addUniqueBuilder(final java.util.Comparator<ImageData<JSONObject>> b,
-      final ImageData<JSONObject> b1) {
+  public PackerFactory addUniqueBuilder(final java.util.Comparator<ImageData> b, final ImageData b1) {
     return !builders.stream().filter(x -> b.compare(x, b1) == 0).findFirst().isPresent() ? addBuilder(b1) : this;
   }
 
   @Override
-  public PackerFactory<JSONObject> addUniquePostProcessor(final java.util.Comparator<PackerPostProcessor> b,
+  public PackerFactory addUniquePostProcessor(final java.util.Comparator<PackerPostProcessor> b,
       final PackerPostProcessor p) {
     return !postProcessors.stream().filter(x -> b.compare(x, p) == 0).findFirst().isPresent() ? addPostProcessor(p)
         : this;
   }
 
   @Override
-  public PackerFactory<JSONObject> addUniqueProvisioner(final java.util.Comparator<PackerProvisioner<JSONObject>> b,
-      final PackerProvisioner<JSONObject> p) {
+  public PackerFactory addUniqueProvisioner(final java.util.Comparator<PackerProvisioner> b,
+      final PackerProvisioner p) {
     return !provisioners.stream().filter(x -> b.compare(x, p) == 0).findFirst().isPresent() ? addProvisioner(p) : this;
   }
 
   @Override
-  public PackerFactory<JSONObject> addVariable(final String name, final String value) {
+  public PackerFactory addVariable(final String name, final String value) {
     variables.put(requireNonNull(name), requireNonNull(value));
     return this;
   }
@@ -348,36 +350,33 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   }
 
   @Override
-  public Optional<Path> get() {
+  public Path get() {
     if (packerFile == null) {
 
       hintMap = new HashMap<>();
       postProcessors.add(manifestPP);
 
       postProcessors.forEach(p -> p.setArtifact(artifact));
-      postProcessors = Collections.unmodifiableList(postProcessors);
+      postProcessors = unmodifiableList(postProcessors);
 
-      hintMap.put(POST_PROCESSOR, postProcessors.stream().map(ImageBaseObject::getHintMapForType)
-          .collect(Collectors.toMap(k -> k.getId(), Function.identity())));
+      hintMap.put(POST_PROCESSOR,
+          postProcessors.stream().map(ImageBaseObject::getHintMapForType).collect(toMap(k -> k.getId(), identity())));
 
-      builders = Collections.unmodifiableList(builders);
+      builders = unmodifiableList(builders);
       builders.forEach(p -> p.setArtifact(artifact));
 
-      hintMap.put(BUILDER, builders.stream().map(ImageBaseObject::getHintMapForType)
-          .collect(Collectors.toMap(k -> k.getId(), Function.identity())));
-      provisioners = Collections.unmodifiableList(provisioners);
+      hintMap.put(BUILDER,
+          builders.stream().map(ImageBaseObject::getHintMapForType).collect(toMap(k -> k.getId(), identity())));
+      provisioners = unmodifiableList(provisioners);
       provisioners.forEach(p -> p.setArtifact(artifact));
       provisioners.forEach(p -> p.setBuilders(builders));
       hintMap.put(PROVISIONER,
-
-          provisioners.stream().map(ImageBaseObject::getHintMapForType)
-              .collect(Collectors.toMap(k -> k.getId(), Function.identity())));
+          provisioners.stream().map(ImageBaseObject::getHintMapForType).collect(toMap(k -> k.getId(), identity())));
 
       variables = Collections.unmodifiableMap(variables);
 
-      packerFile = Optional.ofNullable(
-          et.withReturningTranslation(() -> writeString(root.resolve(UUID.randomUUID().toString() + ".json"),
-              asFilteredJSON(requireNonNull(props)).toString(2))));
+      packerFile = et.withReturningTranslation(() -> writeString(root.resolve(UUID.randomUUID().toString() + ".json"),
+          asFilteredJSON(requireNonNull(props)).toString(2)));
 
     }
     return packerFile;
@@ -389,8 +388,9 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   }
 
   @Override
-  public Optional<Map<String, Map<String, PackerHintMapDAO>>> getHintMap() {
-    return Optional.ofNullable(hintMap);
+  public Map<String, Map<String, IBRHintMap>> getHintMap() {
+    return Optional.ofNullable((Map<String, Map<String, IBRHintMap>>) hintMap)
+        .orElseThrow(() -> new PackerException("No hint map in " + this));
   }
 
   @Override
@@ -413,13 +413,13 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   }
 
   @Override
-  public Optional<Path> getMetaRoot() {
-    return Optional.of(metaRoot);
+  public Path getMetaRoot() {
+    return metaRoot;
   }
 
   @Override
-  public Optional<Checksum> getPackerChecksum() {
-    return Optional.of(packerChecksum);
+  public Checksum getPackerChecksum() {
+    return packerChecksum;
   }
 
   @Override
@@ -475,5 +475,11 @@ public class DefaultPackerFactory implements PackerFactory<JSONObject> {
   private void update(final ImageBaseObject p) {
     p.setWorkingRootDirectory(root);
     p.setTargetDirectory(target);
+  }
+
+  @Override
+  public ProcessExecutionFactory getProcessExecutionFactory(String id) {
+    return vpef.getDefaultFactory(getRoot(), id, getPackerExecutable().toString()).withChecksum(getPackerChecksum())
+        .withRelativeRoot(getMetaRoot());
   }
 }

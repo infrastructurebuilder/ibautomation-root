@@ -15,6 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management.impl.ansible;
 
+import static java.util.Optional.empty;
 import static org.infrastructurebuilder.configuration.management.ansible.AnsibleConstants.ANSIBLE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -42,7 +43,10 @@ import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsible
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
+import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.infrastructurebuilder.util.config.WorkingPathSupplier;
 import org.json.JSONObject;
 import org.junit.After;
@@ -50,20 +54,20 @@ import org.junit.Before;
 import org.junit.Test;
 
 public class TestDefaultAnsibleIBRValidator {
-  private AutomationUtils ibr = new AutomationUtilsTesting();
-
-  private final WorkingPathSupplier ps = new WorkingPathSupplier();
-  private Path target;
-  private IBRValidator<JSONObject> test;
-  PlexusContainer container;
-  Path fileA;
-  Path fileB;
-  Path fileC;
-  Path fileD;
-  Path fileE;
-  Path fileF;
-  Path fileG;
-  Path fileH;
+  private final static TestingPathSupplier wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+  private AutomationUtils                  ibr  = new AutomationUtilsTesting();
+  private Path                             target;
+  private IBRValidator                     test;
+  PlexusContainer                          container;
+  Path                                     fileA;
+  Path                                     fileB;
+  Path                                     fileC;
+  Path                                     fileD;
+  Path                                     fileE;
+  Path                                     fileF;
+  Path                                     fileG;
+  Path                                     fileH;
 
   Path targetEmptyDirectory;
   Path targetEmptySubfolder;
@@ -83,8 +87,8 @@ public class TestDefaultAnsibleIBRValidator {
   @Before
   public void beforeClass() throws IOException, PlexusContainerException, ComponentLookupException {
 
-    target = ps.getRoot();
-    targetPath = ps.get();
+    target = wps.getRoot();
+    targetPath = vpef.getScratchDir();
     targetEmptyDirectory = target.resolve(UUID.randomUUID().toString());
     targetEmptySubfolder = target.resolve(UUID.randomUUID().toString());
     targetSneakyNotDirectory = target.resolve(UUID.randomUUID().toString());
@@ -111,7 +115,7 @@ public class TestDefaultAnsibleIBRValidator {
     }
     Files.write(fileSneakyMasquerader, "".getBytes());
     fileH.toFile().setReadable(false);
-    test = new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator());
+    test = new DefaultAnsibleIBRValidator(ibr, new DefaultAnsibleValidator(vpef));
   }
 
   @Test

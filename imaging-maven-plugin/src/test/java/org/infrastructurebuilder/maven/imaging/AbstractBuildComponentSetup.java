@@ -15,7 +15,8 @@
  */
 package org.infrastructurebuilder.maven.imaging;
 
-import java.nio.charset.StandardCharsets;
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,6 +36,8 @@ import org.apache.maven.settings.Server;
 import org.apache.maven.settings.Settings;
 import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.classworlds.ClassWorld;
+import org.infrastructurebuilder.ibr.utils.AutomationUtils;
+import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.maven.MockedPackerBean;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
@@ -43,8 +46,7 @@ import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
-import org.infrastructurebuilder.util.config.PathSupplier;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
 import org.joor.Reflect;
 import org.json.JSONObject;
 import org.junit.After;
@@ -54,48 +56,47 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AbstractBuildComponentSetup {
+  public final static TestingPathSupplier ps  = new TestingPathSupplier();
+  public final static Logger              log = LoggerFactory.getLogger(AbstractBuildComponentSetup.class);
+  public final static AutomationUtils     ibr = new AutomationUtilsTesting(ps, log);
 
-  protected static ClassWorld kw;
+  protected static ClassWorld   kw;
   protected static final String TESTING = "testing";
 
-  private Artifact a1;
-  private Artifact a2;
-  private IBAuthConfigBean acb;
-  private ArtifactHandler handler;
-  private PackerImageBuilder image;
-  private PathSupplier ps = new WorkingPathSupplier();
-  private IBRInternalDependency r1;
-  private IBRInternalDependency r2;
-  private List<IBRInternalDependency> requirements;
-  private Type type;
+  private Artifact                        a1;
+  private Artifact                        a2;
+  private IBAuthConfigBean                acb;
+  private ArtifactHandler                 handler;
+  private PackerImageBuilder              image;
+  private IBRInternalDependency           r1;
+  private IBRInternalDependency           r2;
+  private List<IBRInternalDependency>     requirements;
+  private Type                            type;
   protected DefaultImageBuildMojoExecutor m;
-  protected Set<Artifact> resolvedArtifacts;
-  protected Path target;
-  protected Path test;
-  protected PlexusContainer container;
-
-  Logger log = LoggerFactory.getLogger(AbstractBuildComponentSetup.class);
+  protected Set<Artifact>                 resolvedArtifacts;
+  protected Path                          target;
+  protected Path                          test;
+  protected PlexusContainer               container;
 
   @BeforeClass
   public static void beforeClass() {
 
   }
+
   @Before
   public void setUp() throws Exception {
 
     handler = new DefaultArtifactHandler();
-
-    ps = new WorkingPathSupplier();
     test = ps.get();
-    target = test.getParent();
+    target = ps.getRoot();
 
-    m = new DefaultImageBuildMojoExecutor(new FakeArchiverManager());
+    m = new DefaultImageBuildMojoExecutor(ibr, new FakeArchiverManager());
     final MockedPackerBean b = new MockedPackerBean("defaultPasWithNothing", null);
     Reflect.on(m).set("data", b);
 
     m.setLog(log);
 
-    m.setEncoding(StandardCharsets.UTF_8.name());
+    m.setEncoding(UTF_8.name());
     m.setOverwrite(true);
     Reflect.on(m).set("projectBuildDirectory", target.toAbsolutePath().toFile());
     m.setName(UUID.randomUUID().toString());
@@ -134,8 +135,8 @@ public class AbstractBuildComponentSetup {
 
     a1 = new DefaultArtifact("junit", "junit", "4.12", "runtime", "jar", null, handler);
     a1.setFile(target.resolve("test-classes").resolve("junit-4.12.jar").toFile());
-    a2 = new DefaultArtifact("org.infrastructurebuilder.infrastructure", "base-image-test", "0.2.0-SNAPSHOT", "runtime", "packer",
-        "def", handler);
+    a2 = new DefaultArtifact("org.infrastructurebuilder.infrastructure", "base-image-test", "0.2.0-SNAPSHOT", "runtime",
+        "packer", "def", handler);
     a2.setFile(target.resolve("test-classes").resolve("manifest-packer.json").toFile());
     resolvedArtifacts = new HashSet<>(Arrays.asList(a1, a2));
 

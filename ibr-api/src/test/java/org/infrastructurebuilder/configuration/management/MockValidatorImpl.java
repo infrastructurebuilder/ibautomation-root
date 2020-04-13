@@ -23,10 +23,10 @@ import java.util.Set;
 
 import org.json.JSONObject;
 
-public class MockValidatorImpl implements IBRValidator<JSONObject> {
+public class MockValidatorImpl implements IBRValidator {
 
   @Override
-  public boolean respondsTo(final IBRType<JSONObject> type) {
+  public boolean respondsTo(final IBRType type) {
     return true;
   }
 

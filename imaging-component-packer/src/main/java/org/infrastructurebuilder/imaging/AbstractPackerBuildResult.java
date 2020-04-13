@@ -15,6 +15,8 @@
  */
 package org.infrastructurebuilder.imaging;
 
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.ARTIFACT_ID;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDER_TYPE;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILD_TIME;
@@ -27,7 +29,6 @@ import static org.infrastructurebuilder.util.IBUtils.getOptionalJSONArray;
 import java.time.Instant;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -40,20 +41,20 @@ import org.json.JSONObject;
 
 public abstract class AbstractPackerBuildResult implements ImageBuildResult {
 
-  private final Optional<String> artifactId;
-  private final String builderType;
-  private final Instant buildTime;
+  private final Optional<String>       artifactId;
+  private final String                 builderType;
+  private final Instant                buildTime;
   private final Optional<List<Object>> files;
-  private final Optional<JSONArray> filesList;
-  private final JSONObject j;
-  private final String name;
-  private final Optional<String> oaid;
-  private final UUID uuid;
+  private final Optional<JSONArray>    filesList;
+  private final JSONObject             j;
+  private final String                 name;
+  private final Optional<String>       oaid;
+  private final UUID                   uuid;
 
   public AbstractPackerBuildResult(final JSONObject j) {
-    this.j = Objects.requireNonNull(j);
+    this.j = requireNonNull(j);
     filesList = getOptionalJSONArray(getJSON(), FILES);
-    artifactId = Optional.ofNullable(getJSON().optString(ARTIFACT_ID));
+    artifactId = ofNullable(getJSON().optString(ARTIFACT_ID));
     builderType = getJSON().getString(BUILDER_TYPE);
     buildTime = new Date(getJSON().getLong(BUILD_TIME)).toInstant();
     files = _getFilesList().map(a -> {
@@ -101,15 +102,9 @@ public abstract class AbstractPackerBuildResult implements ImageBuildResult {
 
   @Override
   public boolean matchesForAuth(final IBAuthentication auth) {
-    if (Objects.requireNonNull(auth).getType().equals(getBuilderType())) {
-      final Optional<String> aoid = getOriginalAuthId();
-      if (aoid.isPresent())
-        return aoid.get().equals(auth.getId());
-      else
-        return true;
-    }
-
-    return false;
+    // FIXME Overly complex
+    return (ofNullable(auth).map(a -> a.getType().equals(getBuilderType())).orElse(false))
+        && (getOriginalAuthId().map(s -> s.equals(auth.getId())).orElse(true));
   }
 
   protected Optional<JSONArray> _getFilesList() {

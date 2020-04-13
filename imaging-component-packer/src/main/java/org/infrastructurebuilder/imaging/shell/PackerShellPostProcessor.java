@@ -36,8 +36,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.AbstractPackerPostProcessor;
-import org.infrastructurebuilder.imaging.PackerException;
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.json.JSONObject;
 

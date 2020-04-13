@@ -15,7 +15,9 @@
  */
 package org.infrastructurebuilder.imaging.shell;
 
-import java.util.Arrays;
+import static java.util.Arrays.asList;
+import static java.util.Optional.of;
+
 import java.util.Optional;
 
 import javax.inject.Named;
@@ -31,11 +33,11 @@ public class PackerYumUpdateProvisioner extends PackerShellProvisioner {
   public static final String YUM_UPDATE_PROVISIONER = "yum-update-provisioner";
 
   public PackerYumUpdateProvisioner() {
-    setInlines(Arrays.asList("sleep 30", "sudo yum -y update"));
+    setInlines(asList("sleep 30", "sudo yum -y update"));
   }
 
   @Override
   public Optional<String> getLookupHint() {
-    return Optional.of(YUM_UPDATE_PROVISIONER);
+    return of(YUM_UPDATE_PROVISIONER);
   }
 }

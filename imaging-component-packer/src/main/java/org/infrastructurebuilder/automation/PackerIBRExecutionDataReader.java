@@ -14,41 +14,91 @@
  * limitations under the License.
  */
 package org.infrastructurebuilder.automation;
-//
-//import static org.infrastructurebuilder.util.artifacts.impl.DefaultIBVersion.DefaultIBVersionBoundedRange.versionBoundedRangeFrom;
-//
-//import java.io.StringReader;
-//import java.util.Optional;
-//import java.util.function.Supplier;
-//
-//import javax.inject.Inject;
-//import javax.inject.Named;
-//import javax.inject.Singleton;
-//
-//import org.codehaus.plexus.util.xml.Xpp3Dom;
-//import org.infrastructurebuilder.automation.model.v1_0_0.PackerSpecificData;
-//import static org.infrastructurebuilder.automation.IBRAutomationException.*;
-//
-//@Named(PackerIBRExecutionDataReader.PACKER)
-//@Singleton
-//public class PackerIBRExecutionDataReader extends AbstractIBRExecutionDataReader<PackerExecution> {
-//
-//  private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader v1_0_0reader = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader();
-//
-//  static final String PACKER = "packer";
-//
-//  private static final String THIS_VERSION = "1.0.0";
-//
-//  @Inject
-//  public PackerIBRExecutionDataReader() {
-//    super(PACKER, versionBoundedRangeFrom(THIS_VERSION, THIS_VERSION));
-//  }
-//
-//  @Override
-//  public Optional<Supplier<PackerExecution>> readExecutionData(Xpp3Dom ed) {
-//    PackerSpecificData x = et.withReturningTranslation(() -> v1_0_0reader.read(new StringReader(ed.toString())));
-//
-//    return Optional.empty();
-//  }
-//
-//}
+
+import static java.util.Objects.requireNonNull;
+import static java.util.Optional.ofNullable;
+import static java.util.stream.Collectors.toList;
+import static org.infrastructurebuilder.automation.IBRAutomationException.et;
+import static org.infrastructurebuilder.util.IBUtils.removeXMLPrefix;
+import static org.infrastructurebuilder.util.artifacts.impl.DefaultIBVersion.DefaultIBVersionBoundedRange.versionBoundedRangeFrom;
+
+import java.io.StringReader;
+import java.io.StringWriter;
+import java.time.Instant;
+import java.util.Optional;
+import java.util.function.Supplier;
+
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
+
+import org.codehaus.plexus.util.xml.Xpp3Dom;
+import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
+import org.infrastructurebuilder.automation.PackerIBRExecutionDataReader.PackerTypedExecution;
+import org.infrastructurebuilder.automation.model.v1_0_0.PackerSpecificExecution;
+import org.infrastructurebuilder.util.artifacts.Checksum;
+
+@Named(PackerIBRExecutionDataReader.PACKER)
+@Singleton
+public class PackerIBRExecutionDataReader extends AbstractIBRExecutionDataReader<PackerTypedExecution> {
+
+  private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader v1_0_0reader = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader();
+  private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Writer v1_0_0writer = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Writer();
+
+  public static final String PACKER = "packer";
+
+  private static final String V1_0_0_LOWER = "1.0.0"; // FIXME These need to be replaced with the local model version
+  private static final String V1_0_0_UPPER = "1.0.0";
+
+  @Inject
+  public PackerIBRExecutionDataReader() {
+    super(PACKER, PACKER, versionBoundedRangeFrom(V1_0_0_LOWER, V1_0_0_UPPER));
+  }
+
+  public Optional<Supplier<PackerTypedExecution>> readTypedExecution(Xpp3Dom ed, IBRDependentExecution parent) {
+    return ofNullable(ed).map(xpp3Dom -> {
+      return () -> new PackerTypedExecution(ed, parent);
+    });
+  };
+
+  static class PackerTypedExecution extends AbstractIBRExecutionData<PackerSpecificExecution> {
+
+    private final PackerSpecificExecution val;
+
+    public PackerTypedExecution(Xpp3Dom d, IBRDependentExecution parent) {
+      super(d, parent);
+      this.val = et.withReturningTranslation(
+          () -> v1_0_0reader.read(new StringReader(removeXMLPrefix(getSpecificData().toUnescapedString()))));
+    }
+
+    public PackerTypedExecution(String executable, Instant start, Instant end, Checksum check, String originalSource,
+        PackerSpecificExecution specific, IBRDependentExecution parent) {
+      super(executable, start, end, check, originalSource, requireNonNull(specific).asXpp3Dom(), parent);
+      this.val = specific;
+    }
+
+    @Override
+    public IBRTypedExecution copy() {
+      return new PackerTypedExecution(super.asXpp3Dom(), getParent());
+    }
+
+    @Override
+    public IBRSpecificExecution getSpecificExecutionData() {
+      return val;
+    }
+
+    @Override
+    protected Xpp3Dom constructSpecificData() {
+      StringWriter sw = new StringWriter();
+      et.withTranslation(() -> v1_0_0writer.write(sw, val));
+      return et.withReturningTranslation(() -> Xpp3DomBuilder.build(new StringReader(sw.toString())));
+    }
+
+    @Override
+    public Optional<IBRImageMap> getImageMap() {
+      return ofNullable(val).map(v -> new DefaultIBRImageMap(v.getImages().stream().collect(toList())));
+    }
+
+  }
+
+}
