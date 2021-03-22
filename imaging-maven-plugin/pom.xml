@@ -31,7 +31,7 @@
   <description>Maven Plugin to perform Hashicorp packer actions as part of a build</description>
   <properties>
     <mavenVersion>${maven.version}</mavenVersion>
-    <test.coverage.percentage.required>63</test.coverage.percentage.required>
+    <test.coverage.percentage.required>47</test.coverage.percentage.required>
     <jacoco.max.missed.classes>1</jacoco.max.missed.classes>
     <packer.location>${env.HOME}/bin/packer</packer.location>
     <plexus.interpolation.version>1.24</plexus.interpolation.version>
@@ -42,7 +42,7 @@
       <artifactId>imaging-component-packer</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblog-maven-component</artifactId>
     </dependency>
     <dependency>
@@ -81,7 +81,7 @@
       <artifactId>ibauth-factory</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.skyscreamer</groupId>
+      <groupId>org.infrastructurebuilder.usurped</groupId>
       <artifactId>jsonassert</artifactId>
       <scope>test</scope>
     </dependency>
@@ -111,7 +111,7 @@
 
     <dependency>
       <groupId>org.jooq</groupId>
-      <artifactId>jool-java-8</artifactId>
+      <artifactId>jool</artifactId>
       <scope>test</scope>
     </dependency>
     <!-- Maven -->
@@ -144,7 +144,7 @@
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
-      <artifactId>joor-java-8</artifactId>
+      <artifactId>joor</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -153,7 +153,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblog-slf4j-component</artifactId>
     </dependency>
   </dependencies>

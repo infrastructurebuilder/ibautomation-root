@@ -21,10 +21,10 @@ import static java.util.UUID.randomUUID;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static org.codehaus.plexus.util.xml.Xpp3DomBuilder.build;
-import static org.infrastructurebuilder.IBConstants.XML;
 import static org.infrastructurebuilder.automation.IBRAutomationException.et;
 import static org.infrastructurebuilder.util.IBUtils.stringFromDocument;
 import static org.infrastructurebuilder.util.IBUtils.writeString;
+import static org.infrastructurebuilder.util.constants.IBConstants.XML;
 
 import java.io.IOException;
 import java.io.Reader;

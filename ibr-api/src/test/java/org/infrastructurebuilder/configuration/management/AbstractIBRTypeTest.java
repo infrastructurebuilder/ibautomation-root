@@ -15,7 +15,6 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -25,7 +24,6 @@ import java.nio.file.Path;
 
 import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.config.TestingPathSupplier;
-import org.json.JSONObject;
 import org.junit.Test;
 
 public class AbstractIBRTypeTest {

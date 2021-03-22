@@ -39,7 +39,7 @@ public class IBRDialectMapperTest {
   private static final String          LARGE    = "large";
   private static final String          MEDIUM   = "medium";
   private static final String          SMALL    = "small";
-  private final static AutomationUtils ibr      = new AutomationUtilsTesting();
+  protected final static AutomationUtils ibr      = new AutomationUtilsTesting();
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {

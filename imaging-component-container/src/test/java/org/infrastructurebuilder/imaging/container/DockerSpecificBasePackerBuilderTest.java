@@ -17,7 +17,6 @@ package org.infrastructurebuilder.imaging.container;
 
 import static org.junit.Assert.assertEquals;
 
-import org.infrastructurebuilder.imaging.container.DockerSpecificBasePackerBuilder;
 import org.junit.Before;
 import org.junit.Test;
 

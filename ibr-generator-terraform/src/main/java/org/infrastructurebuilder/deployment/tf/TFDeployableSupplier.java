@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.nio.file.Path;
 
-import org.infrastructurebuilder.IBException;
 import org.infrastructurebuilder.deployment.DeployableSupplier;
+import org.infrastructurebuilder.exceptions.IBException;
 
 /**
  * Supply a path to a deployable that is specifically meant for Terraform

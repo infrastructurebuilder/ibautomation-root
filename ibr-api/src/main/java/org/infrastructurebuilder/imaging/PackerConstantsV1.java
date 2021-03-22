@@ -17,11 +17,9 @@ package org.infrastructurebuilder.imaging;
 
 import static java.time.Duration.ofMillis;
 import static java.util.Arrays.asList;
-import static java.util.Optional.of;
 
 import java.time.Duration;
 import java.util.List;
-import java.util.Optional;
 
 public interface PackerConstantsV1 {
 

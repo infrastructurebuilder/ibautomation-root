@@ -19,7 +19,7 @@ import static org.junit.Assert.fail;
 
 import java.util.UUID;
 
-import org.infrastructurebuilder.IBException;
+import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.maven.MockedPackerBean;
 import org.joor.Reflect;
 import org.junit.Test;
@@ -27,7 +27,7 @@ import org.junit.Test;
 public class Imaging002Test extends AbstractBuildComponentSetup {
 
 
-  @Test(expected = IBException.class)
+  @Test(expected = PackerException.class)
   public void testExecute2() {
     final MockedPackerBean b = new MockedPackerBean("hard", null);
     Reflect.on(m).set("data", b);

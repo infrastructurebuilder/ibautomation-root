@@ -3,7 +3,7 @@
     {
       "name": "docker",
       "builder_type": "docker",
-      "build_time": 1507245986,
+      "build_time": "1970-01-18T10:40:45.986Z",
       "files": [
         {
           "name": "packer_example",

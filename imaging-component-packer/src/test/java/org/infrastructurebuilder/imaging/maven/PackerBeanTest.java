@@ -15,10 +15,10 @@
  */
 package org.infrastructurebuilder.imaging.maven;
 
+import static java.util.Optional.empty;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -57,6 +57,9 @@ import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducer;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducer;
+import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.joor.Reflect;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -68,15 +71,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PackerBeanTest {
-  private static final String DESCRIPTION = "Description";
+  private static final String           DESCRIPTION = "Description";
 
   private static ContainerConfiguration dpcreq;
 
-  private static ClassWorld kw;
+  private static ClassWorld             kw;
 
-  private final static Logger log = LoggerFactory.getLogger(PackerBeanTest.class);
+  private final static Logger           log         = LoggerFactory.getLogger(PackerBeanTest.class);
 
-  private static final String TESTING = "TESTING";
+  private static final String           TESTING     = "TESTING";
 
   @BeforeClass
   public static void setUpBeforeClass() throws Exception {
@@ -88,24 +91,27 @@ public class PackerBeanTest {
 
   }
 
-  private IBAuthConfigBean authConfig;
-  private Path authTestPath;
-  private Path errorpacker;
-  private Path errorpacker2;
+  private final static TestingPathSupplier      wps  = new TestingPathSupplier();
+  private VersionedProcessExecutionFactory      vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
+
+  private IBAuthConfigBean                      authConfig;
+  private Path                                  authTestPath;
+  private Path                                  errorpacker;
+  private Path                                  errorpacker2;
 
   private DummyNOPAuthenticationProducerFactory f;
 
-  private PackerImageBuilder image;
+  private PackerImageBuilder                    image;
 
-  private PackerBean med;
+  private PackerBean                            med;
 
-  private Path packer;
+  private Path                                  packer;
 
-  private Path targetPath;
+  private Path                                  targetPath;
 
-  private Path temp;
+  private Path                                  temp;
 
-  private Type type;
+  private Type                                  type;
 
   @Before
   public void setUp() throws Exception {
@@ -117,7 +123,7 @@ public class PackerBeanTest {
     packer = targetPath.resolve("packer");
     packer.toFile().setExecutable(true);
     Files.createDirectories(authTestPath);
-    med = new PackerBean();
+    med = new PackerBean().setVersionedProcessExecutionFactory(vpef);;
     final Path p = authTestPath.resolve(UUID.randomUUID().toString());
     Files.createDirectories(p);
     final FakePackerExecutionConfig fake = new FakePackerExecutionConfig(targetPath, p, temp, packer, kw, dpcreq);
@@ -195,7 +201,7 @@ public class PackerBeanTest {
 
   @Test(expected = PackerException.class)
   public void testForceCreateDir() throws IOException {
-    final Path p = targetPath.resolve(UUID.randomUUID().toString());
+    final Path                     p     = targetPath.resolve(UUID.randomUUID().toString());
     final Set<PosixFilePermission> perms = new HashSet<>();
     perms.addAll(Arrays.asList(PosixFilePermission.OWNER_EXECUTE, PosixFilePermission.OWNER_READ));
 
@@ -328,8 +334,8 @@ public class PackerBeanTest {
 
   @Test
   public void testWriteJSON() throws JSONException, IOException {
-    final JSONObject j = new JSONObject().put("X", "Y");
-    final Path pp = med.writeJSON(j);
+    final JSONObject j  = new JSONObject().put("X", "Y");
+    final Path       pp = med.writeJSON(j);
     final JSONObject st = IBUtils.readJsonObject(pp);
     JSONAssert.assertEquals(st, j, true);
     final Path od = med.getOutputDirectory();

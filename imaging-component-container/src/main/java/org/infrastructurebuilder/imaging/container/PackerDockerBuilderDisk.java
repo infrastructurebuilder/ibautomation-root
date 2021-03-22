@@ -15,8 +15,8 @@
  */
 package org.infrastructurebuilder.imaging.container;
 
-import static org.infrastructurebuilder.imaging.container.DockerV1Constants.CONTAINER_PATH;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.CONTAINER;
+import static org.infrastructurebuilder.imaging.container.DockerV1Constants.CONTAINER_PATH;
 import static org.infrastructurebuilder.imaging.container.DockerV1Constants.HOST_PATH;
 
 import java.util.List;

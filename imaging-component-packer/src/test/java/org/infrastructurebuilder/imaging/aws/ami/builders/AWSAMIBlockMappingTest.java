@@ -98,7 +98,7 @@ public class AWSAMIBlockMappingTest {
   public void testGetVolumeSize() {
     assertFalse(bm.getVolumeSize().isPresent());
     bm.setVolumeSize(10L);
-    assertEquals(new Long(10L), bm.getVolumeSize().get());
+    assertEquals(Long.valueOf(10L), bm.getVolumeSize().get());
   }
 
   @Test

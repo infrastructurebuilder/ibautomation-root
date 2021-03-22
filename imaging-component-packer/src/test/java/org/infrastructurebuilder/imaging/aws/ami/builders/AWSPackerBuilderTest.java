@@ -21,13 +21,21 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.IBRDialectMapperTest;
+import org.infrastructurebuilder.imaging.IBRDialectSupplier;
 import org.infrastructurebuilder.imaging.PackerSizing2;
+import org.infrastructurebuilder.imaging.aws.ami.IBRAWSAMISupplier;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSGpu;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSSmall;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSStupid;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.json.JSONObject;
@@ -42,6 +50,9 @@ public class AWSPackerBuilderTest extends IBRDialectMapperTest {
   @Before
   public void setUp() throws Exception {
     super.setUp();
+    ArrayList<IBRDialectSupplier> l = new ArrayList<>(ts);
+    l.add(new IBRAWSAMISupplier(ibr, Arrays.asList(new AWSGpu(),new AWSSmall(), new AWSStupid())));
+    m = new IBRDialectMapper(ibr, l);
     pb = new PackerAWSBuilder(m);
     pb.setSourceImage("A");
     final GAV artifact = new DefaultGAV("org.junit:junit:1.2.3:jar");

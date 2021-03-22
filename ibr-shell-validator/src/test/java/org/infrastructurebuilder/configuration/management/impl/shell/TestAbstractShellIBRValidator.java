@@ -31,9 +31,9 @@ import org.infrastructurebuilder.configuration.management.shell.DefaultShellIBRV
 import org.infrastructurebuilder.configuration.management.shell.ShellIBRType;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.imaging.ImageData;
-import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
-import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.json.JSONObject;
 import org.junit.Test;
 

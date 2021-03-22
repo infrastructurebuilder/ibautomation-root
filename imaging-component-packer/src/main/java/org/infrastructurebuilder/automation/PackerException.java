@@ -15,8 +15,6 @@
  */
 package org.infrastructurebuilder.automation;
 
-import org.infrastructurebuilder.automation.IBRAutomationException;
-
 import com.mscharhag.et.ET;
 import com.mscharhag.et.ExceptionTranslator;
 

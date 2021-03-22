@@ -24,7 +24,6 @@ import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
-import org.json.JSONObject;
 
 @Named(SpecificPackerAWSLinuxDLBuilder.SPECIFIC_AMAZONEBS_LINUX_DL)
 @Typed(ImageData.class)

@@ -17,8 +17,6 @@ package org.infrastructurebuilder.ibr.utils;
 
 import static java.util.Collections.emptyList;
 
-import org.infrastructurebuilder.ibr.utils.AbstractAutomationUtils;
-import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.util.CredentialsFactory;
 import org.infrastructurebuilder.util.FakeCredentialsFactory;
 import org.infrastructurebuilder.util.FakeTypeToExtensionMapper;

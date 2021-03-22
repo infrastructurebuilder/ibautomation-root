@@ -23,13 +23,22 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER_RUN_UUI
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.infrastructurebuilder.ibr.IBRConstants;
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
+import org.infrastructurebuilder.imaging.IBRDialectSupplier;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.PackerSizing2;
+import org.infrastructurebuilder.imaging.aws.ami.IBRAWSAMISupplier;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSGpu;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSSmall;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSStupid;
 import org.infrastructurebuilder.imaging.maven.PackerManifestTest;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.json.JSONObject;
@@ -44,6 +53,10 @@ public class SpecificPackerBaseAWSBuilderTest extends PackerManifestTest {
   @Before
   public void setUp3() throws Exception {
     super.setUp2();
+    ArrayList<IBRDialectSupplier> l = new ArrayList<>(ts);
+    l.add(new IBRAWSAMISupplier(ibr, Arrays.asList(new AWSGpu(),new AWSSmall(), new AWSStupid())));
+    m = new IBRDialectMapper(ibr, l);
+
     b = new SpecificPackerBaseAWSBuilder(m);
     a = new DefaultIBAuthentication();
   }
@@ -67,7 +80,7 @@ public class SpecificPackerBaseAWSBuilderTest extends PackerManifestTest {
   public void testMapBuildResult() {
     final JSONObject l = new JSONObject();
     l.put(BUILDER_TYPE, IBRConstants.AMAZONEBS);
-    l.put(BUILD_TIME, 100);
+    l.put(BUILD_TIME, Instant.now().toEpochMilli());
     l.put(NAME, "name");
     l.put(PACKER_RUN_UUID, UUID.randomUUID().toString());
     l.put(ARTIFACT_ID,

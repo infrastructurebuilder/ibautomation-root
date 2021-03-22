@@ -27,7 +27,6 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER_RUN_UUI
 import static org.infrastructurebuilder.util.IBUtils.getOptionalJSONArray;
 
 import java.time.Instant;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -56,7 +55,7 @@ public abstract class AbstractPackerBuildResult implements ImageBuildResult {
     filesList = getOptionalJSONArray(getJSON(), FILES);
     artifactId = ofNullable(getJSON().optString(ARTIFACT_ID));
     builderType = getJSON().getString(BUILDER_TYPE);
-    buildTime = new Date(getJSON().getLong(BUILD_TIME)).toInstant();
+    buildTime = Instant.ofEpochMilli(getJSON().getInt(BUILD_TIME));
     files = _getFilesList().map(a -> {
       return IBUtils.asJSONObjectStream(a).map(LocalFileResult::new).collect(Collectors.toList());
     });

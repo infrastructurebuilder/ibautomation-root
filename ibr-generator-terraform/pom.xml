@@ -80,13 +80,13 @@
       <artifactId>plexus-archiver</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblogconfig</artifactId>
       <classifier>debug</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblog-maven-component</artifactId>
       <scope>test</scope>
     </dependency>

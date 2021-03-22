@@ -15,8 +15,8 @@
  */
 package org.infrastructurebuilder.ibr.utils;
 
-import static org.infrastructurebuilder.IBConstants.JSON_TYPE;
-import static org.junit.Assert.*;
+import static org.infrastructurebuilder.util.constants.IBConstants.JSON_TYPE;
+import static org.junit.Assert.assertEquals;
 
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 import org.junit.After;

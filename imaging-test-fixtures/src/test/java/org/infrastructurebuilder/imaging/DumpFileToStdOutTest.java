@@ -22,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.infrastructurebuilder.imaging.DumpFileToStdOut;
 import org.infrastructurebuilder.util.IBUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;

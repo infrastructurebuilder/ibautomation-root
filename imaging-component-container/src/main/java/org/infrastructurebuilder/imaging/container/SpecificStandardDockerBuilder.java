@@ -27,7 +27,6 @@ import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.maven.Type;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
-import org.json.JSONObject;
 
 @Named("specific-docker")
 @Typed(ImageData.class)

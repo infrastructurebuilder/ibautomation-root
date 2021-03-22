@@ -15,13 +15,13 @@
  */
 package org.infrastructurebuilder.imaging;
 
-import static org.infrastructurebuilder.IBConstants.CHECKSUM_TYPES_DEFAULT;
-import static org.infrastructurebuilder.IBConstants.CHECKSUM_TYPES_SHA512;
-import static org.infrastructurebuilder.IBConstants.SHA512;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.CHECKSUM;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.CHECKSUM_TYPES;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.OUTPUT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
+import static org.infrastructurebuilder.util.constants.IBConstants.CHECKSUM_TYPES_DEFAULT;
+import static org.infrastructurebuilder.util.constants.IBConstants.CHECKSUM_TYPES_SHA512;
+import static org.infrastructurebuilder.util.constants.IBConstants.SHA512;
 
 import java.nio.file.Path;
 import java.util.Collections;

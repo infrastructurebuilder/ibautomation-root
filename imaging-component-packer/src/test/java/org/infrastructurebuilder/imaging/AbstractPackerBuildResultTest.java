@@ -48,7 +48,7 @@ public class AbstractPackerBuildResultTest {
     auth1.setType("fake");
     Reflect.on(auth1).set("id", "A");
     uuid = UUID.randomUUID();
-    now = Instant.now();
+    now = Instant.ofEpochMilli(100L);
     j = new JSONObject()
 
         .put(BUILDER_TYPE, FakeAbstractPackerBuilder.FAKE)

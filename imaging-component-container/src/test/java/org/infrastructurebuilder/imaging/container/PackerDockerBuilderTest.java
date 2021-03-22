@@ -26,8 +26,6 @@ import java.util.List;
 
 import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.ImageDataDisk;
-import org.infrastructurebuilder.imaging.container.PackerContainerBuilder;
-import org.infrastructurebuilder.imaging.container.PackerDockerBuilderDisk;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.json.JSONObject;
 import org.junit.Before;

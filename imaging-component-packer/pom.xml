@@ -16,9 +16,7 @@
     limitations under the License.
 
 -->
-<project
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
 >
   <parent>
@@ -35,6 +33,7 @@
     <test.coverage.percentage.required>25</test.coverage.percentage.required>
     <jacoco.max.missed.classes>40</jacoco.max.missed.classes>
     <ibr.model.version>1.0.0</ibr.model.version>
+    <hashicorp.packer.download.skip>false</hashicorp.packer.download.skip>
   </properties>
   <dependencies>
     <dependency>
@@ -46,6 +45,10 @@
       <artifactId>ibr-api</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>ibr-aws-dialect</artifactId>
     </dependency>
     <dependency>
       <groupId>org.infrastructurebuilder.util.auth</groupId>
@@ -64,7 +67,7 @@
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
-      <artifactId>jool-java-8</artifactId>
+      <artifactId>jool</artifactId>
     </dependency>
     <dependency>
       <groupId>org.eclipse.sisu</groupId>
@@ -91,17 +94,17 @@
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
-      <artifactId>joor-java-8</artifactId>
+      <artifactId>joor</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblogconfig</artifactId>
       <classifier>debug</classifier>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblog-maven-component</artifactId>
       <scope>test</scope>
     </dependency>
@@ -128,7 +131,7 @@
     </dependency>
     <dependency>
       <!--  Needed for JSONObject equals -->
-      <groupId>org.skyscreamer</groupId>
+      <groupId>org.infrastructurebuilder.usurped</groupId>
       <artifactId>jsonassert</artifactId>
       <exclusions>
         <exclusion>

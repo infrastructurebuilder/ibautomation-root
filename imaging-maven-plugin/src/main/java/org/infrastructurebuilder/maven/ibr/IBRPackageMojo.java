@@ -15,7 +15,6 @@
  */
 package org.infrastructurebuilder.maven.ibr;
 
-import static java.util.Optional.ofNullable;
 import static org.apache.maven.plugins.annotations.InstantiationStrategy.PER_LOOKUP;
 import static org.apache.maven.plugins.annotations.LifecyclePhase.PACKAGE;
 import static org.apache.maven.plugins.annotations.ResolutionScope.RUNTIME;
@@ -42,7 +41,6 @@ public final class IBRPackageMojo extends AbstractIBRMojo {
 
   private static final String NO_TYPES_HAVE_BEEN_SET = "No IBR Types have been set.";
 
-  @SuppressWarnings("unchecked")
   @Override
   public void execute() throws MojoExecutionException, MojoFailureException {
     if (getMyTypes().isEmpty()) {

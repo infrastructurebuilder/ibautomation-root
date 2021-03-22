@@ -300,7 +300,7 @@ public class PackerAWSBuilder extends AbstractPackerBuilder implements Initializ
         case AUTO:
           break;
         default:
-          spot = et.withReturningTranslation(() -> new Long(s).toString());
+          spot = et.withReturningTranslation(() -> Long.valueOf(s).toString());
       }
     }
     AWS_SpotPrice = spot;

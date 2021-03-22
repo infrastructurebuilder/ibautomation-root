@@ -17,7 +17,16 @@ package org.infrastructurebuilder.imaging.aws.ami.builders;
 
 import static org.junit.Assert.assertEquals;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.infrastructurebuilder.imaging.IBRDialectMapper;
 import org.infrastructurebuilder.imaging.IBRDialectMapperTest;
+import org.infrastructurebuilder.imaging.IBRDialectSupplier;
+import org.infrastructurebuilder.imaging.aws.ami.IBRAWSAMISupplier;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSGpu;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSSmall;
+import org.infrastructurebuilder.imaging.aws.ami.sizes.AWSStupid;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -28,6 +37,9 @@ public class SpecificPackerAWSLinuxDLBuilderTest  extends IBRDialectMapperTest  
   @Before
   public void setUp() throws Exception {
     super.setUp();
+    ArrayList<IBRDialectSupplier> l = new ArrayList<>(ts);
+    l.add(new IBRAWSAMISupplier(ibr, Arrays.asList(new AWSGpu(),new AWSSmall(), new AWSStupid())));
+    m = new IBRDialectMapper(ibr, l);
     a = new SpecificPackerAWSLinuxDLBuilder(m);
   }
 

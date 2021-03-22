@@ -33,7 +33,7 @@ import org.eclipse.sisu.Typed;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
-import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
+import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.slf4j.Logger;
 
 @Named(SHELL)

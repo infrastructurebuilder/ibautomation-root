@@ -27,7 +27,6 @@ import java.util.Optional;
 import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
-import org.infrastructurebuilder.imaging.container.PackerDockerTagPostProcessor;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.json.JSONArray;
 import org.json.JSONObject;

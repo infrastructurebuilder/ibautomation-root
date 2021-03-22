@@ -33,6 +33,7 @@ import java.util.UUID;
 
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 
+
 public abstract class AbstractIBRType implements IBRType {
   private Optional<IBConfigSupplier> config;
 

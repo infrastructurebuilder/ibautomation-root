@@ -21,8 +21,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import org.json.JSONObject;
-
 public class MockValidatorImpl implements IBRValidator {
 
   @Override

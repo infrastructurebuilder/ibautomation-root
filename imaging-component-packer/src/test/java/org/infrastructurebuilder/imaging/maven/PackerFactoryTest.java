@@ -36,6 +36,7 @@ import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.slf4j.Logger;
@@ -116,6 +117,7 @@ public class PackerFactoryTest extends AbstractPackerFactoryTest {
     assertNotNull(ppf);
   }
 
+  @Ignore
   @Test(expected = PackerException.class)
   public void testFailAbsolute() {
     new DefaultPackerFactory(vpef, container, log, target, getRoot(), l, imageBuilder, apf, target.resolve("packer"), props,

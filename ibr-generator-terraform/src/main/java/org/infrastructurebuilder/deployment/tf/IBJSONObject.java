@@ -15,7 +15,8 @@
  */
 package org.infrastructurebuilder.deployment.tf;
 
-import static java.util.Objects.*;
+import static java.util.Objects.requireNonNull;
+
 import java.nio.file.Path;
 import java.util.Optional;
 

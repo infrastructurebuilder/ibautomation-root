@@ -76,7 +76,7 @@ public final class PackerAWSBuilderDisk extends AbstractPackerBuilderDisk {
   @Override
   public Optional<String> getDeviceName() {
     return Optional.ofNullable(
-        super.getDeviceName().orElse(DEFAULT_AWS_DEVICE_STUB + new Character((char) ('a' + getIndex())).toString()));
+        super.getDeviceName().orElse(DEFAULT_AWS_DEVICE_STUB + Character.valueOf((char) ('a' + getIndex())).toString()));
   }
 
   @Override

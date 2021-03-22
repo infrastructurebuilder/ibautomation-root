@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.Instant;
 import java.util.UUID;
 
 import org.infrastructurebuilder.automation.PackerException;
@@ -74,7 +75,7 @@ public class PackerFileBuilderTest {
   public void testMapBuildResult() {
     final JSONObject l = new JSONObject();
     l.put(BUILDER_TYPE, PackerFileBuilder.FILETYPE);
-    l.put(BUILD_TIME, 100);
+    l.put(BUILD_TIME, Instant.now().toEpochMilli());
     l.put(NAME, "name");
     l.put(PACKER_RUN_UUID, UUID.randomUUID().toString());
     final PackerFileBuildResult g = (PackerFileBuildResult) p.mapBuildResult(l);

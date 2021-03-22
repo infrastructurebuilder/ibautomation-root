@@ -28,7 +28,6 @@ import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.shell.PackerYumUpdateProvisioner;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
-import org.json.JSONObject;
 
 @Named(SpecificPackerBaseAWSBuilder.SPECIFIC_AMAZONEBS_BASE)
 @Typed(ImageData.class)

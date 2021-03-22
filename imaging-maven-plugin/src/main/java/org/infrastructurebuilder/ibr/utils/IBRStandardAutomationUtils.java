@@ -15,10 +15,10 @@
  */
 package org.infrastructurebuilder.ibr.utils;
 
-import static org.infrastructurebuilder.IBConstants.DEFAULT;
-import static org.infrastructurebuilder.IBConstants.MAVEN;
 import static org.infrastructurebuilder.ibr.IBRConstants.IBR_WORKING_PATH_SUPPLIER;
-import static org.infrastructurebuilder.util.InjectedSLF4JFromMavenLoggerSupplier.LOG;
+import static org.infrastructurebuilder.util.constants.IBConstants.DEFAULT;
+import static org.infrastructurebuilder.util.constants.IBConstants.MAVEN;
+import static org.infrastructurebuilder.util.mavensupport.InjectedSLF4JFromMavenLoggerSupplier.LOG;
 
 import java.util.Objects;
 
@@ -27,12 +27,12 @@ import javax.inject.Named;
 
 import org.infrastructurebuilder.util.CredentialsFactory;
 import org.infrastructurebuilder.util.LoggerSupplier;
-import org.infrastructurebuilder.util.MavenProjectSupplier;
 import org.infrastructurebuilder.util.artifacts.IBArtifactVersionMapper;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 import org.infrastructurebuilder.util.config.DependenciesSupplier;
 import org.infrastructurebuilder.util.config.GAVSupplier;
 import org.infrastructurebuilder.util.files.TypeToExtensionMapper;
+import org.infrastructurebuilder.util.mavensupport.MavenProjectSupplier;
 
 public class IBRStandardAutomationUtils extends AbstractAutomationUtils {
 
@@ -49,7 +49,7 @@ public class IBRStandardAutomationUtils extends AbstractAutomationUtils {
       , @Named(MAVEN) GAVSupplier gs
       // Default (all weighted creds suppliers) credentials factory
       , @Named(DEFAULT) CredentialsFactory cf
-      // Dpe Supplier
+      // DependenciesSupplier
       , @Named(MAVEN) DependenciesSupplier ds
       // Version mappers
       , @Named(DEFAULT) IBArtifactVersionMapper avm

@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import org.infrastructurebuilder.util.ExecutionEnvironmentFilter;
+import org.infrastructurebuilder.util.executor.ExecutionEnvironmentFilter;
 
 public class RemoveUserFunction implements ExecutionEnvironmentFilter {
 

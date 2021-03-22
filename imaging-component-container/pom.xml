@@ -49,11 +49,11 @@
     </dependency>
     <dependency>
       <groupId>org.jooq</groupId>
-      <artifactId>joor-java-8</artifactId>
+      <artifactId>joor</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder.util</groupId>
+      <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblogconfig</artifactId>
       <classifier>debug</classifier>
       <scope>test</scope>
@@ -79,7 +79,7 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.skyscreamer</groupId>
+      <groupId>org.infrastructurebuilder.usurped</groupId>
       <artifactId>jsonassert</artifactId>
       <scope>test</scope>
     </dependency>

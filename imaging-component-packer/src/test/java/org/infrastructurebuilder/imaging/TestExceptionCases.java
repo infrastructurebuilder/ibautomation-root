@@ -24,7 +24,7 @@ import java.util.Properties;
 
 import org.codehaus.plexus.DefaultPlexusContainer;
 import org.codehaus.plexus.PlexusContainerException;
-import org.infrastructurebuilder.IBException;
+import org.infrastructurebuilder.exceptions.IBException;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
 import org.infrastructurebuilder.imaging.maven.DefaultPackerFactory;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;

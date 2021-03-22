@@ -29,7 +29,6 @@ import static org.infrastructurebuilder.util.IBUtils.getOptString;
 import java.util.Optional;
 
 import org.infrastructurebuilder.util.artifacts.JSONBuilder;
-import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.json.JSONObject;
 

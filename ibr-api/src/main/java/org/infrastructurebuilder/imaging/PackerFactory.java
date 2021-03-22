@@ -15,23 +15,18 @@
  */
 package org.infrastructurebuilder.imaging;
 
-import static java.util.Optional.empty;
 import static org.infrastructurebuilder.automation.IBRAutomationException.et;
 import static org.infrastructurebuilder.util.IBUtils.readFile;
 
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Properties;
 import java.util.function.Supplier;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.infrastructurebuilder.util.DefaultVersionedProcessExecutionFactory;
-import org.infrastructurebuilder.util.ProcessExecutionFactory;
-import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.executor.ProcessExecutionFactory;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 

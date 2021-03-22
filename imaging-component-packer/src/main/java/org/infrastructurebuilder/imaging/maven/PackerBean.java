@@ -59,11 +59,11 @@ import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.ibr.PackerGenericIBRArchiveProvisioner;
 import org.infrastructurebuilder.imaging.ibr.PackerIBRProvisioner;
-import org.infrastructurebuilder.util.VersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
+import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -148,8 +148,9 @@ public class PackerBean {
 
   private VersionedProcessExecutionFactory vpef;
 
-  public void setVersionedProcessExecutionFactory(VersionedProcessExecutionFactory vpef) {
+  public PackerBean setVersionedProcessExecutionFactory(VersionedProcessExecutionFactory vpef) {
     this.vpef = vpef;
+    return this;
   }
 
   public Map<String, String> getAdditionalEnvironment() {

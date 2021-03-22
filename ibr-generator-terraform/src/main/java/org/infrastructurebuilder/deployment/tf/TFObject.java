@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 
-import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.artifacts.Checksum;
 import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
 import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;

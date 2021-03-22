@@ -529,7 +529,7 @@
         "builder_type": "amazon-ebs",
         "original-auth-id": "prod",
         "name": "a26792d2-296e-425d-a6b5-3cfa2681440f",
-        "build_time": 1528687127,
+        "build_time": "1970-01-18T16:38:07.127Z",
         "files": null,
         "source": "specific-amazonebs-base",
         "artifact_id": "us-east-1:ami-a3cdb7dc,us-east-2:ami-33477956,us-west-1:ami-0aaf4b69,us-west-2:ami-dd6222a5"
@@ -539,7 +539,7 @@
         "builder_type": "amazon-ebs",
         "original-auth-id": "dev",
         "name": "f34176c0-dc30-4e43-89b7-78b3e9387a12",
-        "build_time": 1528687127,
+        "build_time": "1970-01-18T16:38:07.127Z",
         "files": null,
         "source": "specific-amazonebs-base",
         "artifact_id": "us-east-1:ami-0e4a18823d6d19079,us-east-2:ami-005f5de7d0219d665,us-west-1:ami-0e7382759787da46d,us-west-2:ami-0c59e079e8c3f9dd2"
@@ -559,7 +559,7 @@
         "packer_run_uuid": "526eda09-204e-5e9d-a674-1ea71664e18b",
         "builder_type": "amazon-ebs",
         "name": "a26792d2-296e-425d-a6b5-3cfa2681440f",
-        "build_time": 1528687127,
+        "build_time": "1970-01-18T16:38:07.127Z",
         "files": null,
         "artifact_id": "us-east-1:ami-a3cdb7dc,us-east-2:ami-33477956,us-west-1:ami-0aaf4b69,us-west-2:ami-dd6222a5"
       },
@@ -567,7 +567,7 @@
         "packer_run_uuid": "526eda09-204e-5e9d-a674-1ea71664e18b",
         "builder_type": "amazon-ebs",
         "name": "f34176c0-dc30-4e43-89b7-78b3e9387a12",
-        "build_time": 1528687127,
+        "build_time": "1970-01-18T16:38:07.127Z",
         "files": null,
         "artifact_id": "us-east-1:ami-0e4a18823d6d19079,us-east-2:ami-005f5de7d0219d665,us-west-1:ami-0e7382759787da46d,us-west-2:ami-0c59e079e8c3f9dd2"
       }

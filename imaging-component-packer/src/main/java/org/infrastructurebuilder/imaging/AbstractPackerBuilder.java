@@ -22,7 +22,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static org.infrastructurebuilder.IBException.cet;
+import static org.infrastructurebuilder.exceptions.IBException.cet;
 import static org.infrastructurebuilder.util.IBUtils.readFile;
 
 import java.nio.file.Path;
