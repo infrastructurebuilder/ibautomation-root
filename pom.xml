@@ -24,7 +24,7 @@
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>44</version>
+    <version>47</version>
   </parent>
   <groupId>org.infrastructurebuilder.automation</groupId>
   <artifactId>ibautomation-root</artifactId>
@@ -60,10 +60,9 @@
   </distributionManagement>
   <properties>
     <ibauth.version>0.9.4-SNAPSHOT</ibauth.version>
-    <iblog.version>0.13.0-SNAPSHOT</iblog.version>
+    <iblog.version>0.13.0</iblog.version>
     <ibcore.bom.version>0.17.3.0-SNAPSHOT</ibcore.bom.version>
-    <maven.bom.version>${maven.version}.4</maven.bom.version>
-        <ib.versioning.support.plugin.version>0.15.2-SNAPSHOT</ib.versioning.support.plugin.version>
+    <ib.versioning.support.plugin.version>0.15.2-SNAPSHOT</ib.versioning.support.plugin.version>
 
   </properties>
   <dependencyManagement>
