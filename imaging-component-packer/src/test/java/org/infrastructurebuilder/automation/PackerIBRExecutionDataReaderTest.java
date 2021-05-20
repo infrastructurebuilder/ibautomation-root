@@ -31,7 +31,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.infrastructurebuilder.automation.PackerIBRExecutionDataReader.PackerTypedExecution;
 import org.infrastructurebuilder.automation.model.v1_0_0.DependentExecution;
-import org.infrastructurebuilder.automation.model.v1_0_0.PackerSpecificExecution;
+import org.infrastructurebuilder.automation.model.v0_9_0.PackerSpecificExecution;
 import org.infrastructurebuilder.util.core.GAV;
 import org.junit.After;
 import org.junit.Before;

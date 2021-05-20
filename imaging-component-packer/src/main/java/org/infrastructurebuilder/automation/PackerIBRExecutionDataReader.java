@@ -36,15 +36,15 @@ import javax.inject.Singleton;
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.infrastructurebuilder.automation.PackerIBRExecutionDataReader.PackerTypedExecution;
-import org.infrastructurebuilder.automation.model.v1_0_0.PackerSpecificExecution;
+import org.infrastructurebuilder.automation.model.v0_9_0.PackerSpecificExecution;
 import org.infrastructurebuilder.util.core.Checksum;
 
 @Named(PackerIBRExecutionDataReader.PACKER)
 @Singleton
 public class PackerIBRExecutionDataReader extends AbstractIBRExecutionDataReader<PackerTypedExecution> {
 
-  private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader v1_0_0reader = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader();
-  private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Writer v1_0_0writer = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Writer();
+  private final static org.infrastructurebuilder.automation.model.v0_9_0.io.xpp3.PackerManifestXpp3Reader v1_0_0reader = new org.infrastructurebuilder.automation.model.v0_9_0.io.xpp3.PackerManifestXpp3Reader();
+  private final static org.infrastructurebuilder.automation.model.v0_9_0.io.xpp3.PackerManifestXpp3Writer v1_0_0writer = new org.infrastructurebuilder.automation.model.v0_9_0.io.xpp3.PackerManifestXpp3Writer();
 
   public static final String                                                                              PACKER       = "packer";
 

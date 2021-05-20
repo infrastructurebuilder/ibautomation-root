@@ -34,7 +34,7 @@
       java.clone="deep"
     >
       <name>PackerSpecificExecution</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
         <interface>
  <![CDATA[org.infrastructurebuilder.automation.IBRSpecificExecution]]>
@@ -51,14 +51,14 @@
         <!-- ====================================================================== -->
         <field xml.attribute="true">
           <name>modelVersion</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Model version. </description>
           <type>String</type>
         </field>
         <field xml.attribute="true">
           <name>type</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Specific Type of this execution data</description>
           <type>String</type>
@@ -67,7 +67,7 @@
         <field>
           <name>gav</name>
           <required>true</required>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <association>
             <type>Dependency</type>
             <multiplicity>1</multiplicity>
@@ -75,7 +75,7 @@
         </field>
         <field>
           <name>images</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <description>associated images</description>
           <association>
             <type>PackerImage</type>
@@ -86,7 +86,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -104,7 +104,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -117,7 +117,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // Clone hooks
@@ -131,7 +131,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // hash and equals
@@ -171,7 +171,7 @@
       java.clone="deep"
     >
       <name>PackerExecution</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
       <!--
         <interface><![CDATA[org.infrastructurebuilder.automation.IBRDependentExecution]]></interface>
@@ -180,7 +180,7 @@
       <fields>
         <field>
           <name>parent</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <association>
             <type>PackerSpecificExecution</type>
             <multiplicity>1</multiplicity>
@@ -189,7 +189,7 @@
 
         <field>
           <name>builderId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <type>String</type>
           <description>ID of builder</description>
@@ -197,20 +197,20 @@
         <field>
           <name>id</name>
           <type>String</type>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Id of the execution</description>
         </field>
         <field>
           <name>index</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Individually addressable execution data</description>
           <type>int</type>
         </field>
         <field>
           <name>files</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>false</required>
           <description>Files produces by this execution</description>
           <association>
@@ -225,7 +225,7 @@
         </field>
         <field>
           <name>targetGAV</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <association>
             <type>Dependency</type>
@@ -247,7 +247,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     public PackerExecution() {
@@ -257,7 +257,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -283,7 +283,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -293,7 +293,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     @Override
@@ -325,11 +325,11 @@
 
     <class java.clone="deep">
       <name>PackerFile</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <fields>
         <field>
           <name>parent</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <association>
             <type>PackerExecution</type>
             <multiplicity>1</multiplicity>
@@ -338,14 +338,14 @@
 
         <field>
           <name>name</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>file name</description>
           <type>String</type>
         </field>
         <field>
           <name>size</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>file length</description>
           <type>long</type>
@@ -353,7 +353,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -369,21 +369,21 @@
       java.clone="deep"
     >
       <name>Dependency</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
         <interface>org.infrastructurebuilder.util.core.GAV</interface>
       </interfaces>
       <fields>
         <field xml.attribute="true">
           <name>groupId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Group ID</description>
           <type>String</type>
         </field>
         <field xml.attribute="true">
           <name>artifactId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>ArtifactId ID</description>
           <type>String</type>
@@ -393,14 +393,14 @@
           xml.attribute="true"
         >
           <name>version</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>version</description>
           <type>String</type>
         </field>
         <field xml.attribute="true">
           <name>extension</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>extension (not type-mapped)</description>
           <type>String</type>
@@ -410,7 +410,7 @@
           xml.attribute="true"
         >
           <name>classifier</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>false</required>
           <description>Addl classifier</description>
           <type>String</type>
@@ -418,7 +418,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -483,28 +483,28 @@
       java.clone="deep"
     >
       <name>PackerImage</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
         <interface>org.infrastructurebuilder.automation.IBRImage</interface>
       </interfaces>
       <fields>
         <field>
           <name>identifier</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Identifier</description>
           <type>String</type>
         </field>
         <field>
           <name>mappedRegion</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Mapped region for type</description>
           <type>String</type>
         </field>
         <field>
           <name>dialect</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Dialect (ie Cloud provider)</description>
           <type>String</type>
@@ -512,7 +512,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     public PackerImage() {

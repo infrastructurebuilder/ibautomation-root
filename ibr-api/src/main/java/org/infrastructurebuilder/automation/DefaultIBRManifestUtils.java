@@ -42,11 +42,11 @@ import javax.inject.Singleton;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
-import org.infrastructurebuilder.automation.model.v1_0_0.Dependency;
-import org.infrastructurebuilder.automation.model.v1_0_0.DependentExecution;
-import org.infrastructurebuilder.automation.model.v1_0_0.Manifest;
-import org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.IBRManifestXpp3Reader;
-import org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.IBRManifestXpp3Writer;
+import org.infrastructurebuilder.automation.model.v0_9_0.Dependency;
+import org.infrastructurebuilder.automation.model.v0_9_0.DependentExecution;
+import org.infrastructurebuilder.automation.model.v0_9_0.Manifest;
+import org.infrastructurebuilder.automation.model.v0_9_0.io.xpp3.IBRManifestXpp3Reader;
+import org.infrastructurebuilder.automation.model.v0_9_0.io.xpp3.IBRManifestXpp3Writer;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.w3c.dom.Document;
 

@@ -34,7 +34,7 @@
       java.clone="deep"
     >
       <name>Manifest</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
         <interface>
           <![CDATA[org.infrastructurebuilder.automation.IBRManifest]]>
@@ -51,21 +51,21 @@
         <!-- ====================================================================== -->
         <field>
           <name>modelVersion</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Declares to which version of project descriptor this configuration conforms.  This value is the api version (major.minor) of ibdata-api and conforms to semantic versioning</description>
           <type>String</type>
         </field>
         <field>
           <name>uuid</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>UUID identifier of the manifest, which is the UUID of the checksum of the data.</description>
           <type>String</type>
         </field>
         <field>
           <name>gav</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Building GAV</description>
           <association>
@@ -76,7 +76,7 @@
         <field>
           <name>environment</name>
           <type>Properties</type>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Shell environment variables (may be filtered)</description>
           <association xml.mapStyle="inline">
@@ -87,7 +87,7 @@
         <field>
           <name>properties</name>
           <type>Properties</type>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Project properties</description>
           <association xml.mapStyle="inline">
@@ -98,49 +98,49 @@
 
         <field java.getter="false">
           <name>name</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>The full name of the Manifest (from the builder pom).</description>
           <type>String</type>
         </field>
         <field>
           <name>builderId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>ID of a given builder</description>
           <type>String</type>
         </field>
         <field java.getter="false">
           <name>description</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>false</required>
           <description>Description from the bulding project pom </description>
           <type>String</type>
         </field>
         <field java.getter="false">
           <name>start</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>ISO 8601 formatted string Creation date of this manifest, required</description>
           <type>String</type>
         </field>
         <field java.getter="false">
           <name>end</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>ISO 8601 formatted string End date of this manifest, required</description>
           <type>String</type>
         </field>
         <field java.getter="false">
           <name>duration</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Duration of this run</description>
           <type>String</type>
         </field>
         <field>
           <name>sha512</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Sha-512 Checksum  of this manifest</description>
           <type>String</type>
@@ -150,7 +150,7 @@
           java.getter="false"
         >
           <name>exec</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>The dependent execution</description>
           <association>
@@ -164,7 +164,7 @@
       <codeSegments>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             ]]>
@@ -173,7 +173,7 @@
 
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // Default constructor
@@ -185,7 +185,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // "Copy constructor"
@@ -209,7 +209,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
   public java.time.Instant getStart() {
@@ -222,7 +222,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // Default constructor
@@ -239,7 +239,7 @@
 
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // "Copy constructor"
@@ -258,7 +258,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // Clone hooks
@@ -277,7 +277,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             // hash and equals
@@ -336,7 +336,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
             //
@@ -349,7 +349,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
   @Override
@@ -362,7 +362,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
   @Override
@@ -375,7 +375,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -404,13 +404,13 @@
       java.clone="shallow"
     >
       <name>ManifestInputLocation</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <fields>
         <!-- line, column and source fields are auto-generated by Modello -->
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -429,11 +429,11 @@
       java.clone="shallow"
     >
       <name>ManifestInputSource</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <fields>
         <field>
           <name>modelId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <type>String</type>
           <description>
             <![CDATA[
@@ -443,7 +443,7 @@
         </field>
         <field>
           <name>location</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <type>String</type>
           <description>
             <![CDATA[
@@ -454,7 +454,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     @Override
@@ -472,21 +472,21 @@
       java.clone="deep"
     >
       <name>Dependency</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
         <interface>org.infrastructurebuilder.util.core.GAV</interface>
       </interfaces>
       <fields>
         <field xml.attribute="true">
           <name>groupId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Group ID</description>
           <type>String</type>
         </field>
         <field xml.attribute="true">
           <name>artifactId</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>ArtifactId ID</description>
           <type>String</type>
@@ -496,14 +496,14 @@
           xml.attribute="true"
         >
           <name>version</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>version</description>
           <type>String</type>
         </field>
         <field xml.attribute="true">
           <name>extension</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>extension (not type-mapped)</description>
           <type>String</type>
@@ -513,7 +513,7 @@
           xml.attribute="true"
         >
           <name>classifier</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>false</required>
           <description>Addl classifier</description>
           <type>String</type>
@@ -521,7 +521,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
 
@@ -588,14 +588,14 @@
 
     >
       <name>DependentExecution</name>
-      <version>1.0.0+</version>
+      <version>0.9.0+</version>
       <interfaces>
         <interface><![CDATA[org.infrastructurebuilder.automation.IBRDependentExecution]]></interface>
       </interfaces>
       <fields>
         <field>
           <name>parent</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <association>
             <type>Manifest</type>
             <multiplicity>1</multiplicity>
@@ -604,7 +604,7 @@
 
         <field>
           <name>gav</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Executing GAV</description>
           <association>
@@ -615,7 +615,7 @@
         <field>
           <name>logLines</name>
           <type>List</type>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>false</required>
           <description>Log entries</description>
           <association xml.mapStyle="inline">
@@ -625,7 +625,7 @@
         </field>
         <field java.getter="false">
           <name>executionData</name>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <required>true</required>
           <description>Individually addressable execution data</description>
           <type>DOM</type>
@@ -633,7 +633,7 @@
       </fields>
       <codeSegments>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     public void mutatingCloneHook(DependentExecution d) {
@@ -644,7 +644,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     public DependentExecution() {
@@ -653,7 +653,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     public DependentExecution(DependentExecution o) {
@@ -670,7 +670,7 @@
         </codeSegment>
 
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
   @Override
@@ -681,14 +681,14 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     ]]>
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     @Override
@@ -705,7 +705,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     @Override
@@ -726,7 +726,7 @@
           </code>
         </codeSegment>
         <codeSegment>
-          <version>1.0.0+</version>
+          <version>0.9.0+</version>
           <code>
             <![CDATA[
     @Override

@@ -32,7 +32,7 @@
   <properties>
     <test.coverage.percentage.required>25</test.coverage.percentage.required>
     <jacoco.max.missed.classes>40</jacoco.max.missed.classes>
-    <ibr.model.version>1.0.0</ibr.model.version>
+    <ibr.model.version>${ibversion.majorVersion}.${ibversion.minorVersion}.${ibversion.incrementalVersion}</ibr.model.version>
     <hashicorp.packer.download.skip>false</hashicorp.packer.download.skip>
   </properties>
   <dependencies>
@@ -245,7 +245,6 @@
         <artifactId>build-helper-maven-plugin</artifactId>
         <inherited>true</inherited>
         <executions>
-        <!--
           <execution>
             <id>formatVersion</id>
             <phase>validate</phase>
@@ -260,6 +259,7 @@
             <configuration>
             </configuration>
           </execution>
+        <!--
          -->
           <execution>
             <id>add-sources</id>
