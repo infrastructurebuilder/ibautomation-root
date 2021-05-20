@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.nio.file.Path;
 
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

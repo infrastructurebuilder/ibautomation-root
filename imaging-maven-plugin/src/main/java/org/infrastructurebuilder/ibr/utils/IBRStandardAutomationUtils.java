@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,21 +18,22 @@ package org.infrastructurebuilder.ibr.utils;
 import static org.infrastructurebuilder.ibr.IBRConstants.IBR_WORKING_PATH_SUPPLIER;
 import static org.infrastructurebuilder.util.constants.IBConstants.DEFAULT;
 import static org.infrastructurebuilder.util.constants.IBConstants.MAVEN;
-import static org.infrastructurebuilder.util.mavensupport.InjectedSLF4JFromMavenLoggerSupplier.LOG;
+import static org.infrastructurebuilder.util.maven.mavensupport.InjectedSLF4JFromMavenLoggerSupplier.LOG;
 
 import java.util.Objects;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
-import org.infrastructurebuilder.util.CredentialsFactory;
-import org.infrastructurebuilder.util.LoggerSupplier;
-import org.infrastructurebuilder.util.artifacts.IBArtifactVersionMapper;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 import org.infrastructurebuilder.util.config.DependenciesSupplier;
-import org.infrastructurebuilder.util.config.GAVSupplier;
-import org.infrastructurebuilder.util.files.TypeToExtensionMapper;
-import org.infrastructurebuilder.util.mavensupport.MavenProjectSupplier;
+import org.infrastructurebuilder.util.core.GAVSupplier;
+import org.infrastructurebuilder.util.core.IBArtifactVersionMapper;
+import org.infrastructurebuilder.util.core.LoggerSupplier;
+import org.infrastructurebuilder.util.core.PathSupplier;
+import org.infrastructurebuilder.util.core.TypeToExtensionMapper;
+import org.infrastructurebuilder.util.credentials.basic.CredentialsFactory;
+import org.infrastructurebuilder.util.maven.mavensupport.MavenProjectSupplier;
 
 public class IBRStandardAutomationUtils extends AbstractAutomationUtils {
 
@@ -42,7 +43,7 @@ public class IBRStandardAutomationUtils extends AbstractAutomationUtils {
   @Inject
   public IBRStandardAutomationUtils(
       // WPS from maven run
-      @Named(IBR_WORKING_PATH_SUPPLIER) IBRWorkingPathSupplier wps
+      @Named(IBR_WORKING_PATH_SUPPLIER) PathSupplier wps
       // Maven logger as an SLF4J logger
       , @Named(LOG) LoggerSupplier ls
       // GAV from the Maven project

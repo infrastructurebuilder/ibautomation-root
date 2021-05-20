@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.infrastructurebuilder.imaging.maven.Type;
-import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
+import org.infrastructurebuilder.util.core.GAV;
 import org.json.JSONObject;
 
 public interface ImageData extends ImageBaseObject {

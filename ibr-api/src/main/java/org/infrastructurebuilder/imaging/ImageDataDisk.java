@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,7 +17,7 @@ package org.infrastructurebuilder.imaging;
 
 import java.util.Optional;
 
-import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
+import org.infrastructurebuilder.util.core.JSONOutputEnabled;
 
 public interface ImageDataDisk extends JSONOutputEnabled {
   String BM_DELETE_ON_TERMINATION = "delete_on_termination";

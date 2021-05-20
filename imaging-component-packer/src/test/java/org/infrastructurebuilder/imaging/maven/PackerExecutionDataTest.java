@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -30,7 +30,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.infrastructurebuilder.imaging.IBRDialectMapperTest;
-import org.infrastructurebuilder.util.artifacts.Checksum;
+import org.infrastructurebuilder.util.core.Checksum;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;

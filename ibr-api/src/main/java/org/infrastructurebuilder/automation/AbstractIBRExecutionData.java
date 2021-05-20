@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,7 +29,7 @@ import java.util.Optional;
 import java.util.StringJoiner;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.infrastructurebuilder.util.artifacts.Checksum;
+import org.infrastructurebuilder.util.core.Checksum;
 
 abstract public class AbstractIBRExecutionData<T> implements IBRTypedExecution {
 

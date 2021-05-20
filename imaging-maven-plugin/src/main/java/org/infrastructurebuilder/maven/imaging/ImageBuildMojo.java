@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -51,9 +51,10 @@ import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.logging.JDKSLFromMavenLogger;
 import org.infrastructurebuilder.util.logging.SLF4JFromMavenLogger;
 
 @Mojo(name = "imaging", requiresProject = true, threadSafe = false, requiresDependencyResolution = RUNTIME, defaultPhase = COMPILE)
@@ -240,7 +241,7 @@ public final class ImageBuildMojo extends AbstractMojo implements Contextualizab
         // Skip if empty
         .setSkipIfEmpty(skipIfEmpty)
         // Logger
-        .setLog(new SLF4JFromMavenLogger(getLog()));
+        .setLog(new JDKSLFromMavenLogger(getLog()));
   }
 
   @Override

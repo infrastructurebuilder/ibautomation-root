@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package org.infrastructurebuilder.imaging;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -29,11 +30,9 @@ import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
 import org.infrastructurebuilder.imaging.maven.DefaultPackerFactory;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
+import org.infrastructurebuilder.util.core.DefaultGAV;
 import org.junit.Before;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TestExceptionCases extends PackerTestingSetup {
   public static final String     BUILD                                 = "build";
@@ -41,8 +40,8 @@ public class TestExceptionCases extends PackerTestingSetup {
   public static final String     COULD_NOT_LOCATE_TYPE_FROM_UNKNOWN    = "Could not locate type from unknown";
   public static final String     DOES_NOT_EXIST                        = "doesNotExist";
   public static final String     ERROR_MESSAGE                         = "ErrorMessage";
-  public final static Logger     log                                   = LoggerFactory
-      .getLogger(TestExceptionCases.class);
+  public final static Logger     log                                   = System
+      .getLogger(TestExceptionCases.class.getName());
   public static final String     UNKNOWN                               = "unknown";
   private DefaultPlexusContainer c;
   private PackerFileBuilder      fb;

@@ -15,16 +15,13 @@
     limitations under the License.
 
 -->
-<project
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.infrastructurebuilder</groupId>
     <artifactId>ibparent</artifactId>
-    <version>48-SNAPSHOT</version>
+    <version>52</version>
   </parent>
   <groupId>org.infrastructurebuilder.automation</groupId>
   <artifactId>ibautomation-root</artifactId>
@@ -59,9 +56,8 @@
     </site>
   </distributionManagement>
   <properties>
-    <ibauth.version>0.9.4-SNAPSHOT</ibauth.version>
-    <ibcore.bom.version>0.17.3.0-SNAPSHOT</ibcore.bom.version>
-    <ib.versioning.support.plugin.version>0.15.2-SNAPSHOT</ib.versioning.support.plugin.version>
+    <ibauth.version>0.9.4</ibauth.version>
+    <ibcore.bom.version>0.17.3.0</ibcore.bom.version>
 
   </properties>
   <dependencyManagement>
@@ -205,13 +201,23 @@
     <dependency>
       <groupId>org.infrastructurebuilder</groupId>
       <artifactId>ibcore</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.infrastructurebuilder</groupId>
+      <artifactId>ibcore-config</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.infrastructurebuilder</groupId>
+      <artifactId>ibcore-config</artifactId>
       <type>test-jar</type>
       <scope>test</scope>
     </dependency>
 
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
+      <groupId>org.infrastructurebuilder</groupId>
+      <artifactId>ibcore</artifactId>
+      <type>test-jar</type>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
@@ -351,47 +357,6 @@
               </goals>
             </execution>
           </executions>
-        </plugin>
-        <!--This plugin's configuration is used to store Eclipse m2e settings
-          only. It has no influence on the Maven build itself. -->
-        <plugin>
-          <groupId>org.eclipse.m2e</groupId>
-          <artifactId>lifecycle-mapping</artifactId>
-          <version>1.0.0</version>
-          <configuration>
-            <lifecycleMappingMetadata>
-              <pluginExecutions>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>
-                      com.googlecode.maven-download-plugin
-                    </groupId>
-                    <artifactId>download-maven-plugin</artifactId>
-                    <versionRange>[1.4.0,)</versionRange>
-                    <goals>
-                      <goal>wget</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore />
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.modello</groupId>
-                    <artifactId>modello-maven-plugin</artifactId>
-                    <versionRange>[1.11,)</versionRange>
-                    <goals>
-                      <goal>generate</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore></ignore>
-                  </action>
-                </pluginExecution>
-              </pluginExecutions>
-            </lifecycleMappingMetadata>
-          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

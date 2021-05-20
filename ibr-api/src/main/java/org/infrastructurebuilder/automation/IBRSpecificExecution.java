@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,17 +18,17 @@ package org.infrastructurebuilder.automation;
 import static java.util.Optional.empty;
 import static org.codehaus.plexus.util.xml.Xpp3DomBuilder.build;
 import static org.infrastructurebuilder.automation.IBRAutomationException.et;
-import static org.infrastructurebuilder.util.IBUtils.stringFromDOM;
-import static org.infrastructurebuilder.util.artifacts.Checksum.fromUTF8StringBytes;
+import static org.infrastructurebuilder.util.core.Checksum.fromUTF8StringBytes;
+import static org.infrastructurebuilder.util.core.IBUtils.stringFromDOM;
 
 import java.io.StringReader;
 import java.util.Optional;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;
-import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.artifacts.Xpp3OutputEnabled;
+import org.infrastructurebuilder.util.core.Checksum;
+import org.infrastructurebuilder.util.core.ChecksumEnabled;
+import org.infrastructurebuilder.util.core.GAV;
 
 public interface IBRSpecificExecution extends ChecksumEnabled, Xpp3OutputEnabled {
   public static final String TYPE = "type";

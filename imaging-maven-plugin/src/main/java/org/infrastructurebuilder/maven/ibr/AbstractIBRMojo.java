@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,6 +21,7 @@ import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
 
 import java.io.File;
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -52,7 +53,7 @@ import org.infrastructurebuilder.configuration.management.IBRDataObject;
 import org.infrastructurebuilder.configuration.management.IBRType;
 import org.infrastructurebuilder.ibr.IBRConstants;
 import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
-import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONObject;
 
 abstract public class AbstractIBRMojo extends AbstractMojo implements Initializable {

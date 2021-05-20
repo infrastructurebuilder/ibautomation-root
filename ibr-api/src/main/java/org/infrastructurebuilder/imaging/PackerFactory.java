@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,8 +16,9 @@
 package org.infrastructurebuilder.imaging;
 
 import static org.infrastructurebuilder.automation.IBRAutomationException.et;
-import static org.infrastructurebuilder.util.IBUtils.readFile;
+import static org.infrastructurebuilder.util.core.IBUtils.readFile;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -25,10 +26,9 @@ import java.util.Properties;
 import java.util.function.Supplier;
 
 import org.codehaus.plexus.PlexusContainer;
-import org.infrastructurebuilder.util.artifacts.Checksum;
+import org.infrastructurebuilder.util.core.Checksum;
 import org.infrastructurebuilder.util.executor.ProcessExecutionFactory;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 
 public interface PackerFactory extends Supplier<Path> {
 

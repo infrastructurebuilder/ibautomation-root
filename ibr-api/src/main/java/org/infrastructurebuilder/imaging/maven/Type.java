@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +22,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.infrastructurebuilder.automation.IBRAutomationException;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
 
 public class Type {
   private Map<String, String> extra;

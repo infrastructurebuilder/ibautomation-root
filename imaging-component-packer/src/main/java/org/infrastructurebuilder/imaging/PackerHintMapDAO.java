@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,12 +24,12 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE_CLASS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TARGET;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TYPE;
-import static org.infrastructurebuilder.util.IBUtils.getOptString;
+import static org.infrastructurebuilder.util.core.IBUtils.getOptString;
 
 import java.util.Optional;
 
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
+import org.infrastructurebuilder.util.core.JSONBuilder;
 import org.json.JSONObject;
 
 public class PackerHintMapDAO implements IBRHintMap {

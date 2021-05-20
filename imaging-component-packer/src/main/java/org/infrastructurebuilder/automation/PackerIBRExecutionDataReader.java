@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,12 +19,13 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
 import static org.infrastructurebuilder.automation.IBRAutomationException.et;
-import static org.infrastructurebuilder.util.IBUtils.removeXMLPrefix;
-import static org.infrastructurebuilder.util.artifacts.impl.DefaultIBVersion.DefaultIBVersionBoundedRange.versionBoundedRangeFrom;
+import static org.infrastructurebuilder.util.core.DefaultIBVersion.DefaultIBVersionBoundedRange.versionBoundedRangeFrom;
+import static org.infrastructurebuilder.util.core.IBUtils.removeXMLPrefix;
 
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.time.Instant;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -36,7 +37,7 @@ import org.codehaus.plexus.util.xml.Xpp3Dom;
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.infrastructurebuilder.automation.PackerIBRExecutionDataReader.PackerTypedExecution;
 import org.infrastructurebuilder.automation.model.v1_0_0.PackerSpecificExecution;
-import org.infrastructurebuilder.util.artifacts.Checksum;
+import org.infrastructurebuilder.util.core.Checksum;
 
 @Named(PackerIBRExecutionDataReader.PACKER)
 @Singleton
@@ -45,10 +46,20 @@ public class PackerIBRExecutionDataReader extends AbstractIBRExecutionDataReader
   private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader v1_0_0reader = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Reader();
   private final static org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Writer v1_0_0writer = new org.infrastructurebuilder.automation.model.v1_0_0.io.xpp3.PackerManifestXpp3Writer();
 
-  public static final String PACKER = "packer";
+  public static final String                                                                              PACKER       = "packer";
 
-  private static final String V1_0_0_LOWER = "1.0.0"; // FIXME These need to be replaced with the local model version
-  private static final String V1_0_0_UPPER = "1.0.0";
+  private static final String                                                                             V1_0_0_LOWER = "1.0.0";                                                                                 // FIXME
+                                                                                                                                                                                                                  // These
+                                                                                                                                                                                                                  // need
+                                                                                                                                                                                                                  // to
+                                                                                                                                                                                                                  // be
+                                                                                                                                                                                                                  // replaced
+                                                                                                                                                                                                                  // with
+                                                                                                                                                                                                                  // the
+                                                                                                                                                                                                                  // local
+                                                                                                                                                                                                                  // model
+                                                                                                                                                                                                                  // version
+  private static final String                                                                             V1_0_0_UPPER = "1.0.0";
 
   @Inject
   public PackerIBRExecutionDataReader() {

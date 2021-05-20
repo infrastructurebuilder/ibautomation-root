@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,8 +41,8 @@ import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.aws.ami.builders.PackerAWSBuilder;
 import org.infrastructurebuilder.imaging.aws.ami.builders.PackerAWSBuilderDisk;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Ignore;

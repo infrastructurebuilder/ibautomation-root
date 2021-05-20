@@ -29,7 +29,7 @@
   <description>Plexus component implementation of configuration-management-api linter / enforcer for Shell</description>
   <inceptionYear>2019</inceptionYear>
   <properties>
-    <test.coverage.percentage.required>99</test.coverage.percentage.required>
+    <test.coverage.percentage.required>98</test.coverage.percentage.required>
   </properties>
   <dependencies>
     <dependency>

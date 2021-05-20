@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -28,10 +28,10 @@ import java.util.Properties;
 import java.util.UUID;
 
 import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
-import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
-import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;
+import org.infrastructurebuilder.util.core.Checksum;
+import org.infrastructurebuilder.util.core.ChecksumBuilder;
+import org.infrastructurebuilder.util.core.ChecksumEnabled;
+import org.infrastructurebuilder.util.core.IBUtils;
 
 public interface IBRManifest extends ChecksumEnabled, Comparable<IBRManifest> {
   public final static Xpp3DomBuilder domBuilder     = new Xpp3DomBuilder();

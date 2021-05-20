@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,8 @@ import static java.util.Objects.requireNonNull;
 import static java.util.Optional.empty;
 import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
-import static org.infrastructurebuilder.util.artifacts.Weighted.weighted;
 import static org.infrastructurebuilder.util.constants.IBConstants.DEFAULT;
+import static org.infrastructurebuilder.util.core.Weighted.weighted;
 
 import java.util.Comparator;
 import java.util.List;

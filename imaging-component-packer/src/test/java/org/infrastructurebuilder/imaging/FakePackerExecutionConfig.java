@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -46,10 +46,10 @@ import org.infrastructurebuilder.imaging.maven.PackerBean;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
 import org.infrastructurebuilder.imaging.maven.Type;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
 import org.json.JSONObject;
 
 public class FakePackerExecutionConfig implements ImageBuildExecutionConfig {

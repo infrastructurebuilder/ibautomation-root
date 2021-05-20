@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,11 +15,11 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.lang.System.Logger;
+
 
 public class MockDisallowedStringsImpl implements IBRStaticAnalyzer {
-  private final static Logger log = LoggerFactory.getLogger(MockDisallowedStringsImpl.class);
+  private final static Logger log = System.getLogger(MockDisallowedStringsImpl.class.getName());
 
   @Override
   public Logger getLog() {

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -21,8 +21,8 @@ import java.nio.file.Path;
 
 import javax.inject.Inject;
 
-import org.infrastructurebuilder.util.config.PathSupplier;
-import org.infrastructurebuilder.util.config.TSupplier;
+import org.infrastructurebuilder.util.core.PathSupplier;
+import org.infrastructurebuilder.util.core.TSupplier;
 
 @javax.inject.Named(IBR_WORKING_PATH_SUPPLIER)
 @javax.inject.Singleton

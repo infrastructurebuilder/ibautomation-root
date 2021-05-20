@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,7 +27,7 @@ import java.util.Optional;
 import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
+import org.infrastructurebuilder.util.core.DefaultGAV;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;

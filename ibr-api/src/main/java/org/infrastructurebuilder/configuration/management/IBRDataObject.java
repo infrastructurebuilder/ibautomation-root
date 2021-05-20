@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,15 +18,14 @@ package org.infrastructurebuilder.configuration.management;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.SortedSet;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class IBRDataObject<T> {
-  public final static Logger log = LoggerFactory.getLogger(IBRDataObject.class);
+  public final static Logger log = System.getLogger(IBRDataObject.class.getName());
   private final IBRBuilderConfigElement builder;
   private final String name;
   private final SortedSet<IBRValidationOutput> output;
@@ -41,7 +40,7 @@ public class IBRDataObject<T> {
     builder = requireNonNull(builderJson);
 
     final List<IBRValidationOutput> l = output.stream().filter(o -> !o.isValid()).collect(toList());
-    l.forEach(ll -> log.error("Error!  Path is " + ll.getPath() + "\nException is " + ll.getException().get()));
+    l.forEach(ll -> log.log(Logger.Level.ERROR,"Error!  Path is " + ll.getPath() + "\nException is " + ll.getException().get()));
     if (l.size() > 0)
       throw new IBArchiveException("Failure of " + l.size() + " entries");
   }

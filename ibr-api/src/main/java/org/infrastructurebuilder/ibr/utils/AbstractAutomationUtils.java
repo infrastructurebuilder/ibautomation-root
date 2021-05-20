@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,15 +18,15 @@ package org.infrastructurebuilder.ibr.utils;
 import java.util.List;
 import java.util.Objects;
 
-import org.infrastructurebuilder.util.CredentialsFactory;
-import org.infrastructurebuilder.util.LoggerSupplier;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.IBArtifactVersionMapper;
 import org.infrastructurebuilder.util.config.AbstractIBRuntimeUtils;
 import org.infrastructurebuilder.util.config.DependenciesSupplier;
-import org.infrastructurebuilder.util.config.GAVSupplier;
-import org.infrastructurebuilder.util.config.PathSupplier;
-import org.infrastructurebuilder.util.files.TypeToExtensionMapper;
+import org.infrastructurebuilder.util.core.GAV;
+import org.infrastructurebuilder.util.core.GAVSupplier;
+import org.infrastructurebuilder.util.core.IBArtifactVersionMapper;
+import org.infrastructurebuilder.util.core.LoggerSupplier;
+import org.infrastructurebuilder.util.core.PathSupplier;
+import org.infrastructurebuilder.util.core.TypeToExtensionMapper;
+import org.infrastructurebuilder.util.credentials.basic.CredentialsFactory;
 
 abstract public class AbstractAutomationUtils extends AbstractIBRuntimeUtils implements AutomationUtils {
 

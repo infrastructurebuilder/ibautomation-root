@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +31,7 @@ import static org.infrastructurebuilder.imaging.maven.PackerManifest.runAndGener
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.lang.System.Logger;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -59,15 +60,13 @@ import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.ibr.PackerGenericIBRArchiveProvisioner;
 import org.infrastructurebuilder.imaging.ibr.PackerIBRProvisioner;
-import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
+import org.infrastructurebuilder.util.core.GAV;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PackerBean {
   public final static Function<Path, Path> forceCreateDir = i -> {
@@ -111,42 +110,42 @@ public class PackerBean {
   private boolean                               force                 = false;
   private Supplier<PackerManifest>              generator;
   private ImageBuilder                          image;
-  private Logger                                log                   = LoggerFactory.getLogger(PackerBean.class);
+  private Logger                                log                   = System.getLogger(PackerBean.class.getName());
   private String                                name;
   private Optional<String>                      only                  = Optional.empty();
   private Path                                  outputDirectory;
   private List<PackerManifest>                  packerArtifactData;
   private Path                                  packerExecutable;
 
-  private PackerFactory packerFactory;
+  private PackerFactory                         packerFactory;
 
-  private boolean         parallel = true;
-  private PlexusContainer plexusContainer;
+  private boolean                               parallel              = true;
+  private PlexusContainer                       plexusContainer;
 
-  private Optional<Path> projectBuildDirectory = Optional.empty();
+  private Optional<Path>                        projectBuildDirectory = Optional.empty();
 
-  private Properties properties;
+  private Properties                            properties;
 
-  private List<IBRInternalDependency> requirements;
+  private List<IBRInternalDependency>           requirements;
 
-  private Map<String, String> runtimeEnvironment;
+  private Map<String, String>                   runtimeEnvironment;
 
-  private JSONObject settingsJSON;
+  private JSONObject                            settingsJSON;
 
-  private boolean skipActualPackerRun = false;
+  private boolean                               skipActualPackerRun   = false;
 
-  private Optional<PrintStream> stdOut = Optional.empty();
+  private Optional<PrintStream>                 stdOut                = Optional.empty();
 
-  private Path tempDirectory;
+  private Path                                  tempDirectory;
 
-  private Duration timeout;
+  private Duration                              timeout;
 
-  private Path varFile;
+  private Path                                  varFile;
 
-  private Map<String, String> vars;
-  private Path                workingDirectory;
+  private Map<String, String>                   vars;
+  private Path                                  workingDirectory;
 
-  private VersionedProcessExecutionFactory vpef;
+  private VersionedProcessExecutionFactory      vpef;
 
   public PackerBean setVersionedProcessExecutionFactory(VersionedProcessExecutionFactory vpef) {
     this.vpef = vpef;
@@ -214,7 +213,7 @@ public class PackerBean {
     }
     getExcept().ifPresent(e -> packerParams.add("-except=" + e));
     packerParams.add("-on-error=" + (isCleanupOnError() ? "cleanup" : "abort"));
-    if (getLog().isDebugEnabled()) {
+    if (getLog().isLoggable(Logger.Level.DEBUG)) {
       packerParams.add("-debug");
     }
     packerParams.add("-parallel=" + isParallel());
@@ -260,7 +259,7 @@ public class PackerBean {
       t = Optional.empty();
     }
     if (!t.isPresent()) {
-      getLog().warn(NO_TIMEOUT_SPECIFIED);
+      getLog().log(Logger.Level.WARNING, NO_TIMEOUT_SPECIFIED);
     }
     timeout = t.orElse(null);
     return ofNullable(timeout);
@@ -467,7 +466,7 @@ public class PackerBean {
       throw new PackerException("No working dir " + getWorkingDirectory());
     final Path pFile = packerFactory.get();
     if (isSkipActualPackerRun()) {
-      getLog().warn("Skipping packer run.  Target packer file -> " + pFile.toAbsolutePath());
+      getLog().log(Logger.Level.WARNING, "Skipping packer run.  Target packer file -> " + pFile.toAbsolutePath());
     } else {
       finalMap = new HashMap<>();
       final PackerManifest packerManifest = runAndGenerateManifest(packerFactory, tempDirectory, name, description,
@@ -509,7 +508,7 @@ public class PackerBean {
       if (ibrArchives.size() > 0) {
         for (final IBArchive ibr : ibrArchives) {
           final IBRInternalDependency d = internalDependencies.get(ibr);
-          PackerIBRProvisioner p;
+          PackerIBRProvisioner        p;
           try {
             p = ((PackerIBRProvisioner) getPlexusContainer().lookup(PackerProvisioner.class, getIBRHandler()));
             p.setLog(getLog());

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,17 +16,17 @@
 package org.infrastructurebuilder.automation;
 
 import static java.util.Optional.empty;
-import static org.infrastructurebuilder.util.artifacts.Checksum.fromUTF8StringBytes;
-import static org.infrastructurebuilder.util.artifacts.GAV.GAV_VERSION;
+import static org.infrastructurebuilder.util.core.Checksum.fromUTF8StringBytes;
+import static org.infrastructurebuilder.util.core.GAV.GAV_VERSION;
 
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Optional;
 
-import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
-import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;
 import org.infrastructurebuilder.util.artifacts.Xpp3OutputEnabled;
+import org.infrastructurebuilder.util.core.Checksum;
+import org.infrastructurebuilder.util.core.ChecksumBuilder;
+import org.infrastructurebuilder.util.core.ChecksumEnabled;
 
 /**
  * A mapped representation of the XML stored in the "executionData" of a real

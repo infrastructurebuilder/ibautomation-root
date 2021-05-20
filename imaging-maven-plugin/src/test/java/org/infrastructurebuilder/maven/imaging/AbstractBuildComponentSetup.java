@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@ package org.infrastructurebuilder.maven.imaging;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -42,22 +43,21 @@ import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.maven.MockedPackerBean;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.Type;
-import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.IBUtils;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.joor.Reflect;
 import org.json.JSONObject;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class AbstractBuildComponentSetup {
   public final static TestingPathSupplier ps  = new TestingPathSupplier();
-  public final static Logger              log = LoggerFactory.getLogger(AbstractBuildComponentSetup.class);
+  public final static Logger              log = System.getLogger(AbstractBuildComponentSetup.class.getName());
   public final static AutomationUtils     ibr = new AutomationUtilsTesting(ps, log);
 
   protected static ClassWorld   kw;

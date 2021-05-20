@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -24,7 +24,7 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.FILES;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.NAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.ORIGINAL_AUTH_ID;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER_RUN_UUID;
-import static org.infrastructurebuilder.util.IBUtils.getOptionalJSONArray;
+import static org.infrastructurebuilder.util.core.IBUtils.getOptionalJSONArray;
 
 import java.time.Instant;
 import java.util.List;
@@ -33,8 +33,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.infrastructurebuilder.imaging.maven.LocalFileResult;
-import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
+import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

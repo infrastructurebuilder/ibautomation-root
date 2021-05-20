@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,8 +22,8 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Stream.concat;
 import static org.codehaus.plexus.util.xml.Xpp3DomBuilder.build;
 import static org.infrastructurebuilder.automation.IBRAutomationException.et;
-import static org.infrastructurebuilder.util.IBUtils.stringFromDocument;
-import static org.infrastructurebuilder.util.IBUtils.writeString;
+import static org.infrastructurebuilder.util.core.IBUtils.stringFromDocument;
+import static org.infrastructurebuilder.util.core.IBUtils.writeString;
 import static org.infrastructurebuilder.util.constants.IBConstants.XML;
 
 import java.io.IOException;
@@ -31,6 +31,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
@@ -53,8 +54,8 @@ import org.w3c.dom.Document;
 @Singleton
 public class DefaultIBRManifestUtils implements IBRManifestUtils {
 
-  private final IBRManifestXpp3Reader reader = new IBRManifestXpp3Reader();
-  private final IBRManifestXpp3Writer writer = new IBRManifestXpp3Writer();
+  private final IBRManifestXpp3Reader        reader = new IBRManifestXpp3Reader();
+  private final IBRManifestXpp3Writer        writer = new IBRManifestXpp3Writer();
 
   private final AutomationUtils              ibr;
   private final IBRExecutionDataReaderMapper drm;
@@ -81,7 +82,7 @@ public class DefaultIBRManifestUtils implements IBRManifestUtils {
       try {
         m = reader.read(ins).setMapper(drm).clone();
       } catch (IOException | XmlPullParserException e) {
-        getAutomationUtils().getLog().error("Failed to read manifest from reader", e);
+        getAutomationUtils().getLog().log(Logger.Level.ERROR, "Failed to read manifest from reader", e);
         m = null;
       }
     }
@@ -95,7 +96,7 @@ public class DefaultIBRManifestUtils implements IBRManifestUtils {
     try {
       m2 = ((Manifest) m).setMapper(drm);
     } catch (Throwable t) {
-      getAutomationUtils().getLog().warn("Failed to cast " + m + " to Manifest");
+      getAutomationUtils().getLog().log(Logger.Level.WARNING, "Failed to cast " + m + " to Manifest");
       m2 = null;
     }
     return ofNullable(m2);
@@ -116,23 +117,27 @@ public class DefaultIBRManifestUtils implements IBRManifestUtils {
 
   @Override
   public Optional<Path> writeManifest(IBRManifest m, List<? extends IBRDependentExecution> additionalExections) {
-    return ofNullable(recast(m).map(manifest -> {
-      manifest.setExec(concat(manifest.getDependentExecutions().parallelStream().map(rr -> this.recast(rr, manifest)),
-          requireNonNull(additionalExections).parallelStream().map(rr -> this.recast(rr, manifest)))
-              .map(DependentExecution::clone).collect(toList()));
-      String mStr;
-      synchronized (writer) {
-        try (Writer w = new StringWriter()) {
-          writer.write(w, manifest.clone()); // The clone within the models sets up the Xpp3Dom of the dependent items
-          w.close();
-          mStr = w.toString();
-        } catch (IOException e) {
-          getAutomationUtils().getLog().error("Error writing manifest " + m, e);
-          mStr = null;
-        }
-      }
-      return mStr;
-    }).orElse(null)).map(string -> et.withReturningTranslation(() -> writeString(
-        getAutomationUtils().getWorkingPath().resolve(randomUUID().toString() + XML), string)));
+    return ofNullable(
+        //
+        recast(m).map(manifest -> {
+          manifest
+              .setExec(concat(manifest.getDependentExecutions().parallelStream().map(rr -> this.recast(rr, manifest)),
+                  requireNonNull(additionalExections).parallelStream().map(rr -> this.recast(rr, manifest)))
+                      .map(DependentExecution::clone).collect(toList()));
+          String mStr;
+          synchronized (writer) {
+            try (Writer w = new StringWriter()) {
+              writer.write(w, manifest.clone()); // The clone within the models sets up the Xpp3Dom of the dependent
+                                                 // items
+              w.close();
+              mStr = w.toString();
+            } catch (IOException e) {
+              getAutomationUtils().getLog().log(Logger.Level.ERROR, "Error writing manifest " + m, e);
+              mStr = null;
+            }
+          }
+          return mStr;
+        }).orElse(null)).map(string -> et.withReturningTranslation(
+            () -> writeString(getAutomationUtils().getWorkingPath().resolve(randomUUID().toString() + XML), string)));
   }
 }

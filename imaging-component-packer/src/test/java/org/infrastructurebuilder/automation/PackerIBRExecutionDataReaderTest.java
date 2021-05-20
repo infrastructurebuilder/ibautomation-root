@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -32,7 +32,7 @@ import org.codehaus.plexus.util.xml.Xpp3DomBuilder;
 import org.infrastructurebuilder.automation.PackerIBRExecutionDataReader.PackerTypedExecution;
 import org.infrastructurebuilder.automation.model.v1_0_0.DependentExecution;
 import org.infrastructurebuilder.automation.model.v1_0_0.PackerSpecificExecution;
-import org.infrastructurebuilder.util.artifacts.GAV;
+import org.infrastructurebuilder.util.core.GAV;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;

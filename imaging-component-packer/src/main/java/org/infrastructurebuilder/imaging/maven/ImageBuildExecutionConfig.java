@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -27,9 +27,9 @@ import org.codehaus.plexus.PlexusContainer;
 import org.codehaus.plexus.archiver.manager.ArchiverManager;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
-import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
+import org.infrastructurebuilder.util.core.GAV;
 import org.json.JSONObject;
 
 public interface ImageBuildExecutionConfig {

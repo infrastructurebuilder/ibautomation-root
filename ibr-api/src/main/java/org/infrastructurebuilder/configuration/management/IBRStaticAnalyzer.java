@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,24 +15,24 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
+import java.lang.System.Logger;
 import java.util.Arrays;
 import java.util.List;
 
-import org.slf4j.Logger;
 
 public interface IBRStaticAnalyzer {
   default List<String> getDisallowedStringList() {
     return Arrays.asList("executionId");
   }
 
-  Logger getLog();
+  System.Logger getLog();
 
   default boolean isValid(final String toValidate) {
     final List<String> wrappers = Arrays.asList("${%s}", "@%s@");
     for (final String disallowed : getDisallowedStringList()) {
       for (final String wrapper : wrappers)
         if (toValidate.contains(String.format(wrapper, disallowed))) {
-          getLog().error(String.format("DISALLOWED %s  / %s", disallowed, wrapper));
+          getLog().log(Logger.Level.ERROR,String.format("DISALLOWED %s  / %s", disallowed, wrapper));
           return false;
         }
     }

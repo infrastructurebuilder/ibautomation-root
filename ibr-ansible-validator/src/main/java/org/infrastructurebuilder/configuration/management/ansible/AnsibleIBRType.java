@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,7 +38,7 @@ import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerConstantsV1;
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
+import org.infrastructurebuilder.util.core.JSONBuilder;
 import org.json.JSONObject;
 
 @Named(ANSIBLE)

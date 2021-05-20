@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,8 +29,9 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER_EXECUTA
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.START_TIME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TIMED_OUT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.VERSION;
-import static org.infrastructurebuilder.util.IBUtils.asStringStream;
+import static org.infrastructurebuilder.util.core.IBUtils.asStringStream;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -39,17 +40,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
-import org.infrastructurebuilder.util.artifacts.JSONAndChecksumEnabled;
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
+import org.infrastructurebuilder.util.core.Checksum;
+import org.infrastructurebuilder.util.core.ChecksumBuilder;
+import org.infrastructurebuilder.util.core.JSONAndChecksumEnabled;
+import org.infrastructurebuilder.util.core.JSONBuilder;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class PackerExecutionData implements JSONAndChecksumEnabled {
-  private final static Logger log = LoggerFactory.getLogger(PackerExecutionData.class);
+  private final static Logger log = System.getLogger(PackerExecutionData.class.getName());
 
   private final Checksum                      checksum;
   private final Duration                      duration;
@@ -78,7 +78,7 @@ public class PackerExecutionData implements JSONAndChecksumEnabled {
     final Optional<Checksum> c = ofNullable(pJson.optString(CHECKSUM, null)).map(Checksum::new);
     c.ifPresent(possible -> {
       if (!possible.equals(checksum)) {
-        log.warn("Checksum failure" + checksum + " vs " + possible);
+        log.log(Logger.Level.WARNING,"Checksum failure" + checksum + " vs " + possible);
       }
     });
 

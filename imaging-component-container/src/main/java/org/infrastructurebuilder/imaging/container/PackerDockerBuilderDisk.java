@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.infrastructurebuilder.imaging.AbstractPackerBuilderDisk;
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
+import org.infrastructurebuilder.util.core.JSONBuilder;
 import org.json.JSONObject;
 
 public class PackerDockerBuilderDisk extends AbstractPackerBuilderDisk {

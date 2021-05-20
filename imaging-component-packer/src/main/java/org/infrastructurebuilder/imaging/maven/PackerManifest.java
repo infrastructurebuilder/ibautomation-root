@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -38,11 +38,12 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.SOURCE;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.TWENTY_SECONDS;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.VERSION;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.VERSION_PARAM;
-import static org.infrastructurebuilder.util.IBUtils.asJSONObjectStream;
-import static org.infrastructurebuilder.util.IBUtils.getOptString;
-import static org.infrastructurebuilder.util.IBUtils.readJsonObject;
+import static org.infrastructurebuilder.util.core.IBUtils.asJSONObjectStream;
+import static org.infrastructurebuilder.util.core.IBUtils.getOptString;
+import static org.infrastructurebuilder.util.core.IBUtils.readJsonObject;
 
 import java.io.PrintStream;
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.Instant;
@@ -59,11 +60,11 @@ import org.infrastructurebuilder.imaging.IBRHintMap;
 import org.infrastructurebuilder.imaging.ImageBuildResult;
 import org.infrastructurebuilder.imaging.ImageData;
 import org.infrastructurebuilder.imaging.PackerFactory;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
-import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
+import org.infrastructurebuilder.util.core.JSONBuilder;
+import org.infrastructurebuilder.util.core.JSONOutputEnabled;
 import org.infrastructurebuilder.util.executor.DefaultProcessRunner;
 import org.infrastructurebuilder.util.executor.ProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.ProcessExecutionResultBag;
@@ -78,7 +79,7 @@ public class PackerManifest implements JSONOutputEnabled {
       final List<String> params, final Map<String, String> runtime) throws Exception {
     final Path packerFile = factory.get();
     var a = Instant.ofEpochMilli(1507245986).toString();
-    factory.getLog().info("Running packer for " + packerFile);
+    factory.getLog().log(Logger.Level.INFO,"Running packer for " + packerFile);
     final PlexusContainer c = factory.getContainer();
     final Path packer = factory.getPackerExecutable();
     final JSONObject packerFileAsJSON = readJsonObject(packerFile);
@@ -107,7 +108,7 @@ public class PackerManifest implements JSONOutputEnabled {
           .withEnvironment(packerEnvParams).withDuration(timeOut.orElse(Duration.ZERO));
       pr.add(exec);
 
-      pr.setKeepScratchDir(factory.getLog().isDebugEnabled());
+      pr.setKeepScratchDir(factory.getLog().isLoggable(Logger.Level.DEBUG));
       pr.lock();
       final ProcessExecutionResultBag vbb = pr.get().orElseThrow(() -> new PackerException("Unable to run packer "));
       final String versionString = vbb.getExecution(VERSION).map(res -> {

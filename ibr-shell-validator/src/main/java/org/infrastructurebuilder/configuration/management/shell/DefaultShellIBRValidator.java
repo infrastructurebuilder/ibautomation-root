@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,8 @@ package org.infrastructurebuilder.configuration.management.shell;
 import static java.lang.String.format;
 import static java.util.Optional.of;
 import static org.infrastructurebuilder.ibr.IBRConstants.SHELL;
-import static org.slf4j.LoggerFactory.getLogger;
 
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -34,12 +34,11 @@ import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
-import org.slf4j.Logger;
 
 @Named(SHELL)
 @Typed(IBRValidator.class)
 public class DefaultShellIBRValidator extends AbstractShellIBRValidator {
-  private static final Logger         log = getLogger(DefaultShellIBRValidator.class);
+  private static final Logger         log = System.getLogger(DefaultShellIBRValidator.class.getName());
   private final ShellIBRFileValidator fileValidator;
 
   @Inject
@@ -64,12 +63,12 @@ public class DefaultShellIBRValidator extends AbstractShellIBRValidator {
       } else {
         result.add(new IBRValidationOutput(path, "validation failed",
             of(new IBArchiveException(format("%s: DefaultShellIBRValidator File failed validation", path)))));
-        log.error(format("%s: File failed validation", path));
+        log.log(Logger.Level.ERROR,format("%s: File failed validation", path));
       }
     } catch (final Exception e) {
       result.add(new IBRValidationOutput(path, "validation failed",
           of(new IBArchiveException(format("%s: File failed validation externally", path)))));
-      log.error(format("%s: File failed validation externally", path));
+      log.log(Logger.Level.ERROR,format("%s: File failed validation externally", path));
     }
 
     return result;

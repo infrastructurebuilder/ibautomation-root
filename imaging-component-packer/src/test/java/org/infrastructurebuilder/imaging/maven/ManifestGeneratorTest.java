@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,35 +22,25 @@ import static org.infrastructurebuilder.automation.PackerException.et;
 import static org.infrastructurebuilder.imaging.maven.PackerManifest.runAndGenerateManifest;
 import static org.junit.Assert.assertNotNull;
 
-import java.nio.file.Path;
-import java.util.Arrays;
-import java.util.HashMap;
+import java.lang.System.Logger;
+import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.function.Supplier;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class ManifestGeneratorTest extends AbstractPackerFactoryTest {
 
   private Supplier<PackerManifest> m;
 
-  private List<String>        params;
-  private Map<String, String> runtime;
-  private Path                tempDir;
-  Logger                      log = LoggerFactory.getLogger(ManifestGeneratorTest.class);
+  private final Logger             log = System.getLogger(ManifestGeneratorTest.class.getName());
 
   @Before
   public void setUp2() throws Exception {
-    tempDir = target.resolve(UUID.randomUUID().toString());
-    params = Arrays.asList("--color=false");
-    runtime = new HashMap<>();
-    m = () -> et.withReturningTranslation(
-        () -> runAndGenerateManifest(pf, tempDir, "name", "desc", gav, of(ofMinutes(30)), of(out), params, runtime));
+    m = () -> et.withReturningTranslation(() -> runAndGenerateManifest(pf, target.resolve(UUID.randomUUID().toString()),
+        "name", "desc", gav, of(ofMinutes(30)), of(out), List.of("--color=false"), Collections.emptyMap()));
   }
 
   @Test

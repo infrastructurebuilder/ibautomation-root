@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -32,18 +33,17 @@ import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
 import org.infrastructurebuilder.imaging.shell.PackerShellLocalProvisioner;
 import org.infrastructurebuilder.imaging.shell.PackerShellPostProcessor;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class PackerFactoryTest extends AbstractPackerFactoryTest {
-  public final static Logger log = LoggerFactory.getLogger(PackerFactoryTest.class);
+  public final static Logger log = System.getLogger(PackerFactoryTest.class.getName());
 
   @Test
   public void testAddBuilder() {

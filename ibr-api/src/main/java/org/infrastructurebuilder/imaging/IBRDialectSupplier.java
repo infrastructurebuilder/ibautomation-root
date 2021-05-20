@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,8 +18,8 @@ package org.infrastructurebuilder.imaging;
 import java.util.function.Supplier;
 
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
-import org.infrastructurebuilder.util.artifacts.Weighted;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
+import org.infrastructurebuilder.util.core.Weighted;
 
 public interface IBRDialectSupplier extends Weighted, Supplier<IBRDialect> {
   String getDialect();

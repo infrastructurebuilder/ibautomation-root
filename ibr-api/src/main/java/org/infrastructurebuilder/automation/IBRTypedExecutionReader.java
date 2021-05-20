@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,8 +19,8 @@ import java.util.Optional;
 import java.util.function.Supplier;
 
 import org.codehaus.plexus.util.xml.Xpp3Dom;
-import org.infrastructurebuilder.util.artifacts.IBVersion.IBVersionBoundedRange;
-import org.infrastructurebuilder.util.artifacts.Weighted;
+import org.infrastructurebuilder.util.core.IBVersion.IBVersionBoundedRange;
+import org.infrastructurebuilder.util.core.Weighted;
 
 public interface IBRTypedExecutionReader<T extends IBRTypedExecution> extends Weighted {
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -50,14 +51,14 @@ import org.codehaus.plexus.component.repository.exception.ComponentLookupExcepti
 import org.infrastructurebuilder.automation.PackerException;
 import org.infrastructurebuilder.imaging.FakePackerExecutionConfig;
 import org.infrastructurebuilder.imaging.PackerFactory;
-import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducer;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducer;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.IBUtils;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.joor.Reflect;
@@ -67,8 +68,7 @@ import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class PackerBeanTest {
   private static final String           DESCRIPTION = "Description";
@@ -77,7 +77,7 @@ public class PackerBeanTest {
 
   private static ClassWorld             kw;
 
-  private final static Logger           log         = LoggerFactory.getLogger(PackerBeanTest.class);
+  private final static Logger           log         = System.getLogger(PackerBeanTest.class.getName());
 
   private static final String           TESTING     = "TESTING";
 
@@ -244,8 +244,8 @@ public class PackerBeanTest {
 
   @Test
   public void testGetParams1() {
-    log.info("Parameters -> " + med.getParams());
-    assertEquals(4, med.getParams().size());
+    log.log(Logger.Level.INFO,"Parameters -> " + med.getParams());
+    assertEquals(3, med.getParams().size());
   }
 
   @Test

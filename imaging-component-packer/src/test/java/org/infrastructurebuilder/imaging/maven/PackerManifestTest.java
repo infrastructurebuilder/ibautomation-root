@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,6 +22,7 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDS;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -33,12 +34,12 @@ import org.codehaus.plexus.DefaultPlexusContainer;
 import org.infrastructurebuilder.imaging.ImageBuilder;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerHintMapDAO;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.DummyNOPAuthenticationProducerFactory;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.joor.Reflect;
@@ -46,11 +47,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class PackerManifestTest extends PackerExecutionDataTest {
-  static final Logger                        log  = LoggerFactory.getLogger(PackerManifestTest.class);
+  static final Logger                        log  = System.getLogger(PackerManifestTest.class.getName());
   static final TestingPathSupplier           wps  = new TestingPathSupplier();
   protected VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,18 +17,18 @@ package org.infrastructurebuilder.automation;
 //
 //import static java.util.Objects.requireNonNull;
 //import static org.infrastructurebuilder.automation.IBRManifest.MODEL_VERSION;
-//import static org.infrastructurebuilder.util.artifacts.Checksum.fromUTF8StringBytes;
-//import static org.infrastructurebuilder.util.artifacts.GAV.GAV_ARTIFACTID;
-//import static org.infrastructurebuilder.util.artifacts.GAV.GAV_CLASSIFIER;
-//import static org.infrastructurebuilder.util.artifacts.GAV.GAV_EXTENSION;
-//import static org.infrastructurebuilder.util.artifacts.GAV.GAV_GROUPID;
-//import static org.infrastructurebuilder.util.artifacts.GAV.GAV_VERSION;
+//import static org.infrastructurebuilder.util.core.Checksum.fromUTF8StringBytes;
+//import static org.infrastructurebuilder.util.core.GAV.GAV_ARTIFACTID;
+//import static org.infrastructurebuilder.util.core.GAV.GAV_CLASSIFIER;
+//import static org.infrastructurebuilder.util.core.GAV.GAV_EXTENSION;
+//import static org.infrastructurebuilder.util.core.GAV.GAV_GROUPID;
+//import static org.infrastructurebuilder.util.core.GAV.GAV_VERSION;
 //
 //import org.codehaus.plexus.util.xml.Xpp3Dom;
-//import org.infrastructurebuilder.util.artifacts.Checksum;
-//import org.infrastructurebuilder.util.artifacts.GAV;
+//import org.infrastructurebuilder.util.core.Checksum;
+//import org.infrastructurebuilder.util.core.GAV;
 //import org.infrastructurebuilder.util.artifacts.IBVersion;
-//import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
+//import org.infrastructurebuilder.util.core.DefaultGAV;
 //import org.infrastructurebuilder.util.artifacts.impl.DefaultIBVersion;
 //
 ///**

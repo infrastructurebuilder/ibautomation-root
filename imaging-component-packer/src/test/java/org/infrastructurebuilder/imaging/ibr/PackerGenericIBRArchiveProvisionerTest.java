@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,12 +15,13 @@
  */
 package org.infrastructurebuilder.imaging.ibr;
 
-import static org.infrastructurebuilder.util.IBUtils.readToString;
+import static org.infrastructurebuilder.util.core.IBUtils.readToString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -40,17 +41,16 @@ import org.infrastructurebuilder.configuration.management.FakeTestCMType;
 import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.maven.PackerBeanTest;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.skyscreamer.jsonassert.JSONAssert;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class PackerGenericIBRArchiveProvisionerTest {
-  public final static Logger log = LoggerFactory.getLogger(PackerGenericIBRArchiveProvisionerTest.class);
+  public final static Logger log = System.getLogger(PackerGenericIBRArchiveProvisionerTest.class.getName());
   private static final String TESTING = "testing";
   private IBArchive a;
   private DefaultPlexusContainer c;

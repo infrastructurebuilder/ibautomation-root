@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -49,6 +49,7 @@ import static org.infrastructurebuilder.imaging.aws.ami.builders.AWSConstants.US
 import static org.infrastructurebuilder.imaging.aws.ami.builders.AWSConstants.VPC_ID;
 import static org.jooq.lambda.tuple.Tuple.tuple;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.List;
@@ -71,13 +72,12 @@ import org.infrastructurebuilder.imaging.ImageStorage;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.PackerSizing2;
 import org.infrastructurebuilder.imaging.maven.Type;
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
+import org.infrastructurebuilder.util.core.JSONBuilder;
 import org.jooq.lambda.tuple.Tuple2;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 @Named(AMAZONEBS)
 @Typed(ImageData.class)
@@ -118,7 +118,7 @@ public class PackerAWSBuilder extends AbstractPackerBuilder implements Initializ
   public static final String DEFAULT_INSTANCE_TYPE          = "t2.micro";
   public static final String DEFAULT_REGION                 = "us-west-2";
 
-  private final static Logger log = LoggerFactory.getLogger(PackerAWSBuilder.class);
+  private final static Logger log = System.getLogger(PackerAWSBuilder.class.getName());
 
   private static final String PROVISIONING_USER    = EC2_USER;
   static final List<String>   namedTypes           = asList(AMAZONEBS);
@@ -270,7 +270,7 @@ public class PackerAWSBuilder extends AbstractPackerBuilder implements Initializ
   @Override
   public void initialize() throws InitializationException {
     ofNullable(getLog())
-        .ifPresent(myLog -> myLog.debug("Initializing with " + isCopyToOtherRegions() + " and " + COPY_TO));
+        .ifPresent(myLog -> myLog.log(Logger.Level.DEBUG,"Initializing with " + isCopyToOtherRegions() + " and " + COPY_TO));
 
   }
 
@@ -329,7 +329,7 @@ public class PackerAWSBuilder extends AbstractPackerBuilder implements Initializ
       final Optional<JSONObject> j = m.getArtifactInfo().map(JSONObject::new);
       j.ifPresent(lr -> {
         final String x = lr.getString(US_WEST_2);
-        log.info("Imagesource -> " + x);
+        log.log(Logger.Level.INFO,"Imagesource -> " + x);
         setSourceImage(x);
       });
 

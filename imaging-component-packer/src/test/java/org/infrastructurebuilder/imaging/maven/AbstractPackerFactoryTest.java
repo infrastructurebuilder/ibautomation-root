@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,6 +18,7 @@ package org.infrastructurebuilder.imaging.maven;
 import static java.util.Collections.emptyList;
 import static java.util.Optional.empty;
 
+import java.lang.System.Logger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
@@ -33,14 +34,13 @@ import org.eclipse.sisu.wire.WireModule;
 import org.infrastructurebuilder.imaging.AbstractPackerTestRoot;
 import org.infrastructurebuilder.imaging.PackerFactory;
 import org.infrastructurebuilder.imaging.file.PackerFileBuilder;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.json.JSONObject;
 import org.junit.Before;
-import org.slf4j.Logger;
 
 abstract public class AbstractPackerFactoryTest extends AbstractPackerTestRoot {
 

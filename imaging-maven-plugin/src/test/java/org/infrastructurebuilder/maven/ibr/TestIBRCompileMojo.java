@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@ import static org.infrastructurebuilder.configuration.management.ansible.Ansible
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -40,7 +41,7 @@ import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsible
 import org.infrastructurebuilder.configuration.management.ansible.DefaultAnsibleValidator;
 import org.infrastructurebuilder.ibr.utils.AutomationUtilsTesting;
 import org.infrastructurebuilder.ibr.utils.IBRWorkingPathSupplier;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.junit.Before;
@@ -48,11 +49,10 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 public class TestIBRCompileMojo {
-  public final static Logger                   log      = LoggerFactory.getLogger(TestIBRCompileMojo.class);
+  public final static Logger                   log      = System.getLogger(TestIBRCompileMojo.class.getName());
   @Rule
   public ExpectedException                     expected = ExpectedException.none();
   private List<DefaultIBRBuilderConfigElement> builders;

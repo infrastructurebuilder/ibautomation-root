@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,11 +23,12 @@ import static org.infrastructurebuilder.automation.PackerException.et;
 import static org.infrastructurebuilder.configuration.management.IBArchive.IBR;
 import static org.infrastructurebuilder.ibr.IBRConstants.IBR_METADATA_FILENAME;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PACKER;
-import static org.infrastructurebuilder.util.IBUtils.copy;
-import static org.infrastructurebuilder.util.IBUtils.readJsonObject;
+import static org.infrastructurebuilder.util.core.IBUtils.copy;
+import static org.infrastructurebuilder.util.core.IBUtils.readJsonObject;
 
 import java.io.File;
 import java.io.PrintStream;
+import java.lang.System.Logger;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -55,11 +56,10 @@ import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.maven.PackerBean;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
+import org.infrastructurebuilder.util.core.DefaultGAV;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 
 @Named
 public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecutor {
@@ -176,15 +176,15 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
 
     if (executionId.contains(EXECUTION_ID))
       throw new IBException("Execution Id cannot contain the string '" + EXECUTION_ID + "'");
-    getLog().info("ExecutionId : " + executionId);
+    getLog().log(Logger.Level.INFO,"ExecutionId : " + executionId);
     try {
       if (isSkip()) {
-        getLog().info("Skipping plugin execution");
+        getLog().log(Logger.Level.INFO,"Skipping plugin execution");
         return Optional.empty();
       }
 
       packerArtifactData = resolve(artifacts);
-      getLog().info("Execution " + executionId + " has acquired " + packerArtifactData.size() + " elements");
+      getLog().log(Logger.Level.INFO,"Execution " + executionId + " has acquired " + packerArtifactData.size() + " elements");
       ibrArtifactData = extract(getRequirements(), artifacts);
       return data.setExecutionConfigFrom(this).executePacker(executionId);
     } catch (final Exception e) {
@@ -202,11 +202,11 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
     final List<IBArchive> ibrArchives = new ArrayList<>();
 
     for (final IBRInternalDependency a : requirements) {
-      getLog().debug("Checking for " + a);
+      getLog().log(Logger.Level.DEBUG,"Checking for " + a);
       final List<Artifact> list1 = new ArrayList<>();
 
       for (final Artifact a1 : resolvedArtifacts) {
-        getLog().debug("  vs. " + a1);
+        getLog().log(Logger.Level.DEBUG,"  vs. " + a1);
         if (matchArtifact(a, a1)) {
           list1.add(a1);
         }
@@ -217,25 +217,25 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
       Path awd = getWorkingDirectory().toAbsolutePath();
       for (final Artifact art : list1) {
         final Path instanceWorkingDir = IBR.equals(art.getType()) ? awd.resolve(randomUUID().toString()) : awd;
-        getLog().info("Writing " + art + " to " + instanceWorkingDir);
+        getLog().log(Logger.Level.INFO,"Writing " + art + " to " + instanceWorkingDir);
         if (a.isUnpack().orElse(false)) {
           final UnArchiver aa = et.withReturningTranslation(() -> getArchiverManager().getUnArchiver(art.getFile()));
           aa.setDestDirectory(instanceWorkingDir.toFile());
           aa.setOverwrite(a.isOverwrite());
           et.withTranslation(() -> createDirectories(aa.getDestDirectory().toPath()));
           aa.setSourceFile(art.getFile());
-          getLog().info("Unpacking " + aa.getSourceFile() + " to " + instanceWorkingDir);
+          getLog().log(Logger.Level.INFO,"Unpacking " + aa.getSourceFile() + " to " + instanceWorkingDir);
           aa.extract();
           a.setFile(instanceWorkingDir);
         } else {
           final Path targetPath = instanceWorkingDir.resolve(art.getFile().getName());
-          getLog().info("Copying " + art.getFile().toPath() + " to " + targetPath);
+          getLog().log(Logger.Level.INFO,"Copying " + art.getFile().toPath() + " to " + targetPath);
           et.withTranslation(() -> copy(art.getFile().toPath(), targetPath));
           a.setFile(targetPath);
         }
         a.applyTargetDir(instanceWorkingDir);
         if (IBR.equals(art.getType())) {
-          getLog().info("Reading Manifest from " + art.getFile().toPath());
+          getLog().log(Logger.Level.INFO,"Reading Manifest from " + art.getFile().toPath());
           final IBArchive archive = et.withReturningTranslation(() -> new IBArchive(
               readJsonObject(instanceWorkingDir.resolve(IBR_METADATA_FILENAME)), instanceWorkingDir));
 
@@ -457,12 +457,12 @@ public final class DefaultImageBuildMojoExecutor implements ImageBuildMojoExecut
     final List<PackerManifest> psm = new ArrayList<>();
     for (final org.apache.maven.artifact.Artifact d : resolvedArtifacts)
       if (PACKER.equals(d.getType())) {
-        getLog().info("Reading manifest from " + d.getFile().toPath());
+        getLog().log(Logger.Level.INFO,"Reading manifest from " + d.getFile().toPath());
         et.withTranslation(
             () -> psm.add(new PackerManifest(readJsonObject(d.getFile().toPath().toAbsolutePath()), plexusContainer)));
       }
 
-    getLog().info("Got \n" + psm.toString());
+    getLog().log(Logger.Level.INFO,"Got \n" + psm.toString());
 
     return psm;
   }

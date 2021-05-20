@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -41,12 +41,12 @@ import org.codehaus.plexus.logging.console.ConsoleLogger;
 import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.Type;
-import org.infrastructurebuilder.util.IBUtils;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.DummyNOPWorkingPathSupplier;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
-import org.infrastructurebuilder.util.config.PathSupplier;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.core.IBUtils;
+import org.infrastructurebuilder.util.core.PathSupplier;
+import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 import org.joor.Reflect;
 import org.junit.After;
 import org.junit.Before;

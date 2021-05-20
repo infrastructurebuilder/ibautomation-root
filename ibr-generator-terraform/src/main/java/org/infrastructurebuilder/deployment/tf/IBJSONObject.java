@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,9 +20,9 @@ import static java.util.Objects.requireNonNull;
 import java.nio.file.Path;
 import java.util.Optional;
 
-import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.artifacts.ChecksumBuilder;
-import org.infrastructurebuilder.util.artifacts.ChecksumEnabled;
+import org.infrastructurebuilder.util.core.Checksum;
+import org.infrastructurebuilder.util.core.ChecksumBuilder;
+import org.infrastructurebuilder.util.core.ChecksumEnabled;
 import org.json.JSONObject;
 
 public class IBJSONObject extends JSONObject implements ChecksumEnabled {

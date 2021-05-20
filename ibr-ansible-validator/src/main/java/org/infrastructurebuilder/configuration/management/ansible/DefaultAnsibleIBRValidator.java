@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@ package org.infrastructurebuilder.configuration.management.ansible;
 
 import static org.infrastructurebuilder.ibr.IBRConstants.ANSIBLE;
 
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.HashSet;
@@ -32,13 +33,11 @@ import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.infrastructurebuilder.ibr.utils.AutomationUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Named(ANSIBLE)
 @Typed(IBRValidator.class)
 public class DefaultAnsibleIBRValidator extends AbstractAnsibleIBRValidator {
-  private static final Logger log = LoggerFactory.getLogger(DefaultAnsibleIBRValidator.class);
+  private static final Logger log = System.getLogger(DefaultAnsibleIBRValidator.class.getName());
 
   private final DefaultAnsibleValidator fileValidator;
 
@@ -55,7 +54,7 @@ public class DefaultAnsibleIBRValidator extends AbstractAnsibleIBRValidator {
 
     final Set<IBRValidationOutput> result = new HashSet<>();
     if (!Files.exists(path)) {
-      log.error(String.format("File does not exist : %s", path));
+      log.log(Logger.Level.ERROR,String.format("File does not exist : %s", path));
       result.add(new IBRValidationOutput(path, "failed validation",
           Optional.of(new IBArchiveException("The provided file didn't exist"))));
       return result;
@@ -73,7 +72,7 @@ public class DefaultAnsibleIBRValidator extends AbstractAnsibleIBRValidator {
     } catch (final Exception e) {
       result.add(new IBRValidationOutput(path, "validation failed",
           Optional.of(new IBArchiveException("File failed validation externally"))));
-      log.error(String.format("%s: File failed validation externally", path));
+      log.log(Logger.Level.ERROR,String.format("%s: File failed validation externally", path));
     }
 
     return result;

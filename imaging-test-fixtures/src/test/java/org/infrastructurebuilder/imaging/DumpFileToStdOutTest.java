@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -22,7 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 
-import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.core.IBUtils;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;

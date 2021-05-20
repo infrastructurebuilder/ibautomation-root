@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -20,6 +20,7 @@ import static java.util.Optional.of;
 import static java.util.UUID.randomUUID;
 import static org.infrastructurebuilder.configuration.management.IBArchiveException.et;
 
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -32,18 +33,17 @@ import javax.inject.Named;
 
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRStaticAnalyzer;
-import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.core.IBUtils;
 import org.infrastructurebuilder.util.executor.DefaultProcessRunner;
 import org.infrastructurebuilder.util.executor.ProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.ProcessExecutionResult;
 import org.infrastructurebuilder.util.executor.ProcessRunner;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 
 @Named("shell-ibr-validator")
 public class ShellIBRFileValidator {
-  private static final Logger                    log        = LoggerFactory.getLogger(ShellIBRFileValidator.class);
+  private static final Logger                    log        = System.getLogger(ShellIBRFileValidator.class.getName());
   private Path                                   targetPath = null;
   private final VersionedProcessExecutionFactory vpef;
 
@@ -63,11 +63,11 @@ public class ShellIBRFileValidator {
     final IBRStaticAnalyzer defaultDisallowedStrings = new IBRStaticAnalyzer() {
       @Override
       public Logger getLog() {
-        return LoggerFactory.getLogger(this.getClass());
+        return System.getLogger(this.getClass().getName());
       }
     };
     if (!defaultDisallowedStrings.isValid(string)) {
-      log.error("IBRStaticAnalyzer in Shell code");
+      log.log(Logger.Level.ERROR,"IBRStaticAnalyzer in Shell code");
       return false;
     }
 
@@ -90,13 +90,13 @@ public class ShellIBRFileValidator {
       for (final ProcessExecutionResult res : resultMap.values()) {
         final Optional<Integer> resultCode = res.getResultCode();
         res.getStdOut().stream().forEach(line -> {
-          log.info(line);
+          log.log(Logger.Level.INFO,line);
         });
         res.getStdErr().stream().forEach(line -> {
-          log.error(line);
+          log.log(Logger.Level.ERROR,line);
         });
         if (resultCode.get() != 0) {
-          log.error(String.format("Nonzero Result code %d", resultCode.get()));
+          log.log(Logger.Level.ERROR,String.format("Nonzero Result code %d", resultCode.get()));
           return false;
         }
       }

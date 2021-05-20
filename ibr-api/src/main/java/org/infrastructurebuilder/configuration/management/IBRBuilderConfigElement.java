@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
  */
 package org.infrastructurebuilder.configuration.management;
 
-import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
+import org.infrastructurebuilder.util.core.JSONOutputEnabled;
 
 public interface IBRBuilderConfigElement extends IBConfigSupplier, JSONOutputEnabled {
   String getId();

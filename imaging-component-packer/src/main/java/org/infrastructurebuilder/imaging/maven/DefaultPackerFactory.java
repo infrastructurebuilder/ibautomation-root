@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +29,10 @@ import static org.infrastructurebuilder.imaging.PackerConstantsV1.BUILDER;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.DEFAULT;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.POST_PROCESSOR;
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.PROVISIONER;
-import static org.infrastructurebuilder.util.IBUtils.writeString;
+import static org.infrastructurebuilder.util.core.IBUtils.writeString;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -65,15 +66,14 @@ import org.infrastructurebuilder.imaging.PackerManifestPostProcessor;
 import org.infrastructurebuilder.imaging.PackerPostProcessor;
 import org.infrastructurebuilder.imaging.PackerProvisioner;
 import org.infrastructurebuilder.imaging.PackerTypeMapperProcessingSection;
-import org.infrastructurebuilder.util.artifacts.Checksum;
-import org.infrastructurebuilder.util.artifacts.GAV;
 import org.infrastructurebuilder.util.auth.IBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthenticationProducerFactory;
+import org.infrastructurebuilder.util.core.Checksum;
+import org.infrastructurebuilder.util.core.GAV;
 import org.infrastructurebuilder.util.executor.ProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 
 public class DefaultPackerFactory implements PackerFactory {
   public final static String naiveFilter(final String d, final String k, final String val) {
@@ -172,7 +172,7 @@ public class DefaultPackerFactory implements PackerFactory {
       final Map<ImageData, Type> builders = new HashMap<>();
 
       for (final String hint : packerImageBuilder.getTypeHints()) {
-        log.info("Builder -> " + hint);
+        log.log(Logger.Level.INFO,"Builder -> " + hint);
         final ImageData c = this.container.lookup(ImageData.class, hint);
 //        log.debug("  " + hint + " found");
         c.setLog(this.log);
@@ -186,7 +186,7 @@ public class DefaultPackerFactory implements PackerFactory {
         final Type type = builders.get(imageData);
         final Optional<GAV> parent = Optional.ofNullable(type.getParent().orElse(null));
         final String targetType = imageData.getLookupHint().get();
-        log.info("  --> " + targetType + " type " + imageData.getPackerType());
+        log.log(Logger.Level.INFO,"  --> " + targetType + " type " + imageData.getPackerType());
 
         final Set<IBAuthentication> auth = imageData.getAuthType()
             .map(authType -> authProdFactory.getAuthenticationsForType(authType)).orElse(new HashSet<>());
@@ -210,13 +210,13 @@ public class DefaultPackerFactory implements PackerFactory {
                   if (item.getOriginalAuthId().get().equals(aKey)) {
                     mmap.put(item, lm);
                   } else {
-                    log.debug(item.getOriginalAuthId().get() + " != " + aKey);
+                    log.log(Logger.Level.DEBUG,item.getOriginalAuthId().get() + " != " + aKey);
                   }
                 } else {
-                  log.debug("Original auth id for " + item + " was not present");
+                  log.log(Logger.Level.DEBUG,"Original auth id for " + item + " was not present");
                 }
             } else {
-              log.debug("Parent " + parent + " != " + manifestCoords);
+              log.log(Logger.Level.DEBUG,"Parent " + parent + " != " + manifestCoords);
             }
           }
           Optional<ImageBuildResult> m = Optional.empty();
@@ -232,12 +232,12 @@ public class DefaultPackerFactory implements PackerFactory {
           final Optional<String> keyPrime = imageData.getLookupHint();
 
           if (!keyPrime.isPresent()) {
-            log.warn(
+            log.log(Logger.Level.WARNING,
                 "No local type is present for " + imageData.getId() + " so no update data could possibly be available");
           } else {
             final String keyPrimeHint = keyPrime.get();
             updateData = packerImageBuilder.getTypeFor(keyPrimeHint);
-            log.info("Update data set to " + updateData);
+            log.log(Logger.Level.INFO,"Update data set to " + updateData);
           }
           b1.updateBuilderWithInstanceData(packerImageBuilder.getSize(), a, m, packerImageBuilder.getDisks(),
               updateData);
@@ -245,9 +245,9 @@ public class DefaultPackerFactory implements PackerFactory {
         }
       }
       for (final String ppHint : packerImageBuilder.getPostProcessingHints()) {
-        log.info("Postprocessor -> " + ppHint);
+        log.log(Logger.Level.INFO,"Postprocessor -> " + ppHint);
         final PackerPostProcessor p1 = this.container.lookup(PackerPostProcessor.class, ppHint);
-        log.debug("  " + ppHint + " found");
+        log.log(Logger.Level.DEBUG,"  " + ppHint + " found");
         p1.setLog(log);
         p1.setTags(packerImageBuilder.getTags());
 
@@ -321,7 +321,7 @@ public class DefaultPackerFactory implements PackerFactory {
     try {
       interpolator.addValueSource(new EnvarBasedValueSource());
     } catch (IOException e) {
-      log.warn("Failed to use environment variables for interpolation: " + e.getMessage());
+      log.log(Logger.Level.WARNING,"Failed to use environment variables for interpolation: " + e.getMessage());
     }
     return new JSONObject(
         et.withReturningTranslation(() -> interpolator.interpolate(getBuilderOutputData().toString())));
@@ -336,7 +336,7 @@ public class DefaultPackerFactory implements PackerFactory {
           item.getForcedOutput().ifPresent(map -> {
             map.keySet().stream().forEach(item2 -> {
               if (val.containsKey(item2)) {
-                log.error("Attempting to overwrite a value in the forced output map. IGNORING VALUE.  Key" + item2
+                log.log(Logger.Level.ERROR,"Attempting to overwrite a value in the forced output map. IGNORING VALUE.  Key" + item2
                     + " id " + item.getId() + " localtype " + item.getLookupHint());
               } else {
                 val.put(item2, root.resolve(map.get(item2)));

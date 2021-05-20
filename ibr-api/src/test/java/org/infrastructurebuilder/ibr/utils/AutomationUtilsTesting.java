@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,46 +15,60 @@
  */
 package org.infrastructurebuilder.ibr.utils;
 
-import static java.util.Collections.emptyList;
+import java.lang.System.Logger;
+import java.util.Collections;
+import java.util.List;
 
-import org.infrastructurebuilder.util.CredentialsFactory;
-import org.infrastructurebuilder.util.FakeCredentialsFactory;
-import org.infrastructurebuilder.util.FakeTypeToExtensionMapper;
-import org.infrastructurebuilder.util.artifacts.GAV;
-import org.infrastructurebuilder.util.artifacts.IBArtifactVersionMapper;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.config.ConfigMapSupplier;
 import org.infrastructurebuilder.util.config.FakeGAVSupplier;
 import org.infrastructurebuilder.util.config.FakeIBVersionsSupplier;
-import org.infrastructurebuilder.util.config.PathSupplier;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.infrastructurebuilder.util.config.FakeTypeToExtensionMapper;
+import org.infrastructurebuilder.util.config.factory.FakeCredentialsFactory;
+import org.infrastructurebuilder.util.core.DefaultGAV;
+import org.infrastructurebuilder.util.core.GAV;
+import org.infrastructurebuilder.util.core.IBArtifactVersionMapper;
+import org.infrastructurebuilder.util.core.PathSupplier;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
+import org.infrastructurebuilder.util.credentials.basic.CredentialsFactory;
+import org.infrastructurebuilder.util.versions.IBVersionsSupplier;
 
 public class AutomationUtilsTesting extends AbstractAutomationUtils {
 
-  private final static Logger log = LoggerFactory.getLogger(AutomationUtilsTesting.class);
+  private final static Logger log = System.getLogger(AutomationUtilsTesting.class.getName());
 
   public AutomationUtilsTesting(PathSupplier wps, Logger ls, GAV gs, CredentialsFactory cf,
       IBArtifactVersionMapper avm) {
-    super(wps, () -> ls, new FakeGAVSupplier(gs), cf, avm, new FakeTypeToExtensionMapper(), () -> emptyList());
+    super(wps, () -> ls, new FakeGAVSupplier(gs), cf, avm, new FakeTypeToExtensionMapper(),
+        () -> Collections.emptyList());
   }
 
   public AutomationUtilsTesting(PathSupplier wps, Logger log) {
     this(wps, log, new DefaultGAV(new FakeIBVersionsSupplier()), new FakeCredentialsFactory(),
         new IBArtifactVersionMapper() {
+          @Override
+          public List<IBVersionsSupplier> getMatchingArtifacts(String groupId, String artifactId) {
+            return Collections.emptyList();
+          }
         });
   }
 
   public AutomationUtilsTesting(Logger log) {
     this(new TestingPathSupplier(), log, new DefaultGAV(new FakeIBVersionsSupplier()), new FakeCredentialsFactory(),
         new IBArtifactVersionMapper() {
+          @Override
+          public List<IBVersionsSupplier> getMatchingArtifacts(String groupId, String artifactId) {
+            return Collections.emptyList();
+          }
         });
   }
 
   public AutomationUtilsTesting() {
     this(new TestingPathSupplier(), log, new DefaultGAV(new FakeIBVersionsSupplier()), new FakeCredentialsFactory(),
         new IBArtifactVersionMapper() {
+          @Override
+          public List<IBVersionsSupplier> getMatchingArtifacts(String groupId, String artifactId) {
+            return Collections.emptyList();
+          }
         });
   }
 

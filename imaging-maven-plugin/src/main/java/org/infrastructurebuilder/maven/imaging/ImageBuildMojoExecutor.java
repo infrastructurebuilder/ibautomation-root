@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,6 +16,7 @@
 package org.infrastructurebuilder.maven.imaging;
 
 import java.io.File;
+import java.lang.System.Logger;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,10 @@ import org.infrastructurebuilder.imaging.IBRInternalDependency;
 import org.infrastructurebuilder.imaging.maven.ImageBuildExecutionConfig;
 import org.infrastructurebuilder.imaging.maven.PackerImageBuilder;
 import org.infrastructurebuilder.imaging.maven.PackerManifest;
-import org.infrastructurebuilder.util.artifacts.impl.DefaultGAV;
 import org.infrastructurebuilder.util.auth.DefaultIBAuthentication;
 import org.infrastructurebuilder.util.auth.IBAuthConfigBean;
+import org.infrastructurebuilder.util.core.DefaultGAV;
 import org.json.JSONObject;
-import org.slf4j.Logger;
 
 public interface ImageBuildMojoExecutor extends ImageBuildExecutionConfig {
   public static final String EXECUTION_ID = "executionId";

@@ -47,10 +47,6 @@
       <artifactId>json</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.infrastructurebuilder</groupId>
-      <artifactId>ibcore</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.infrastructurebuilder.util.logging</groupId>
       <artifactId>iblogconfig</artifactId>
       <classifier>test</classifier>

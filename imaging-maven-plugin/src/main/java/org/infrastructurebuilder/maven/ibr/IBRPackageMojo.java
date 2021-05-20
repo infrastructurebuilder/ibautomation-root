@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -33,7 +33,7 @@ import org.infrastructurebuilder.configuration.management.IBArchive;
 import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRDataObject;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
-import org.infrastructurebuilder.util.IBUtils;
+import org.infrastructurebuilder.util.core.IBUtils;
 import org.json.JSONObject;
 
 @Mojo(name = "package", requiresProject = true, threadSafe = true, instantiationStrategy = PER_LOOKUP, defaultPhase = PACKAGE, requiresDependencyResolution = RUNTIME)

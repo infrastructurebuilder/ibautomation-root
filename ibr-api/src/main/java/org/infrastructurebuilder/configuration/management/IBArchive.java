@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,7 @@ package org.infrastructurebuilder.configuration.management;
 import static java.util.Collections.unmodifiableList;
 import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toList;
-import static org.infrastructurebuilder.util.IBUtils.asJSONObjectStream;
+import static org.infrastructurebuilder.util.core.IBUtils.asJSONObjectStream;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -26,8 +26,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import org.infrastructurebuilder.util.artifacts.JSONBuilder;
-import org.infrastructurebuilder.util.artifacts.JSONOutputEnabled;
+import org.infrastructurebuilder.util.core.JSONBuilder;
+import org.infrastructurebuilder.util.core.JSONOutputEnabled;
 import org.json.JSONArray;
 import org.json.JSONObject;
 

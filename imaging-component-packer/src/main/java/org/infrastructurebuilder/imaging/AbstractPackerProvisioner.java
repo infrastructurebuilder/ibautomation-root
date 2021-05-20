@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -17,6 +17,7 @@ package org.infrastructurebuilder.imaging;
 
 import static org.infrastructurebuilder.imaging.PackerConstantsV1.OVERRIDES;
 
+import java.lang.System.Logger;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ abstract public class AbstractPackerProvisioner extends AbstractPackerBaseObject
   }
 
   protected Optional<JSONObject> addOverrideForType(final ImageData b) {
-    getLog().debug("No override for builder " + b.getId() + " in " + getId());
+    getLog().log(Logger.Level.DEBUG,"No override for builder " + b.getId() + " in " + getId());
     return Optional.empty();
   }
 

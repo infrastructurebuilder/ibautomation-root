@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.lang.System.Logger;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -39,36 +40,34 @@ import org.infrastructurebuilder.configuration.management.IBArchiveException;
 import org.infrastructurebuilder.configuration.management.IBRValidationOutput;
 import org.infrastructurebuilder.configuration.management.IBRValidator;
 import org.infrastructurebuilder.configuration.management.shell.DefaultShellIBRValidator;
-import org.infrastructurebuilder.util.IBUtils;
-import org.infrastructurebuilder.util.config.TestingPathSupplier;
+import org.infrastructurebuilder.util.core.IBUtils;
+import org.infrastructurebuilder.util.core.TestingPathSupplier;
 import org.infrastructurebuilder.util.executor.DefaultVersionedProcessExecutionFactory;
 import org.infrastructurebuilder.util.executor.VersionedProcessExecutionFactory;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class TestDefaultShellIBRValidator {
-  public final static Logger               log  = LoggerFactory.getLogger(TestDefaultShellIBRValidator.class);
+  public final static Logger               log  = System.getLogger(TestDefaultShellIBRValidator.class.getName());
   private final static TestingPathSupplier wps  = new TestingPathSupplier();
   private VersionedProcessExecutionFactory vpef = new DefaultVersionedProcessExecutionFactory(wps.get(), empty());
 
-  private Path         target;
-  private IBRValidator test;
-  Path                 fileA;
-  Path                 fileB;
-  Path                 fileC;
-  Path                 fileD;
-  Path                 fileE;
-  Path                 fileF;
-  Path                 fileG;
-  Path                 fileH;
-  Path                 targetEmptyDirectory;
+  private Path                             target;
+  private IBRValidator                     test;
+  Path                                     fileA;
+  Path                                     fileB;
+  Path                                     fileC;
+  Path                                     fileD;
+  Path                                     fileE;
+  Path                                     fileF;
+  Path                                     fileG;
+  Path                                     fileH;
+  Path                                     targetEmptyDirectory;
 
-  Path targetEmptySubfolder;
-  Path targetPath;
-  Path targetSneakyNotDirectory;
+  Path                                     targetEmptySubfolder;
+  Path                                     targetPath;
+  Path                                     targetSneakyNotDirectory;
 
   @After
   public void after() {
@@ -87,9 +86,9 @@ public class TestDefaultShellIBRValidator {
     targetEmptySubfolder = target.resolve(UUID.randomUUID().toString());
     targetSneakyNotDirectory = target.resolve(UUID.randomUUID().toString());
     final Path targetEmptySubfolderShell = targetEmptySubfolder.resolve(SHELL);
-    final Path shellPath = targetPath.resolve(SHELL);
+    final Path shellPath                 = targetPath.resolve(SHELL);
     Files.createDirectories(shellPath);
-    final Path subDir = shellPath.resolve("subdir");
+    final Path subDir  = shellPath.resolve("subdir");
     final Path subDir2 = subDir.resolve("subdir2");
     final Path subDir3 = subDir2.resolve("subdir3");
 
@@ -124,7 +123,7 @@ public class TestDefaultShellIBRValidator {
 
     assertEquals("Map size should be 8", 8, result.size());
     if (result.get(fileA).isPresent()) {
-      log.debug("fileA Message " + result.get(fileA).get().getMessage());
+      log.log(Logger.Level.DEBUG, "fileA Message " + result.get(fileA).get().getMessage());
     }
     assertFalse("Good file should have empty exception list", result.get(fileA).isPresent());
     for (final Path a : Arrays.asList(fileB, fileC, fileD, fileE, fileF, fileG, fileH)) {
@@ -153,8 +152,8 @@ public class TestDefaultShellIBRValidator {
 
   @Test
   public void testNonexistentDirectoryValidator() {
-    final Path nonexistent = Paths.get("/non/existent/path");
-    final Set<IBRValidationOutput> result = test.validate(nonexistent);
+    final Path                     nonexistent = Paths.get("/non/existent/path");
+    final Set<IBRValidationOutput> result      = test.validate(nonexistent);
     result.forEach(output -> {
       assertFalse("Nonexistent directory should fail validation", output.isValid());
     });

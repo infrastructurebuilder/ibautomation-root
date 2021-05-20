@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright © 2019 admin (admin@infrastructurebuilder.org)
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -19,7 +19,7 @@ import java.util.Optional;
 
 import org.infrastructurebuilder.deployment.tf.IBJSONObject;
 import org.infrastructurebuilder.deployment.tf.TFGenerator;
-import org.infrastructurebuilder.util.config.WorkingPathSupplier;
+import org.infrastructurebuilder.util.core.WorkingPathSupplier;
 
 public class DefaultTFAWSObject extends TFAWSObject<IBJSONObject> {
 

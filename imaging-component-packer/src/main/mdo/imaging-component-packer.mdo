@@ -371,7 +371,7 @@
       <name>Dependency</name>
       <version>1.0.0+</version>
       <interfaces>
-        <interface>org.infrastructurebuilder.util.artifacts.GAV</interface>
+        <interface>org.infrastructurebuilder.util.core.GAV</interface>
       </interfaces>
       <fields>
         <field xml.attribute="true">
@@ -424,7 +424,7 @@
 
   public Dependency() {
   }
-  public Dependency(org.infrastructurebuilder.util.artifacts.GAV g) {
+  public Dependency(org.infrastructurebuilder.util.core.GAV g) {
     this.groupId = g.getGroupId();
     this.artifactId = g.getArtifactId();
     this.version = g.getVersion().orElse(null);
